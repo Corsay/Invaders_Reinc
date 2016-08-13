@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
-set(CMAKE_CXX_FLAGS "-std=c++11")
+
+add_definitions(--std=c++11)
 
 # Set up your project name.
 project(template)
@@ -9,7 +10,7 @@ set(SOURCE_ROOT src)
 # Scan source folder to find all sources and put the result to SRC_LIST.
 aux_source_directory(${SOURCE_ROOT} SRC_LIST)
 # Create executable by SRC_LIST.
-add_executable(${PROJECT_NAME} ${SRC_LIST} src/dummy.hpp)
+add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 # Add subdirectory with Google Test Library.
 add_subdirectory(3party/googletest)
@@ -23,6 +24,8 @@ include_directories(3party/googletest/googletest/include ${SOURCE_ROOT})
 # Set up testing project.
 set(TESTS_SOURCE_ROOT tests)
 aux_source_directory(${TESTS_SOURCE_ROOT} TEST_SRC_FILES)
+set(TEST_SRC_FILES ${SRC_LIST} ${TEST_SRC_FILES})
+list(REMOVE_ITEM TEST_SRC_FILES src/main.cpp)
 add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES})
 # Link gtest and gtest_main libraries.
 target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
