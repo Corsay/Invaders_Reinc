@@ -99,18 +99,40 @@ TEST(box2d_test, test_square_brackets)
   EXPECT_EQ(b1[2][1], 0.0f);
 }
 
-/*
+TEST(box2d_test, test_center)
+{
+  Box2D b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  Box2D b2 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
+  EXPECT_EQ(b1.get_center(), Point2D(2.4, 3.6));
+  EXPECT_EQ(b2.get_center(), Point2D(4.5, 4));
+}
+
+TEST(box2d_test, test_intersection)
+{
+  Box2D b13 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
+  Box2D b14 = { {7.0f, 2.0f}, {13.0f, 6.0f} };
+  Box2D b15 = { {8.0f, 2.0f}, {13.0f, 6.0f} };
+  Box2D b16 = { {-5.0f, 3.0f}, {7.0f, 2.0f} };
+  Box2D b17 = { {3.0f, 3.0f}, {6.0f, 5.0f} };
+
+  EXPECT_EQ(b13.check_intersection(b14), 1); // left
+  EXPECT_EQ(b13.check_intersection(b15), 0); // not intersect
+  EXPECT_EQ(b13.check_intersection(b16), 1); // bottom
+  EXPECT_EQ(b13.check_intersection(b17), 1); // inside
+}
+
 TEST(box2d_test, test_hash)
 {
   Box2D::Hash hasher;
-  EXPECT_EQ(hasher(Box2D(0.0f, 0.0f)), 0);
+  Box2D b1;
+  EXPECT_EQ(hasher(b1), 0);
+  EXPECT_EQ(hasher(Box2D(Point2D(0.0f, 0.0f), Point2D(0.0f, 0.0f))), 0);
 
   std::unordered_set<Box2D, Box2D::Hash> hashTable;
-  hashTable.insert(Box2D(0.0f, 0.0f));
-  hashTable.insert(Box2D(1.0f, 0.0f));
+  hashTable.insert(Box2D(Point2D(0.0f, 0.0f), Point2D(0.0f, 0.0f)));
+  hashTable.insert(Box2D(Point2D(1.0f, 0.0f), Point2D(0.0f, 2.0f)));
   EXPECT_EQ(hashTable.size(), 2);
 }
-*/
 
 TEST(box2d_test, test_output)
 {

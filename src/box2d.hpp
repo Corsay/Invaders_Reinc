@@ -32,6 +32,20 @@ public:
   Point2D const & left_bottom() const { return m_left_bottom; }
   Point2D const & right_top() const { return m_right_top; }
 
+  // get center
+  Point2D get_center()
+  {
+    Point2D p = {(m_left_bottom.x() + m_right_top.x()) / 2 , (m_left_bottom.y() + m_right_top.y())/2 };
+    return p;
+  }
+
+  // check of intersection boxes
+  bool check_intersection (Box2D const & obj)
+  {
+    //        y2               oy1          y1                 oy2          x2               ox1          x1                 ox2
+    return !( right_top()[1] < obj[0][1] || left_bottom()[1] > obj[1][1] || right_top()[0] < obj[0][0] || left_bottom()[0] > obj[1][0] );
+  }
+
   // Конструктор со списком инициализации.
   Box2D(std::initializer_list<Point2D> const & lst)
   {
@@ -155,18 +169,15 @@ public:
     return index == 0 ? m_left_bottom : m_right_top;
   }
 
-  /*
   // Добавим внутреннюю сущность для вычисления хэша.
   struct Hash
   {
     size_t operator()(Box2D const & p) const
     {
-      //auto hasher = std::hash<float>();
       Point2D::Hash hasher;
-      return (hasher(m_left_bottom) ^ (hasher(m_right_top) << 1));
+      return (hasher(p.left_bottom()) ^ (hasher(p.right_top()) << 1));
     }
   };
-  */
 
   // Переопределение оператора <<
   friend std::ostream & operator << (std::ostream & os, Box2D const & obj)

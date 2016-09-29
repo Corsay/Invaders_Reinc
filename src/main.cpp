@@ -36,9 +36,9 @@ int main()
   //EXPECT_EQ(p1[2], 0.0f);
 
   //hasher
-  Point2D::Hash hasher;
-  cout << hasher(Point2D(0.0f, 0.0f)) << endl;
-  cout << hasher(p4) << endl << endl;
+  Point2D::Hash point_hasher;
+  cout << point_hasher(Point2D(0.0f, 0.0f)) << endl;
+  cout << point_hasher(p4) << endl << endl;
   //EXPECT_EQ(hasher(Point2D(0.0f, 0.0f)), 0);
 
 
@@ -101,6 +101,33 @@ int main()
   cout << b9 / 2.0f << endl;
 
   cout << endl;
+  //
+  Box2D b11 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  Box2D b12 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
+
+  cout << b11.get_center() << endl;
+  cout << b12.get_center() << endl;
+
+  cout << endl;
+  //
+  Box2D b13 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
+  Box2D b14 = { {7.0f, 2.0f}, {13.0f, 6.0f} };
+  Box2D b15 = { {8.0f, 2.0f}, {13.0f, 6.0f} };
+  Box2D b16 = { {-5.0f, 3.0f}, {7.0f, 2.0f} };
+  Box2D b17 = { {3.0f, 3.0f}, {6.0f, 5.0f} };
+
+  cout << b13.check_intersection(b14) << endl; // left
+  cout << b13.check_intersection(b15) << endl; // not intersect
+  cout << b13.check_intersection(b16) << endl; // bottom
+  cout << b13.check_intersection(b17) << endl; // inside
+
+  cout << endl;
+  // hash
+  Box2D::Hash box_hasher;
+  Box2D b18;
+  Box2D b19 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
+  cout << box_hasher(b18) << endl;
+  cout << box_hasher(b19) << endl;
 
   return 0;
 }
