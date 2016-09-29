@@ -1,101 +1,120 @@
 #include "gtest/gtest.h"
-#include "point2d.hpp"
+#include "box2d.hpp"
 #include <sstream>
 #include <unordered_set>
 
-TEST(point2d_test, test_construction)
+
+TEST(box2d_test, test_construction)
 {
   // Тест на создание объекта по умолчанию.
-  Point2D p1;
-  EXPECT_EQ(p1.x(), 0.0f);
-  EXPECT_EQ(p1.y(), 0.0f);
+  Box2D b1;
+  EXPECT_EQ(b1.left_bottom(), Point2D(0.0f, 0.0f));
+  EXPECT_EQ(b1.left_bottom().x(), 0.0f);
+  EXPECT_EQ(b1.left_bottom().y(), 0.0f);
+  EXPECT_EQ(b1.right_top(), Point2D(0.0f, 0.0f));
+  EXPECT_EQ(b1.right_top().x(), 0.0f);
+  EXPECT_EQ(b1.right_top().y(), 0.0f);
 
   // Тест на создание объекта с параметрами.
-  Point2D p2 = { 1.2f, 2.4f };
-  EXPECT_EQ(p2.x(), 1.2f);
-  EXPECT_EQ(p2.y(), 2.4f);
+  Box2D b2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
+  EXPECT_EQ(b2.left_bottom(), Point2D(1.2f, 2.4f));
+  EXPECT_EQ(b2.left_bottom().x(), 1.2f);
+  EXPECT_EQ(b2.left_bottom().y(), 2.4f);
+  EXPECT_EQ(b2.right_top(), Point2D(2.4f, 4.8f));
+  EXPECT_EQ(b2.right_top().x(), 2.4f);
+  EXPECT_EQ(b2.right_top().y(), 4.8f);
 
   // Тест на создание копии объекта.
-  Point2D p3 = p2;
-  EXPECT_EQ(p3, p2);
+  Box2D b3 = b2;
+  EXPECT_EQ(b3, b2);
 }
 
-TEST(point2d_test, test_initializer_list)
+TEST(box2d_test, test_initializer_list)
 {
-  Point2D p1 = { 1.0f, 2.0f, 3.0f };
-  EXPECT_EQ(p1.x(), 1.0f);
-  EXPECT_EQ(p1.y(), 2.0f);
+  Box2D b1 = { {1.0f, 2.0f}, {3.0f, 4.0f}, {5.0f, 6.0f} };
+  EXPECT_EQ(b1.left_bottom(), Point2D(1.0f, 2.0f));
+  EXPECT_EQ(b1.right_top(), Point2D(3.0f, 4.0f));
 
-  Point2D p2 = { 1.0f };
-  EXPECT_EQ(p2.x(), 1.0f);
-  EXPECT_EQ(p2.y(), 0.0f);
+  Box2D b2 = { {1.0f, 2.0f} };
+  EXPECT_EQ(b2.left_bottom(), Point2D(1.0f, 2.0f));
+  EXPECT_EQ(b2.right_top(), Point2D(0.0f, 0.0f));
 }
 
-TEST(point2d_test, test_assignment)
+TEST(box2d_test, test_assignment)
 {
-  Point2D p1;
-  p1 = { 1.2f, 2.4f };
-  EXPECT_EQ(p1, Point2D(1.2f, 2.4f));
+  Box2D b1;
+  b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  EXPECT_EQ(b1, Box2D(Point2D(1.2f, 2.4f), Point2D(3.6f, 4.8f)));
 }
 
-TEST(point2d_test, test_equality)
+TEST(box2d_test, test_equality)
 {
-  Point2D p1 = { 1.2f, 2.4f };
-  Point2D p2 = { 1.2f, 2.4f };
-  Point2D p3 = { 1.3f, 2.4f };
-  Point2D p4 = { 1.2f, 2.5f };
+  Box2D b1 = { {1.2f, 2.4f}, {2.4f, 2.4f} };
+  Box2D b2 = { {1.2f, 2.4f}, {2.4f, 2.4f} };
+  Box2D b3 = { {1.3f, 2.4f}, {1.4f, 10.4f} };
+  Box2D b4 = { {2.2f, 2.2f}, {7.2f, 6.5f} };
 
-  EXPECT_EQ(p1, p2);
-  EXPECT_NE(p1, p3);
-  EXPECT_LT(p1, p3);
-  EXPECT_LT(p1, p4);
+  EXPECT_EQ(b1, b2);
+  EXPECT_NE(b1, b3);
+  EXPECT_LT(b1, b3);
+  EXPECT_LT(b1, b4);
 }
 
-TEST(point2d_test, test_calculus)
+TEST(box2d_test, test_calculus)
 {
-  Point2D p1 = { 1.2f, 2.4f };
-  Point2D p2 = { 1.0f, 2.0f };
+  Box2D b1 = { {1.2f, 2.4f}, {1.2f, 2.6f} };
+  Box2D b2 = { {1.0f, 2.0f}, {0.6f, 2.0f} };
 
-  EXPECT_EQ(p1 + p2, Point2D(2.2f, 4.4f));
-  EXPECT_EQ(p1 - p2, Point2D(0.2f, 0.4f));
-  EXPECT_EQ(p1 * 2.0f, Point2D(2.4f, 4.8f));
-  EXPECT_EQ(p1 / 2.0f, Point2D(0.6f, 1.2f));
+  EXPECT_EQ(b1 + b2, Box2D(Point2D(2.2f, 4.4f), Point2D(1.8f, 4.6f)));
+  EXPECT_EQ(b1 - b2, Box2D(Point2D(0.2f, 0.4f), Point2D(0.6f, 0.6f)));
+  EXPECT_EQ(b1 * 2.0f, Box2D(Point2D(2.4f, 4.8f), Point2D(2.4f, 5.2f)));
+  EXPECT_EQ(b1 / 2.0f, Box2D(Point2D(0.6f, 1.2f), Point2D(0.6f, 1.3f)));
 
-  p1 += { 1.2f, 2.4f };
-  EXPECT_EQ(p1, Point2D(2.4f, 4.8f));
+  b1 += { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  EXPECT_EQ(b1, Box2D(Point2D(2.4f, 4.8f), Point2D(4.8f, 7.4f)));
 
-  p1 -= { 1.2f, 2.4f };
-  EXPECT_EQ(p1, Point2D(1.2f, 2.4f));
+  b1 -= { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  EXPECT_EQ(b1, Box2D(Point2D(1.2f, 2.4f), Point2D(1.2f, 2.6f)));
 
-  p1 *= 2.0f;
-  EXPECT_EQ(p1, Point2D(2.4f, 4.8f));
+  b1 *= 2.0f;
+  EXPECT_EQ(b1, Box2D(Point2D(2.4f, 4.8f), Point2D(2.4f, 5.2f)));
 
-  p1 /= 2.0f;
-  EXPECT_EQ(p1, Point2D(1.2f, 2.4f));
+  b1 /= 2.0f;
+  EXPECT_EQ(b1, Box2D(Point2D(1.2f, 2.4f), Point2D(1.2f, 2.6f)));
 }
 
-TEST(point2d_test, test_square_brackets)
+TEST(box2d_test, test_square_brackets)
 {
-  Point2D p1 = { 1.2f, 2.4f };
-  EXPECT_EQ(p1[0], 1.2f);
-  EXPECT_EQ(p1[1], 2.4f);
-  EXPECT_EQ(p1[2], 0.0f);
+  Box2D b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  EXPECT_EQ(b1[0], Point2D(1.2f, 2.4f));
+  EXPECT_EQ(b1[0][0], 1.2f);
+  EXPECT_EQ(b1[0][1], 2.4f);
+  EXPECT_EQ(b1[0][2], 0.0f);
+  EXPECT_EQ(b1[1], Point2D(3.6f, 4.8f));
+  EXPECT_EQ(b1[1][0], 3.6f);
+  EXPECT_EQ(b1[1][1], 4.8f);
+  EXPECT_EQ(b1[1][2], 0.0f);
+  EXPECT_EQ(b1[2], Point2D(0.0f, 0.0f));
+  EXPECT_EQ(b1[2][0], 0.0f);
+  EXPECT_EQ(b1[2][1], 0.0f);
 }
 
-TEST(point2d_test, test_hash)
+/*
+TEST(box2d_test, test_hash)
 {
-  Point2D::Hash hasher;
-  EXPECT_EQ(hasher(Point2D(0.0f, 0.0f)), 0);
+  Box2D::Hash hasher;
+  EXPECT_EQ(hasher(Box2D(0.0f, 0.0f)), 0);
 
-  std::unordered_set<Point2D, Point2D::Hash> hashTable;
-  hashTable.insert(Point2D(0.0f, 0.0f));
-  hashTable.insert(Point2D(1.0f, 0.0f));
+  std::unordered_set<Box2D, Box2D::Hash> hashTable;
+  hashTable.insert(Box2D(0.0f, 0.0f));
+  hashTable.insert(Box2D(1.0f, 0.0f));
   EXPECT_EQ(hashTable.size(), 2);
 }
+*/
 
-TEST(point2d_test, test_output)
+TEST(box2d_test, test_output)
 {
   std::stringstream s;
-  s << Point2D(1.2f, 0.2f);
-  EXPECT_EQ(s.str(), "Point2D {1.2, 0.2}");
+  s << Box2D({1.2f, 0.2f},{2.4f, 0.4f});
+  EXPECT_EQ(s.str(), "Box2D {Point2D {1.2, 0.2}, Point2D {2.4, 0.4}}");
 }

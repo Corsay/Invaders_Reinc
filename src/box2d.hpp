@@ -2,8 +2,6 @@
 
 #include "point2d.hpp"
 
-//float const kEps = 1e-5;
-
 class Box2D
 {
 public:
@@ -27,6 +25,7 @@ public:
     return (m_left_bottom == obj.left_bottom() && m_right_top == obj.right_top());
   }
 
+  // get
   Point2D & left_bottom() { return m_left_bottom; }
   Point2D & right_top() { return m_right_top; }
 
@@ -61,8 +60,12 @@ public:
   // Оператор меньше.
   bool operator < (Box2D const & obj) const
   {      
-    if (m_left_bottom != obj.m_left_bottom) return m_left_bottom < obj.m_left_bottom;
-    return m_right_top < obj.m_right_top;
+    // square of first
+    float s1 = sqrt( powf(right_top()[0] - left_bottom()[0], 2) * powf(right_top()[1] - left_bottom()[1], 2) );
+    // square of second
+    float s2 = sqrt( powf(obj[1][0] - obj[0][0], 2) * powf(obj[1][1] - obj[0][1], 2) );
+
+    return s1 < s2;
   }
 
   // Сложение.
@@ -165,13 +168,14 @@ public:
   };
   */
 
+  // Переопределение оператора <<
+  friend std::ostream & operator << (std::ostream & os, Box2D const & obj)
+  {
+    os << "Box2D {" << obj.left_bottom() << ", " << obj.right_top() << "}";
+    return os;
+  }
+
 private:
 
   Point2D m_left_bottom = {0.0f,0.0f}, m_right_top = {0.0f,0.0f};
 };
-
-std::ostream & operator << (std::ostream & os, Box2D const & obj)
-{
-  os << "Box2D {" << obj.left_bottom() << ", " << obj.right_top() << "}";
-  return os;
-}
