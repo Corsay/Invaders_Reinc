@@ -23,16 +23,9 @@ public:
     : m_x(x), m_y(y)
   {}
 
-  // Оператор логического равенства.
-  bool operator == (Point2D const & obj) const
-  {
-    return EqualWithEps(m_x, obj.m_x) && EqualWithEps(m_y, obj.m_y);
-  }
-
-  // get
+  // Getters
   float & x() { return m_x; }
   float & y() { return m_y; }
-
   float const & x() const { return m_x; }
   float const & y() const { return m_y; }
 
@@ -55,6 +48,13 @@ public:
     return *this;
   }
 
+  // Logical operators
+  // Оператор логического равенства.
+  bool operator == (Point2D const & obj) const
+  {
+    return EqualWithEps(m_x, obj.m_x) && EqualWithEps(m_y, obj.m_y);
+  }
+
   // Оператор логического неравенства.
   bool operator != (Point2D const & obj) const
   {
@@ -66,6 +66,12 @@ public:
   {
     if (m_x != obj.m_x) return m_x < obj.m_x;
     return m_y < obj.m_y;
+  }
+
+  bool operator > (Point2D const & obj) const
+  {
+    if (m_x != obj.m_x) return m_x > obj.m_x;
+    return m_y > obj.m_y;
   }
 
   // Сложение.
