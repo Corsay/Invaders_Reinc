@@ -47,6 +47,13 @@ public:
     : m_left_bottom(obj.m_left_bottom), m_right_top(obj.m_right_top)
   {}
 
+  // Move constructor
+  /*Box2D(Box2D & obj)
+  {
+    std::swap(m_left_bottom, obj.left_bottom());
+    std::swap(m_right_top, obj.right_top());
+  }*/
+
   // Getters
   inline Point2D & left_bottom() { return m_left_bottom; }
   inline Point2D & right_top() { return m_right_top; }
@@ -177,13 +184,13 @@ public:
 
   void HorizontalShift(float shift)
   {
-    m_left_bottom.x()+=shift;
-    m_right_top.x()+=shift;
+    m_left_bottom.x() += shift;
+    m_right_top.x() += shift;
   }
   void VerticalShift(float shift)
   {
-    m_left_bottom.y()+=shift;
-    m_right_top.y()+=shift;
+    m_left_bottom.y() += shift;
+    m_right_top.y() += shift;
   }
 
   // Redefinition

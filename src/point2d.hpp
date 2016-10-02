@@ -23,6 +23,13 @@ public:
     : m_x(x), m_y(y)
   {}
 
+  // Конструктор перемещения
+  /*Point2D(Point2D & obj)
+  {
+    std::swap(m_x, obj.x());
+    std::swap(m_y, obj.y());
+  }*/
+
   // Getters
   inline float & x() { return m_x; }
   inline float & y() { return m_y; }
@@ -146,11 +153,11 @@ public:
 
   void HorizontalShift(float shift)
   {
-    m_x+=shift;
+    m_x += shift;
   }
   void VerticalShift(float shift)
   {
-    m_y+=shift;
+    m_y += shift;
   }
 
   // Переопределение оператора [].

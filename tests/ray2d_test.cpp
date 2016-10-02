@@ -108,21 +108,21 @@ TEST(ray2d_test, test_intersection)
   Box2D b1 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
 
   // from bottom
-  Ray2D r1={ 4.0f, 0.0f, 135.0f};
-  Ray2D r2={ 2.0f, 0.0f, 90.0f};
-  Ray2D r3={ 5.0f, 0.0f, 45.0f};
+  Ray2D r1={ 4.0f, 0.0f, 135.0f};  // left
+  Ray2D r2={ 2.0f, 0.0f, 90.0f};   // up
+  Ray2D r3={ 5.0f, 0.0f, 45.0f};   // right
   // from left
-  Ray2D r4={ 0.0f, 4.0f, 0.0f};
-  Ray2D r5={ 0.0f, 4.0f, 45.0f};
-  Ray2D r6={ 0.0f, 4.0f, -45.0f};
+  Ray2D r4={ 0.0f, 4.0f, 0.0f};    // right
+  Ray2D r5={ 0.0f, 4.0f, 45.0f};   // up
+  Ray2D r6={ 0.0f, 4.0f, -45.0f};  // down
   // from top
-  Ray2D r7={ 4.5f, 8.0f, 270.0f};
-  Ray2D r8={ 4.0f, 8.0f, -135.0f};
-  Ray2D r9={ 5.0f, 8.0f, -45.0f};
+  Ray2D r7={ 4.0f, 8.0f, -135.0f}; // left
+  Ray2D r8={ 4.5f, 8.0f, 270.0f};  // down
+  Ray2D r9={ 5.0f, 8.0f, -45.0f};  // right
   // from right
-  Ray2D r10={ 9.0f, 4.0f, 135.0f};
-  Ray2D r11={ 9.0f, 4.0f, 180.0f};
-  Ray2D r12={ 9.0f, 4.0f, 225.0f};
+  Ray2D r10={ 9.0f, 4.0f, 135.0f}; // up
+  Ray2D r11={ 9.0f, 4.0f, 180.0f}; // left
+  Ray2D r12={ 9.0f, 4.0f, 225.0f}; // down
   // near box
   Ray2D r13={ 2.0f-kEps*2, 2.0f-kEps*2, 90.0f};  // bottom UP    90
   Ray2D r14={ 2.0f-kEps*2, 2.0f-kEps*2, 0.0f};   // bottom Right 0
@@ -154,4 +154,15 @@ TEST(ray2d_test, test_intersection)
   EXPECT_FALSE(r18 && b1);
   EXPECT_FALSE(r19 && b1);
   EXPECT_FALSE(r20 && b1);
+
+  Ray2D r21={ 2.0f, 2.0f-kEps*2, -90.0f}; // bottom Down  270
+  Ray2D r22={ 2.0f-kEps*2, 6.0f, 180.0f}; // Left   Left  180
+  Ray2D r23={ 7.0f, 6.0f+kEps*2, 90.0f};  // Top    Up    90
+  Ray2D r24={ 7.0f+kEps*2, 2.0f, 0.0f};   // Right  Right 0
+
+  EXPECT_FALSE(r21 && b1);
+  EXPECT_FALSE(r22 && b1);
+  EXPECT_FALSE(r23 && b1);
+  EXPECT_FALSE(r24 && b1);
+
 }
