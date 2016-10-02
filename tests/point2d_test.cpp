@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "point2d.hpp"
+#include "geometry.hpp"
 #include <sstream>
 #include <unordered_set>
 
@@ -47,7 +47,7 @@ TEST(point2d_test, test_equality)
 
   EXPECT_EQ(p1, p2);
   EXPECT_NE(p1, p3);
-  EXPECT_LT(p1, p3);
+  EXPECT_LE(p1, p3);
   EXPECT_LT(p1, p4);
 }
 
@@ -72,6 +72,17 @@ TEST(point2d_test, test_calculus)
 
   p1 /= 2.0f;
   EXPECT_EQ(p1, Point2D(1.2f, 2.4f));
+
+  p2.VerticalShift(2.1f);
+  EXPECT_EQ(p2, Point2D(1.0f, 4.1f));
+  p2.VerticalShift(-0.8f);
+  EXPECT_EQ(p2, Point2D(1.0f, 3.3f));
+
+  p2.HorizontalShift(1.2f);
+  EXPECT_EQ(p2, Point2D(2.2f, 3.3f));
+  p2.HorizontalShift(-3.0);
+  EXPECT_EQ(p2, Point2D(-0.8f, 3.3f));
+
 }
 
 TEST(point2d_test, test_square_brackets)
