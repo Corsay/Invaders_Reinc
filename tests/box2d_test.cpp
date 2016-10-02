@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "geometry.hpp"
+#include "box2d.hpp"
 #include <sstream>
 #include <unordered_set>
 
@@ -46,6 +46,14 @@ TEST(box2d_test, test_initializer_list)
   Box2D b2 = { {1.0f, 2.0f} };
   EXPECT_EQ(b2.left_bottom(), Point2D(0.0f, 0.0f)); // because swap
   EXPECT_EQ(b2.right_top(), Point2D(1.0f, 2.0f));
+
+  Box2D b3 = { 3.0f, 4.0f, 1.0f, 2.0f, 5.0f };
+  EXPECT_EQ(b3.left_bottom(), Point2D(1.0f, 2.0f)); // because swap
+  EXPECT_EQ(b3.right_top(), Point2D(3.0f, 4.0f));
+
+  Box2D b4 = { 1.0f, 2.0f };
+  EXPECT_EQ(b4.left_bottom(), Point2D(0.0f, 0.0f)); // because swap
+  EXPECT_EQ(b4.right_top(), Point2D(1.0f, 2.0f));
 }
 
 TEST(box2d_test, test_assignment)
@@ -140,6 +148,7 @@ TEST(box2d_test, test_intersection)
   EXPECT_EQ((b1 && b4), 1); // bottom
   EXPECT_EQ((b1 && b5), 1); // inside
 
+  // point in box
   Point2D p1={3.0f, 3.0f};
   Point2D p2={2.0f, 2.0f};
   Point2D p3={1.0f, 1.0f};

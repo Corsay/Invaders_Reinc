@@ -24,10 +24,10 @@ public:
   {}
 
   // Getters
-  float & x() { return m_x; }
-  float & y() { return m_y; }
-  float const & x() const { return m_x; }
-  float const & y() const { return m_y; }
+  inline float & x() { return m_x; }
+  inline float & y() { return m_y; }
+  inline float const & x() const { return m_x; }
+  inline float const & y() const { return m_y; }
 
   // Конструктор со списком инициализации.
   Point2D(std::initializer_list<float> const & lst)
@@ -72,6 +72,16 @@ public:
   {
     if (m_x != obj.m_x) return m_x > obj.m_x;
     return m_y > obj.m_y;
+  }
+
+  bool operator <= (Point2D const & obj) const
+    {
+      return m_x <= obj.m_x+kEps && m_y <= obj.m_y+kEps;
+    }
+
+  bool operator >= (Point2D const & obj) const
+  {
+    return m_x >= obj.m_x-kEps && m_y >= obj.m_y-kEps;
   }
 
   // Сложение.
@@ -132,6 +142,15 @@ public:
     m_x /= scale;
     m_y /= scale;
     return *this;
+  }
+
+  void HorizontalShift(float shift)
+  {
+    m_x+=shift;
+  }
+  void VerticalShift(float shift)
+  {
+    m_y+=shift;
   }
 
   // Переопределение оператора [].

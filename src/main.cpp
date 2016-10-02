@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "box2d.hpp"
+#include "ray2d.hpp"
 
 using namespace std;
 
@@ -8,7 +8,7 @@ int main()
 {
   //cout << "Hello World!" << endl;
 
-  int m = 1;
+  int m = 2;
 
   switch (m)
   {
@@ -131,10 +131,10 @@ int main()
       Box2D b16 = { {-5.0f, 3.0f}, {7.0f, 2.0f} };
       Box2D b17 = { {3.0f, 3.0f}, {6.0f, 5.0f} };
 
-      cout << b13.Check_intersection(b14) << endl; // left
-      cout << b13.Check_intersection(b15) << endl; // not intersect
-      cout << b13.Check_intersection(b16) << endl; // bottom
-      cout << b13.Check_intersection(b17) << endl; // inside
+      cout << (b13 && b14) << endl; // left
+      cout << (b13 && b15) << endl; // not intersect
+      cout << (b13 && b16) << endl; // bottom
+      cout << (b13 && b17) << endl; // inside
 
       cout << endl;
       // hash
@@ -149,7 +149,55 @@ int main()
   // Ray2D
     case 2:
     {
-      cout << "2" << endl;
+      Box2D b1 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
+
+      // from bottom
+      Ray2D r1={ 4.0f, 0.0f, 135.0f};
+      Ray2D r2={ 2.0f, 0.0f, 90.0f};
+      Ray2D r3={ 5.0f, 0.0f, 45.0f};
+      // from left
+      Ray2D r4={ 0.0f, 4.0f, 0.0f};
+      Ray2D r5={ 0.0f, 4.0f, 45.0f};
+      Ray2D r6={ 0.0f, 4.0f, -45.0f};
+      // from top
+      Ray2D r7={ 4.5f, 8.0f, 270.0f};
+      Ray2D r8={ 4.0f, 8.0f, -135.0f};
+      Ray2D r9={ 5.0f, 8.0f, -45.0f};
+      // from right
+      Ray2D r10={ 9.0f, 4.0f, 135.0f};
+      Ray2D r11={ 9.0f, 4.0f, 180.0f};
+      Ray2D r12={ 9.0f, 4.0f, 225.0f};
+      // near box
+      Ray2D r13={ 2.0f-kEps*2, 2.0f-kEps*2, 90.0f};  // bottom UP    90
+      Ray2D r14={ 2.0f-kEps*2, 2.0f-kEps*2, 0.0f};   // bottom Right 0
+      Ray2D r15={ 7.0f+kEps*2, 2.0f-kEps*2, 180.0f}; // bottom LEFT  180
+      Ray2D r16={ 7.0f+kEps*2, 2.0f-kEps*2, 90.0f};  // bottom UP    90
+      Ray2D r17={ 7.0f+kEps*2, 6.0f+kEps*2, -90.0f}; // bottom Down  270
+      Ray2D r18={ 7.0f+kEps*2, 6.0f+kEps*2, 180.0f}; // bottom Left  180
+      Ray2D r19={ 2.0f-kEps*2, 6.0f+kEps*2, 0.0f};   // bottom Right 0
+      Ray2D r20={ 2.0f-kEps*2, 6.0f+kEps*2, -90.0f}; // bottom Down  270
+
+      // check
+      cout << (r1 && b1) << endl;
+      cout << (r2 && b1) << endl;
+      cout << (r3 && b1) << endl;
+      cout << (r4 && b1) << endl;
+      cout << (r5 && b1) << endl;
+      cout << (r6 && b1) << endl;
+      cout << (r7 && b1) << endl;
+      cout << (r8 && b1) << endl;
+      cout << (r9 && b1) << endl;
+      cout << (r10 && b1) << endl;
+      cout << (r11 && b1) << endl;
+      cout << (r12 && b1) << endl;
+      cout << (r13 && b1) << endl;
+      cout << (r14 && b1) << endl;
+      cout << (r15 && b1) << endl;
+      cout << (r16 && b1) << endl;
+      cout << (r17 && b1) << endl;
+      cout << (r18 && b1) << endl;
+      cout << (r19 && b1) << endl;
+      cout << (r20 && b1) << endl;
 
       break;
     }

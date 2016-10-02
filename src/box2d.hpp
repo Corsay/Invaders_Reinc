@@ -32,20 +32,30 @@ public:
     Swap();
   }
 
+  Box2D(std::initializer_list<float> const& lst)
+  {
+    float *vals[] = { &m_left_bottom.x(), &m_left_bottom.y(), &m_right_top.x(), &m_right_top.y() };
+    auto it = lst.begin();
+    // writing coord's
+    for (int i=0; i<4 && it!=lst.end(); i++, ++it)
+        *vals[i] = *it;
+    Swap();
+  }
+
   // Copy constructor
   Box2D(Box2D const & obj)
     : m_left_bottom(obj.m_left_bottom), m_right_top(obj.m_right_top)
   {}
 
   // Getters
-  Point2D & left_bottom() { return m_left_bottom; }
-  Point2D & right_top() { return m_right_top; }
-  Point2D const & left_bottom() const { return m_left_bottom; }
-  Point2D const & right_top() const   { return m_right_top; }
-  float const left() const   { return left_bottom().x(); } // x min
-  float const right() const  { return right_top().x(); }   // x max
-  float const top() const    { return right_top().y(); }   // y max
-  float const bottom() const { return left_bottom().y(); } // y min
+  inline Point2D & left_bottom() { return m_left_bottom; }
+  inline Point2D & right_top() { return m_right_top; }
+  inline Point2D const & left_bottom() const { return m_left_bottom; }
+  inline Point2D const & right_top() const   { return m_right_top; }
+  inline float const left() const   { return left_bottom().x(); } // x min
+  inline float const right() const  { return right_top().x(); }   // x max
+  inline float const top() const    { return right_top().y(); }   // y max
+  inline float const bottom() const { return left_bottom().y(); } // y min
 
   // Logical operators
   bool operator == (Box2D const & obj) const
@@ -155,9 +165,25 @@ public:
     return p;
   }
 
-  bool Check_intersection (Box2D const & obj)
+  // Check_intersection
+  bool operator &&(Box2D const & obj) const
   {
     return !( top() < obj.bottom() || bottom() > obj.top() || right() < obj.left() || left() > obj.right() );
+  }
+  bool operator &&(Point2D const & P) const
+  {
+    return !( P.y() < bottom() || P.y() > top() || right() < P.x() || left() > P.x() );
+  }
+
+  void HorizontalShift(float shift)
+  {
+    m_left_bottom.x()+=shift;
+    m_right_top.x()+=shift;
+  }
+  void VerticalShift(float shift)
+  {
+    m_left_bottom.y()+=shift;
+    m_right_top.y()+=shift;
   }
 
   // Redefinition
