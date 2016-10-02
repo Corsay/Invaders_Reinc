@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "box2d.hpp"
+#include "geometry.hpp"
 #include <sstream>
 #include <unordered_set>
 
@@ -64,7 +64,7 @@ TEST(box2d_test, test_equality)
 
   EXPECT_EQ(b1, b2);
   EXPECT_NE(b1, b3);
-  EXPECT_LT(b1, b3);
+  EXPECT_LT(b1, b3);//if(b1<b3)
   EXPECT_LT(b1, b4);
 }
 
@@ -72,12 +72,23 @@ TEST(box2d_test, test_calculus)
 {
   Box2D b1 = { {1.2f, 2.4f}, {1.2f, 2.6f} };
   Box2D b2 = { {1.0f, 2.0f}, {0.6f, 2.0f} };
-  // swap    { {0.6f, 2.0f}, {1.0f, 2.0f} };
+  //after swap b2={ {0.6f, 2.0f}, {1.0f, 2.0f} };
 
   EXPECT_EQ(b1 + b2, Box2D(Point2D(1.8f, 4.4f), Point2D(2.2f, 4.6f)));
-  EXPECT_EQ(b1 - b2, Box2D(Point2D(0.2f, 0.6f), Point2D(0.6f, 0.4f)));
+  EXPECT_EQ(b1 - b2, Box2D(Point2D(0.6f, 0.4f), Point2D(0.2f, 0.6f)));
   EXPECT_EQ(b1 * 2.0f, Box2D(Point2D(2.4f, 4.8f), Point2D(2.4f, 5.2f)));
   EXPECT_EQ(b1 / 2.0f, Box2D(Point2D(0.6f, 1.2f), Point2D(0.6f, 1.3f)));
+
+  b2.HorizontalShift(2.0f);
+  EXPECT_EQ(b2, Box2D(Point2D(2.6f, 2.0f), Point2D(3.0f, 2.0f)));
+  b2.HorizontalShift(-5.0);
+  EXPECT_EQ(b2, Box2D(Point2D(-2.4f, 2.0f), Point2D(-2.0f, 2.0f)));
+
+  b2.VerticalShift(3.2f);
+  EXPECT_EQ(b2, Box2D(Point2D(-2.4f, 5.2f), Point2D(-2.0f, 5.2f)));
+  b2.VerticalShift(-2.5);
+  EXPECT_EQ(b2, Box2D(Point2D(-2.4f, 2.7f), Point2D(-2.0f, 2.7f)));
+
 
   b1 += { {1.2f, 2.4f}, {3.6f, 4.8f} };
   EXPECT_EQ(b1, Box2D(Point2D(2.4f, 4.8f), Point2D(4.8f, 7.4f)));
@@ -124,10 +135,18 @@ TEST(box2d_test, test_intersection)
   Box2D b4 = { {-5.0f, 3.0f}, {7.0f, 2.0f} };
   Box2D b5 = { {3.0f, 3.0f}, {6.0f, 5.0f} };
 
-  EXPECT_EQ(b1.Check_intersection(b2), 1); // left
-  EXPECT_EQ(b1.Check_intersection(b3), 0); // not intersect
-  EXPECT_EQ(b1.Check_intersection(b4), 1); // bottom
-  EXPECT_EQ(b1.Check_intersection(b5), 1); // inside
+  EXPECT_EQ((b1 && b2), 1); // left
+  EXPECT_EQ((b1 && b3), 0); // not intersect
+  EXPECT_EQ((b1 && b4), 1); // bottom
+  EXPECT_EQ((b1 && b5), 1); // inside
+
+  Point2D p1={3.0f, 3.0f};
+  Point2D p2={2.0f, 2.0f};
+  Point2D p3={1.0f, 1.0f};
+
+  EXPECT_TRUE(b1 && p1);
+  EXPECT_TRUE(b1 && p2);
+  EXPECT_FALSE(b1 && p3);
 }
 
 TEST(box2d_test, test_hash)
