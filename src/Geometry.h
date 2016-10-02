@@ -1,10 +1,12 @@
+#pragma once
 #include <iostream>
 #include <initializer_list>
 #include <cmath>
 
 using namespace std;
-float const Eps=0.001f;
+float const kEps=0.00001f;
 float constexpr RAD=3.141592f/180.0f;
+enum Direction{UP, DOWN};
 
 class Point2D;
 class Box2D;
@@ -14,25 +16,38 @@ class Ray2D_G;
 class Point2D
 {
 public:
-  float m_x = 0.0f, m_y = 0.0f;
-//-----------------------------------------для удобства координаты открытые
+  float m_x = 0.0f, m_y = 0.0f;// ну это действительно удобнее
+
+  // Разрешаем конструирование по умолчанию.
   Point2D() = default;
+
+  // Конструктор копирования.
   Point2D(Point2D const & obj)
     : m_x(obj.m_x), m_y(obj.m_y)
   {}
+
+  // Конструктор с параметрами.
   Point2D(float x, float y)
     : m_x(x), m_y(y)
   {}
+
+  // Getters
+  float & x() { return m_x; }
+  float & y() { return m_y; }
+  float const & x() const { return m_x; }
+  float const & y() const { return m_y; }
+
+  // Конструктор со списком инициализации.
   Point2D(std::initializer_list<float> const & lst)
   {
     float * vals[] = { &m_x, &m_y };
     int const count = sizeof(vals) / sizeof(vals[0]);
     auto it = lst.begin();
-
     for (int i = 0; i < count && it != lst.end(); i++, ++it)
       *vals[i] = *it;
   }
 
+  // Оператор присваивания.
   Point2D & operator = (Point2D const & obj)
   {
     if (this == &obj) return *this;
@@ -41,134 +56,328 @@ public:
     return *this;
   }
 
+  // Logical operators
+  // Оператор логического равенства.
   bool operator == (Point2D const & obj) const
   {
-    return abs(m_x-obj.m_x)<Eps && abs(m_y-obj.m_y)<Eps;
+    return EqualWithEps(m_x, obj.m_x) && EqualWithEps(m_y, obj.m_y);
   }
+
+  // Оператор логического неравенства.
   bool operator != (Point2D const & obj) const
   {
     return !operator==(obj);
   }
 
-
+  // Оператор меньше.
   bool operator <= (Point2D const & obj) const
   {
-    return m_x <= obj.m_x && m_y <= obj.m_y;
+    return m_x <= obj.m_x+kEps && m_y <= obj.m_y+kEps;
   }
   bool operator >= (Point2D const & obj) const
   {
-    return m_x >= obj.m_x && m_y >= obj.m_y;
+    return m_x >= obj.m_x-kEps && m_y >= obj.m_y-kEps;
   }
   bool operator < (Point2D const & obj) const
   {
-    return m_x < obj.m_x && m_y < obj.m_y;
+    return m_x < obj.m_x+kEps && m_y < obj.m_y;
   }
   bool operator > (Point2D const & obj) const
   {
-    return m_x > obj.m_x && m_y > obj.m_y;
+    return m_x>obj.m_x-kEps && m_y > obj.m_y-kEps;
+  }
+
+  Point2D operator + (Point2D const & obj) const
+  {
+    return { m_x + obj.m_x, m_y + obj.m_y };
+  }
+  Point2D operator - (Point2D const & obj) const
+  {
+    return { m_x - obj.m_x, m_y - obj.m_y };
+  }
+  Point2D operator - () const
+  {
+    return { -m_x, -m_y };
+  }
+  Point2D operator * (float scale) const
+  {
+    return { m_x * scale, m_y * scale };
+  }
+  Point2D operator / (float scale) const
+  {
+    //TODO: обработать деление на 0.
+    return { m_x / scale, m_y / scale };
+  }
+
+  Point2D & operator += (Point2D const & obj)
+  {
+    m_x += obj.m_x;
+    m_y += obj.m_y;
+    return *this;
+  }
+  Point2D & operator -= (Point2D const & obj)
+  {
+    m_x -= obj.m_x;
+    m_y -= obj.m_y;
+    return *this;
+  }
+  Point2D & operator *= (float scale)
+  {
+    m_x *= scale;
+    m_y *= scale;
+    return *this;
+  }
+  Point2D & operator /= (float scale)
+  {
+    //TODO: обработать деление на 0.
+    m_x /= scale;
+    m_y /= scale;
+    return *this;
+  }
+
+  void HorizontalShift(float shift)
+  {
+    m_x+=shift;
+  }
+  void VerticalShift(float shift)
+  {
+    m_y+=shift;
+  }
+
+  // Переопределение оператора [].
+  float operator [] (unsigned int index) const
+  {
+    if (index >= 2) return 0.0f;
+    return index == 0 ? m_x : m_y;
+  }
+  // Добавим внутреннюю сущность для вычисления хэша.
+  struct Hash
+  {
+    size_t operator()(Point2D const & p) const
+    {
+      auto hasher = std::hash<float>();
+      return (hasher(p.m_x) ^ (hasher(p.m_y) << 1));
+    }
+  };
+
+  // Переопределение оператора <<
+  friend std::ostream & operator << (std::ostream & os, Point2D const & obj)
+  {
+    os << "Point2D {" << obj.m_x << ", " << obj.m_y << "}";
+    return os;
+  }
+
+private:
+  bool EqualWithEps(float v1, float v2) const
+  {
+    return fabs(v1 - v2) < kEps;
   }
 };
 
-
-
 class Box2D
 {
-  public:
-    Box2D()=default;
-    Box2D(Point2D& ld, Point2D& rt)
+public:
+  Box2D() = default;
+  Box2D(Point2D left_bottom, Point2D right_top)
+    : m_left_bottom(left_bottom), m_right_top(right_top)
+  {
+    Swap();
+  }
+  Box2D(float x1, float y1, float x2, float y2)
+    : m_left_bottom(x1, y1), m_right_top(x2, y2)
+  {
+    Swap();
+  }
+  Box2D(std::initializer_list<Point2D> const & lst)
+  {
+    Point2D * vals[] = { &m_left_bottom, &m_right_top };
+    int const count = sizeof(vals) / sizeof(vals[0]);
+    auto it = lst.begin();
+    for (int i = 0; i < count && it != lst.end(); i++, ++it)
+      *vals[i] = *it;
+    Swap();
+  }
+  Box2D(initializer_list<float> const& lst)
     {
-      if(ld>rt)
-        swap(m_ld, m_rt);
-
-      if(ld<rt)
-      {
-        m_ld=ld;
-        m_rt=rt;
-      }
-    }
-    Box2D(initializer_list<float> const& lst)
-    {
-      Point2D ld{0.0f, 0.0f};
-      Point2D rt{0.0f, 0.0f};
-
-      float *vals[] = { &ld.m_x, &ld.m_y, &rt.m_x, &rt.m_y };
+      float *vals[] = { &m_left_bottom.m_x, &m_left_bottom.m_y, &m_right_top.m_x, &m_right_top.m_y };
       auto it = lst.begin();
        //запись координат
       for (int i=0; i<4 && it!=lst.end(); i++, ++it)
         *vals[i] = *it;
+      Swap();
+    }
+  Box2D(Box2D const & obj)
+    : m_left_bottom(obj.m_left_bottom), m_right_top(obj.m_right_top)
+  {}
 
-        //если углы не в том порядке меняем
-      if(ld>rt)
-        swap(m_ld, m_rt);
+  // Getters
+  Point2D & left_bottom() { return m_left_bottom; }
+  Point2D & right_top() { return m_right_top; }
+  Point2D const & left_bottom() const { return m_left_bottom; }
+  Point2D const & right_top() const   { return m_right_top; }
+  float const left() const   { return m_left_bottom.m_x; } // x min
+  float const right() const  { return m_right_top.m_x; }   // x max
+  float const top() const    { return m_right_top.m_y; }   // y max
+  float const bottom() const { return m_left_bottom.m_y; } // y min
 
-      if(ld<rt)
+  // Logical operators
+  bool operator == (Box2D const & obj) const
+  {
+    return (m_left_bottom == obj.left_bottom() && m_right_top == obj.right_top());
+  }
+
+  bool operator != (Box2D const & obj) const
+  {
+    return !operator==(obj);
+  }
+
+  bool operator < (Box2D const & obj) const
+  {
+    return Rectangle_square() < obj.Rectangle_square();
+  }
+
+  // Assignment operator.
+  Box2D & operator = (Box2D const & obj)
+  {
+    if (this == &obj) return *this;
+    m_left_bottom = obj.m_left_bottom;
+    m_right_top = obj.m_right_top;
+    return *this;
+  }
+
+  // Math operations
+  Box2D operator + (Box2D const & obj) const
+  {
+      return
       {
-        m_ld=ld;
-        m_rt=rt;
-      }
-    }
-     //проверка на пересечение
-    bool operator &&(Box2D& Box)
+          m_left_bottom + obj.m_left_bottom,
+          m_right_top + obj.m_right_top
+      };
+  }
+  Box2D operator - (Box2D const & obj) const
+  {
+    return
     {
-      if(this->m_ld.m_x > Box.m_rt.m_x || this->m_rt.m_x < Box.m_ld.m_x || this->m_rt.m_y < Box.m_ld.m_y || this->m_ld.m_y > Box.m_rt.m_y) return false;
-      return true;
-    }
-    /*bool operator &&(Ray2D& Ray){
-        Box2D Box1={0.0f, 0.0f, 2.0f, 2.0f};
-        Ray2D *Ray1=new Ray2D{1.0f, -1.0f, 135.0f};
+        m_left_bottom - obj.m_left_bottom,
+        m_right_top - obj.m_right_top
+    };
+  }
+  Box2D operator - () const
+  {
+    return
+    {
+        -m_left_bottom,
+        -m_right_top
+    };
+  }
+  Box2D operator * (float scale) const
+  {
+    return
+    {
+        m_left_bottom * scale,
+        m_right_top * scale
+    };
+  }
+  Box2D operator / (float scale) const
+  {
+    //TODO: обработать деление на 0.
+    return
+    {
+        m_left_bottom / scale,
+        m_right_top / scale
+    };
+  }
+  Box2D & operator += (Box2D const & obj)
+  {
+    m_left_bottom += obj.left_bottom();
+    m_right_top += obj.right_top();
+    return *this;
+  }
+  Box2D & operator -= (Box2D const & obj)
+  {
+    m_left_bottom -= obj.left_bottom();
+    m_right_top -= obj.right_top();
+    return *this;
+  }
+  Box2D & operator *= (float scale)
+  {
+    m_left_bottom *= scale;
+    m_right_top *= scale;
+    return *this;
+  }
+  Box2D & operator /= (float scale)
+  {
+    //TODO: обработать деление на 0.
+    m_left_bottom /= scale;
+    m_right_top /= scale;
+    return *this;
+  }
+  void HorizontalShift(float shift)
+  {
+    m_left_bottom.m_x+=shift;
+    m_right_top.m_x+=shift;
+  }
+  void VerticalShift(float shift)
+  {
+    m_left_bottom.m_y+=shift;
+    m_right_top.m_y+=shift;
+  }
 
-        cout << (*Ray1&&Box1) << endl;
-    }
-    bool operator &&(Point2D &Point){return true;}*/
+  // Capabilities
+  Point2D Get_center() const
+  {
+    Point2D p = {(m_left_bottom.m_x + m_right_top.m_x) / 2 , (m_left_bottom.m_y + m_right_top.m_y)/2 };
+    return p;
+  }
 
-    inline float const left(){return m_ld.m_x;}
-    inline float const right(){return m_rt.m_x;}
-    inline float const top(){return m_rt.m_y;}
-    inline float const bottom(){return m_ld.m_y;}
+  bool operator &&(Box2D const & obj) const//проверка на пересечение
+  {
+    return !( top() < obj.bottom() || bottom() > obj.top() || right() < obj.left() || left() > obj.right() );
+  }
+  bool operator &&(Point2D const & P) const
+  {
+    return !( P.m_y < bottom() || P.m_y > top() || right() < P.m_x || left() > P.m_y );
+  }
 
-    bool left(float new_left)
-    {
-      if(new_left<(this->right()))
-      {
-        m_ld.m_x=new_left;
-        return true;
-      }
-      return false;
-    }
-    bool right(float new_right)
-    {
-      if(new_right>(this->left()))
-      {
-        m_rt.m_x=new_right;
-        return true;
-      }
-      return false;
-    }
-    bool top(float new_top)
-    {
-      if(new_top>(this->bottom()))
-      {
-        m_rt.m_y=new_top;
-        return true;
-      }
-      return false;
-    }
-    bool bottom(float new_bottom)
-    {
-      if(new_bottom<(this->top()))
-      {
-        m_ld.m_y=new_bottom;
-        return true;
-      }
-      return false;
-    }
+  // Redefinition
+  Point2D operator [] (unsigned int index) const
+  {
+    if (index >= 2) return {0.0f,0.0f};
+    return index == 0 ? m_left_bottom : m_right_top;
+  }
 
-  private:
-    Point2D m_ld={0.0f, 0.0f};//левый нижний угол
-    Point2D m_rt={0.0f, 0.0f};//правый верхний угол
+  friend std::ostream & operator << (std::ostream & os, Box2D const & obj)
+  {
+    os << "Box2D {" << obj.left_bottom() << ", " << obj.right_top() << "}";
+    return os;
+  }
+
+  // add hash function
+  struct Hash
+  {
+    size_t operator()(Box2D const & p) const
+    {
+      Point2D::Hash hasher;
+      return (hasher(p.left_bottom()) ^ (hasher(p.right_top()) << 1));
+    }
+  };
+
+private:
+
+  void Swap()
+  {
+    if (m_left_bottom > m_right_top) std::swap(m_left_bottom, m_right_top);
+  }
+
+  double Rectangle_square () const
+  {
+      double rez = sqrt( powf(right() - left(), 2) * powf(top() - bottom(), 2) );
+      return rez;
+  }
+
+  Point2D m_left_bottom = {0.0f, 0.0f}, m_right_top = {0.0f, 0.0f};
 };
 
-enum Direction{UP, DOWN};
 class Ray2D_G
 {
   public:
@@ -180,21 +389,21 @@ class Ray2D_G
       :m_origin(originX, originY), m_direction(direction)
       {}
 
-    inline float const X(){return m_origin.m_x;}
-    inline float const Y(){return m_origin.m_y;}
-    inline Direction const direction(){return m_direction;}
+    float const X(){return m_origin.m_x;}
+    float const Y(){return m_origin.m_y;}
+    Direction const direction(){return m_direction;}
 
-    inline void X(float x){m_origin.m_x=x;}
-    inline void Y(float y){m_origin.m_y=y;}
-    inline void direction(Direction direction){m_direction=direction;}
+    void X(float x){m_origin.m_x=x;}
+    void Y(float y){m_origin.m_y=y;}
+    void direction(Direction direction){m_direction=direction;}
 
     bool operator &&(Box2D& Box)
     {
         //если не может попасть теоретически
-      if( (m_direction==UP && Box.top()<this->Y()) || (m_direction==DOWN && Box.bottom()>this->Y()) )
+      if( (m_direction==UP && Box.top()<m_origin.m_y) || (m_direction==DOWN && Box.bottom()>m_origin.m_y) )
         return false;
 
-      if(this->X()>Box.right() || this->X()<Box.left())
+      if(m_origin.m_x>Box.right() || m_origin.m_x<Box.left())
         return false;
 
       return true;
@@ -204,8 +413,6 @@ class Ray2D_G
     Direction m_direction=UP;
 
 };
-
-
 
 class Ray2D
 {
@@ -245,47 +452,56 @@ class Ray2D
       }
     }
 
-    inline float const X(){return m_origin.m_x;}
-    inline float const Y(){return m_origin.m_y;}
-    inline float const direction(){return m_direction;}
-
-    inline void X(float x){m_origin.m_x=x;}
-    inline void Y(float y){m_origin.m_y=y;}
-    inline void direction(float direction)
+    float const X(){return m_origin.m_x;}
+    float const Y(){return m_origin.m_y;}
+    float const direction(){return m_direction;}
+    Point2D const origin(){return m_origin;}
+    void X(float x){m_origin.m_x=x;}
+    void Y(float y){m_origin.m_y=y;}
+    void direction(float direction)
     {
       m_direction = direction-int(direction/360.0f)*360.0f;
       if(m_direction<0.0f)
         m_direction+=360.0f;
     }
+    void origin(Point2D& origin){m_origin=origin;}
 
+    bool operator ==(Ray2D const & Ray) const
+    {
+      return(m_origin==Ray.m_origin && fabs(m_direction-Ray.m_direction)<kEps);
+    }
+    bool operator !=(Ray2D const & Ray) const
+    {
+      return !(m_origin==Ray.m_origin && fabs(m_direction-Ray.m_direction)<kEps);
+    }
     bool operator &&(Box2D& Box)
     {
       float k=tan(m_direction*RAD);
       float b=m_origin.m_y-k*m_origin.m_x;
       float coord=0.0f;
+
+      Direction orient=UP;//1==луч идет влево, 0-вправо от точки
+      if(m_direction>=180.0f)
+        orient=DOWN;
+
       //right
       coord=k*Box.right()+b;
-      if(coord<=Box.top()+Eps && coord>=Box.bottom()-Eps)
+      if( ( (orient==UP && Box.top()+kEps>=m_origin.m_y) || (orient==DOWN && Box.bottom()-kEps<=m_origin.m_y))//отсекаем ненужную половину луча
+          && coord<=Box.top()+kEps && coord>=Box.bottom()-kEps)
         return true;
-
       //left
       coord=k*Box.left()+b;
-      if(coord<=Box.top()+Eps && coord>=Box.bottom()-Eps)
+      if( ( (orient==UP && Box.top()+kEps>=m_origin.m_y) || (orient==DOWN && Box.bottom()-kEps<=m_origin.m_y))
+          && coord<=Box.top()+kEps && coord>=Box.bottom()-kEps)
         return true;
-
       //top
       coord=float((Box.top()-b))/k;
-      if(coord<=Box.right()+Eps && coord>=Box.left()-Eps)
-        return true;
-
-      //bottom
-      coord=float((Box.bottom()-b))/k;
-      if(coord<=Box.right()+Eps && coord>=Box.left()-Eps)
+      if( ( (orient==UP && Box.top()+kEps>=m_origin.m_y) || (orient==DOWN && Box.bottom()-kEps<=m_origin.m_y))
+          && coord<=Box.right()+kEps && coord>=Box.left()-kEps)
         return true;
 
       return false;
     }
-
     bool operator &&(Point2D& point)
     {
       float k=tan(m_direction*RAD);
@@ -293,9 +509,43 @@ class Ray2D
 
       float coord=k*point.m_x+b;
 
-      if(abs(coord-point.m_y)<Eps)
+      if(abs(coord-point.m_y)<kEps)
         return true;
       return false;
+    }
+
+    float operator [] (unsigned int i) const
+    {
+      switch(i)
+      {
+        case 0:
+          return m_origin.m_x;
+          break;
+        case 1:
+          return m_origin.m_y;
+          break;
+        case 2:
+          return m_direction;
+          break;
+        default:
+          return 0.0f;
+      }
+    }
+
+    void VerticalShift(float shift){m_origin.VerticalShift(shift);}
+    void HorizontalShift(float shift){m_origin.HorizontalShift(shift);}
+    void DirectionShift(float shift)
+    {
+      m_direction+=shift;
+      m_direction = m_direction-int(m_direction/360.0f)*360.0f;
+      if(m_direction<0.0f)
+        m_direction+=360.0f;
+    }
+
+    friend std::ostream& operator << (std::ostream & os, Ray2D const & obj)
+    {
+      os << "Ray2D {" << obj.m_origin << ", " << obj.m_direction << "}";
+      return os;
     }
   private:
     Point2D m_origin={0.0f, 0.0f};
