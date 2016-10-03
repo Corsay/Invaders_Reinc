@@ -85,9 +85,9 @@ TEST(ray2d_test, test_calculus)
   EXPECT_EQ(r1, Ray2D(1.0f, 3.0f, 45.0f));
   r1.VerticalShift(-3.0f);
   EXPECT_EQ(r1, Ray2D(1.0f, 0.0f, 45.0f));
-  r1.DirectionShift(1000.0f);
+  r1.DirectionShiftAngle(1000.0f);
   EXPECT_EQ(r1, Ray2D(1.0f, 0.0f, 325.0f));
-  r1.DirectionShift(-350.0f);
+  r1.DirectionShiftAngle(-350.0f);
   EXPECT_EQ(r1, Ray2D(1.0f, 0.0f, 335.0f));
 }
 

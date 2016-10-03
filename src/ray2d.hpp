@@ -11,19 +11,17 @@ public:
   Ray2D() = default;
 
   // Constructor with parameters.
-  Ray2D(Point2D const origin, float direction)
+  Ray2D(Point2D const origin, float const direction)
     :m_origin(origin),
-     m_direction(direction - int(direction / 360.0f) * 360.0f )// direction%360
+     m_direction(direction)
     {
-      if (direction < 0.0f)
-        direction += 360.0f;
+      CorrectDirectionAngle();
     }
-  Ray2D(float const originX, float const originY, float direction)
+  Ray2D(float const originX, float const originY, float const direction)
     :m_origin(originX, originY),
-     m_direction(direction - int(direction / 360.0f) * 360.0f )// direction%360
+     m_direction(direction)
     {
-      if (direction < 0.0f)
-        direction += 360.0f;
+      CorrectDirectionAngle();
     }
 
   // Constructor with initialization list.
@@ -39,9 +37,8 @@ public:
     }
     if(it != lst.end())
     {
-      m_direction = *it - int(*it / 360.0f) * 360.0f;
-      if (m_direction < 0.0f)
-        m_direction += 360.0f;
+      m_direction = *it;
+      CorrectDirectionAngle();
     }
   }
 
@@ -68,9 +65,8 @@ public:
   // Setters
   void direction(float direction)
   {
-    m_direction = direction - int(direction / 360.0f) * 360.0f;
-    if(m_direction < 0.0f)
-      m_direction += 360.0f;
+    m_direction = direction;
+    CorrectDirectionAngle();
   }
   void origin(Point2D const & origin){ m_origin = origin; }
 
@@ -107,7 +103,7 @@ public:
   Ray2D operator - ()
   {
     m_direction -= 180.0f;
-    if (m_direction < 0.0f) m_direction += 360.0f;
+    CorrectDirectionAngle();
     return { m_origin, m_direction };
   }
 
@@ -119,17 +115,17 @@ public:
     float coord = 0.0f;
     //right
     coord = k * Box.right() + b;
-    if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && checkPoint(Box.right(), coord))
+    if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && CheckPoint(Box.right(), coord))
       return true;
     //left
     coord = k * Box.left() + b;
-    if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && checkPoint(Box.left(), coord))
+    if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && CheckPoint(Box.left(), coord))
       return true;
     //top
     coord = float((Box.top() - b)) / k;
     if(fabs(coord) < kEps)
         coord = 0;
-    if(coord <= Box.right() + kEps && coord >= Box.left() - kEps && checkPoint(coord, Box.top()))
+    if(coord <= Box.right() + kEps && coord >= Box.left() - kEps && CheckPoint(coord, Box.top()))
       return true;
 
     return false;
@@ -149,12 +145,10 @@ public:
 
   void VerticalShift(float shift) { m_origin.VerticalShift(shift); }
   void HorizontalShift(float shift) { m_origin.HorizontalShift(shift); }
-  void DirectionShift(float shift)
+  void DirectionShiftAngle(float shift_angle)
   {
-    m_direction += shift;
-    m_direction = m_direction - int(m_direction / 360.0f) * 360.0f;
-    if (m_direction < 0.0f)
-      m_direction += 360.0f;
+    m_direction += shift_angle;
+    CorrectDirectionAngle();
   }
 
   // Redefinition
@@ -172,7 +166,14 @@ public:
 
 private:
 
-  bool checkPoint(float x, float y) const
+  void CorrectDirectionAngle()
+  {
+    m_direction = m_direction - int(m_direction / 360.0f) * 360.0f; // direction%360
+    if (m_direction < 0.0f)
+      m_direction += 360.0f;
+  }
+
+  bool CheckPoint(float x, float y) const
   {
       if(m_direction <= 180.0f && y < m_origin.y())
           return false;
