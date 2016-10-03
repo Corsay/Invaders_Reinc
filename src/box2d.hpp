@@ -9,13 +9,13 @@ public:
   Box2D() = default;
 
   // Constructors with parameters.
-  Box2D(Point2D left_bottom, Point2D right_top)
+  Box2D(Point2D const left_bottom, Point2D const right_top)
     : m_left_bottom(left_bottom), m_right_top(right_top)
   {
     Swap();
   }
 
-  Box2D(float x1, float y1, float x2, float y2)
+  Box2D(float const x1, float const y1, float const x2, float const y2)
     : m_left_bottom(x1, y1), m_right_top(x2, y2)
   {
     Swap();
