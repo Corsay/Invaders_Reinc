@@ -11,14 +11,14 @@ public:
   Ray2D() = default;
 
   // Constructor with parameters.
-  Ray2D(Point2D const origin, float const direction)
+  Ray2D(Point2D const origin, float direction)
     :m_origin(origin),
      m_direction(direction - int(direction / 360.0f) * 360.0f )// direction%360
     {
       if (direction < 0.0f)
         direction += 360.0f;
     }
-  Ray2D(float const originX, float const originY, float const direction)
+  Ray2D(float const originX, float const originY, float direction)
     :m_origin(originX, originY),
      m_direction(direction - int(direction / 360.0f) * 360.0f )// direction%360
     {
