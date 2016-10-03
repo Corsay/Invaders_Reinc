@@ -37,6 +37,20 @@ TEST(box2d_test, test_construction)
   EXPECT_EQ(b4, b3);
 }
 
+TEST(box2d_test, test_move)
+{
+    Box2D b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+    Box2D b3 = { -5.6f, 7.8f };
+    // move constructor
+    Box2D b4 = std::move(b1);
+    EXPECT_EQ(b1, Box2D(Point2D {0, 0}, Point2D {0, 0}));
+    EXPECT_EQ(b4, Box2D(Point2D {1.2, 2.4}, Point2D {3.6, 4.8}));
+    // move
+    b1 = std::move(b3);
+    EXPECT_EQ(b1, Box2D(Point2D {-5.6, 0}, Point2D {0, 7.8}));
+    EXPECT_EQ(b3, Box2D(Point2D {0, 0}, Point2D {0, 0}));
+}
+
 TEST(box2d_test, test_initializer_list)
 {
   Box2D b1 = { {1.0f, 2.0f}, {3.0f, 4.0f}, {0.0f, 1.0f} };
@@ -54,6 +68,28 @@ TEST(box2d_test, test_initializer_list)
   Box2D b4 = { 1.0f, 2.0f };
   EXPECT_EQ(b4.left_bottom(), Point2D(0.0f, 0.0f)); // because swap
   EXPECT_EQ(b4.right_top(), Point2D(1.0f, 2.0f));
+}
+
+TEST(box2d_test, test_swap)
+{
+  Box2D b1 = { 0.0f, 0.0f, -5.6f, 7.8f };
+  Box2D b2 = { 0.0f, 0.0f, 5.6f, -7.8f };
+  Box2D b3 = { 0.0f, 0.0f, 5.6f, 7.8f };
+  Box2D b4 = { 0.0f, 0.0f, -5.6f, -7.8f };
+  Box2D b5 = { -5.5f, 7.7f, -5.6f, 7.8f };
+  Box2D b6 = { 5.5f, -7.7f, 5.6f, -7.8f };
+  Box2D b7 = { 5.6f, 7.7f, 5.5f, 7.8f };
+  Box2D b8 = { 3.2f, 5.4f, -3.1f, 1.9f };
+  // input left_top and right_bottom points
+  EXPECT_EQ(b1, Box2D (Point2D {-5.6, 0}, Point2D {0, 7.8}));
+  EXPECT_EQ(b2, Box2D (Point2D {0, -7.8}, Point2D {5.6, 0}));
+  EXPECT_EQ(b3, Box2D (Point2D {0, 0}, Point2D {5.6, 7.8}));
+  EXPECT_EQ(b4, Box2D (Point2D {-5.6, -7.8}, Point2D {0, 0}));
+  EXPECT_EQ(b5, Box2D (Point2D {-5.6, 7.7}, Point2D {-5.5, 7.8}));
+  EXPECT_EQ(b6, Box2D (Point2D {5.5, -7.8}, Point2D {5.6, -7.7}));
+  EXPECT_EQ(b7, Box2D (Point2D {5.5, 7.7}, Point2D {5.6, 7.8}));
+  // input point in the wrong order
+  EXPECT_EQ(b8, Box2D (Point2D {-3.1, 1.9}, Point2D {3.2, 5.4}));
 }
 
 TEST(box2d_test, test_assignment)

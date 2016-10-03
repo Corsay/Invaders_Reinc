@@ -48,11 +48,11 @@ public:
   {}
 
   // Move constructor
-  /*Box2D(Box2D & obj)
+  Box2D(Box2D && obj)
   {
     std::swap(m_left_bottom, obj.left_bottom());
     std::swap(m_right_top, obj.right_top());
-  }*/
+  }
 
   // Getters
   inline Point2D & left_bottom() { return m_left_bottom; }
@@ -89,6 +89,15 @@ public:
     return *this;
   }
 
+  // Move operator
+  Box2D & operator = (Box2D && obj)
+  {
+    if (this == &obj) return *this;
+    std::swap(m_left_bottom, obj.left_bottom());
+    std::swap(m_right_top, obj.right_top());
+    return *this;
+  }
+
   // Math operations
   Box2D operator + (Box2D const & obj) const
   {
@@ -108,7 +117,7 @@ public:
     };
   }
 
-  Box2D operator - () const
+  Box2D operator - ()
   {
     return
     {
@@ -117,7 +126,7 @@ public:
     };
   }
 
-  Box2D operator * (float scale) const
+  Box2D operator * (float scale)
   {
     return
     {
@@ -126,7 +135,7 @@ public:
     };
   }
 
-  Box2D operator / (float scale) const
+  Box2D operator / (float scale)
   {
     //TODO: обработать деление на 0.
     return
@@ -219,8 +228,13 @@ public:
 private:
 
   void Swap()
-  {
+  {  
     if (m_left_bottom > m_right_top) std::swap(m_left_bottom, m_right_top);
+
+    if (left() > right() || bottom() > top())
+    {
+       std::swap(m_left_bottom.y(), m_right_top.y());
+    }
   }
 
   double Rectangle_square () const

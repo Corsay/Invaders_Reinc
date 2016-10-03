@@ -19,16 +19,16 @@ public:
   {}
 
   // Конструктор с параметрами.
-  Point2D(float x, float y)
+  Point2D(float const x, float const y)
     : m_x(x), m_y(y)
   {}
 
   // Конструктор перемещения
-  /*Point2D(Point2D & obj)
+  Point2D(Point2D && obj)
   {
     std::swap(m_x, obj.x());
     std::swap(m_y, obj.y());
-  }*/
+  }
 
   // Getters
   inline float & x() { return m_x; }
@@ -52,6 +52,15 @@ public:
     if (this == &obj) return *this;
     m_x = obj.m_x;
     m_y = obj.m_y;
+    return *this;
+  }
+
+  // Оператор перемещения
+  Point2D & operator = (Point2D && obj)
+  {
+    if (this == &obj) return *this;
+    std::swap(m_x, obj.x());
+    std::swap(m_y, obj.y());
     return *this;
   }
 
@@ -104,19 +113,19 @@ public:
   }
 
   // Математическое отрицание.
-  Point2D operator - () const
+  Point2D operator - ()
   {
     return { -m_x, -m_y };
   }
 
   // Умножение на число.
-  Point2D operator * (float scale) const
+  Point2D operator * (float scale)
   {
     return { m_x * scale, m_y * scale };
   }
 
   // Деление на число.
-  Point2D operator / (float scale) const
+  Point2D operator / (float scale)
   {
     //TODO: обработать деление на 0.
     return { m_x / scale, m_y / scale };

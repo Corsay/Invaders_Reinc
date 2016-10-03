@@ -8,7 +8,7 @@ int main()
 {
   //cout << "Hello World!" << endl;
 
-  int m = 2;
+  int m = 3;
 
   switch (m)
   {
@@ -211,6 +211,125 @@ int main()
       cout << (r22 && b1) << endl;
       cout << (r23 && b1) << endl;
       cout << (r24 && b1) << endl;
+
+      break;
+    }
+  // move
+    case 3:
+    {
+    // point
+      Point2D p2 = { 1.2f, 2.4f };
+      Point2D p3 = p2;
+      Point2D p4;
+      p4 = p2;
+      // move constructor
+      cout << "move constructor" << endl;
+      cout << p2 << endl;
+      Point2D p5 = std::move(p2);
+      cout << p2 << endl;
+      cout << p5 << endl << endl;
+      // move
+      cout << "move" << endl;
+      cout << p2 << endl;
+      cout << p3 << endl;
+      p2 = std::move(p3);
+      cout << p2 << endl;
+      cout << p3 << endl << endl;
+      // assignment
+      cout << "assignment" << endl;
+      cout << p2 << endl;
+      cout << p3 << endl;
+      p3 = p2;
+      cout << p2 << endl;
+      cout << p3 << endl << endl << endl;
+
+    // box
+      Box2D b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+      Box2D b2 = b1;
+      Box2D b3 = { -5.6f, 7.8f }; // точка по факту левая верхняя и {0;0} будет правой нижней // fixed
+      Box2D b4;
+      b4 = b3;
+      cout << "boxes" << endl;
+      cout << b1 << endl;
+      cout << b2 << endl;
+      cout << b3 << endl;
+      cout << b4 << endl << endl;
+      // move constructor
+      cout << "move constructor" << endl;
+      cout << b2 << endl;
+      Box2D b5 = std::move(b2);
+      cout << b2 << endl;
+      cout << b5 << endl << endl;
+      // move
+      cout << "move" << endl;
+      cout << b2 << endl;
+      cout << b3 << endl;
+      b2 = std::move(b3);
+      cout << b2 << endl;
+      cout << b3 << endl << endl;
+      // assignment
+      cout << "assignment" << endl;
+      cout << b2 << endl;
+      cout << b3 << endl;
+      b3 = b2;
+      cout << b2 << endl;
+      cout << b3 << endl << endl << endl;
+
+      // add tests mistakes in box
+      Box2D b6 = { 0.0f, 0.0f, -5.6f, 7.8f };
+      Box2D b7 = { 0.0f, 0.0f, 5.6f, -7.8f };
+      Box2D b8 = { 0.0f, 0.0f, 5.6f, 7.8f };
+      Box2D b9 = { 0.0f, 0.0f, -5.6f, -7.8f };
+      Box2D b10 = { -5.5f, 7.7f, -5.6f, 7.8f };
+      cout << b6 << endl;
+      cout << b7 << endl;
+      cout << b8 << endl;
+      cout << b9 << endl;
+      cout << b10 << endl;
+      cout << "additional test for boxes" << endl;
+      cout << "bottom - " << b6.bottom() << "    left   - " << b6.left() << endl;
+      cout << "top    - " << b6.top() << "  right  - " << b6.right()  << endl;
+      cout << "bottom - " << b7.bottom() << " left   - " << b7.left() << endl;
+      cout << "top    - " << b7.top() << "    right  - " << b7.right()  << endl;
+      cout << "bottom - " << b8.bottom() << "    left   - " << b8.left() << endl;
+      cout << "top    - " << b8.top() << "  right  - " << b8.right()  << endl;
+      cout << "bottom - " << b9.bottom() << " left   - " << b9.left() << endl;
+      cout << "top    - " << b9.top() << "    right  - " << b9.right()  << endl;
+      cout << "bottom - " << b10.bottom() << "  left   - " << b10.left() << endl;
+      cout << "top    - " << b10.top() << "  right  - " << b10.right()  << endl;
+      cout << endl;
+
+    // ray
+      Ray2D r1 = { {1.2f, 2.4f}, 180.0f };
+      Ray2D r2 = r1;
+      Ray2D r3 = { -5.6f, 7.8f, 45.0f };
+      Ray2D r4;
+      r4 = r3;
+      cout << "rays" << endl;
+      cout << r1 << endl;
+      cout << r2 << endl;
+      cout << r3 << endl;
+      cout << r4 << endl << endl;
+      // move constructor
+      cout << "move constructor" << endl;
+      cout << r2 << endl;
+      Ray2D r5 = std::move(r2);
+      cout << r2 << endl;
+      cout << r5 << endl << endl;
+      // move
+      cout << "move" << endl;
+      cout << r2 << endl;
+      cout << r3 << endl;
+      r2 = std::move(r3);
+      cout << r2 << endl;
+      cout << r3 << endl << endl;
+      // assignment
+      cout << "assignment" << endl;
+      cout << r2 << endl;
+      cout << r3 << endl;
+      r3 = r2;
+      cout << r2 << endl;
+      cout << r3 << endl << endl << endl;
 
       break;
     }

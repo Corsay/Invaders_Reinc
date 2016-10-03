@@ -22,6 +22,20 @@ TEST(ray2d_test, test_construction)
   EXPECT_EQ(r3.direction(), 90.0f);
 }
 
+TEST(ray2d_test, test_move)
+{
+    Ray2D r1 = { {1.2f, 2.4f}, 180.0f };
+    Ray2D r3 = { -5.6f, 7.8f, 45.0f };
+    // move constructor
+    Ray2D r4 = std::move(r1);
+    EXPECT_EQ(r1, Ray2D (Point2D {0, 0}, 90));
+    EXPECT_EQ(r4, Ray2D (Point2D {1.2, 2.4}, 180));
+    // move
+    r1 = std::move(r3);
+    EXPECT_EQ(r1, Ray2D (Point2D {-5.6, 7.8}, 45));
+    EXPECT_EQ(r3, Ray2D (Point2D {0, 0}, 90));
+}
+
 TEST(ray2d_test, test_initializer_list)
 {
   Ray2D r1 = { 1.0f, 2.0f, 37.0f };
