@@ -179,4 +179,37 @@ TEST(ray2d_test, test_intersection)
   EXPECT_FALSE(r23 && b1);
   EXPECT_FALSE(r24 && b1);
 
+  Point2D p{2.0f, 3.0f};
+  Ray2D r25{p, 0.0f};
+  Ray2D r26{p, 45.0f};
+  Ray2D r27{p, 90.0f};
+  Ray2D r28{p, 135.0f};
+  Ray2D r29{p, 180.0f};
+  Ray2D r30{p, 225.0f};
+  Ray2D r31{p, 270.0f};
+  Ray2D r32{p, 315.0f};
+
+  EXPECT_TRUE(r25 && b1);
+  EXPECT_TRUE(r26 && b1);
+  EXPECT_TRUE(r27 && b1);
+  EXPECT_TRUE(r28 && b1);
+  EXPECT_TRUE(r29 && b1);
+  EXPECT_TRUE(r30 && b1);
+  EXPECT_TRUE(r31 && b1);
+  EXPECT_TRUE(r32 && b1);
+
+  Point2D p2={4.3f, 5.3f};
+  Point2D p3={0.7f, 1.7f};
+  Ray2D r26_copy{p, 49.999f};
+
+  EXPECT_TRUE(r26 && p2);
+  EXPECT_FALSE(r26_copy && p3);
+
+  EXPECT_FALSE(r26 && p3);
+  r26.DirectionShiftAngle(180.0f);
+  EXPECT_TRUE(r26 && p3);
+
+
+
+
 }

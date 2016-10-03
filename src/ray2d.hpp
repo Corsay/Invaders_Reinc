@@ -110,6 +110,9 @@ public:
   // Capabilities
   bool operator &&(Box2D const & Box) const
   {
+    if(Box && m_origin)
+        return true;
+
     float k = tan(m_direction * RAD);
     float b = m_origin.y() - k * m_origin.x();
     float coord = 0.0f;
@@ -121,11 +124,12 @@ public:
     coord = k * Box.left() + b;
     if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && CheckPoint(Box.left(), coord))
       return true;
+
     //top
     coord = float((Box.top() - b)) / k;
     if(fabs(coord) < kEps)
         coord = 0;
-    if(coord <= Box.right() + kEps && coord >= Box.left() - kEps && CheckPoint(coord, Box.top()))
+    if(coord <=(Box.right() + kEps) && coord >=(Box.left() - kEps) && CheckPoint(coord, Box.top()))
       return true;
 
     return false;
@@ -138,7 +142,7 @@ public:
 
     float coord = k * point.x() + b;
 
-    if(fabs(coord - point.y()) < kEps)
+    if(fabs(coord - point.y()) < kEps && CheckPoint(point.x(), coord))
       return true;
     return false;
   }
@@ -173,15 +177,15 @@ private:
       m_direction += 360.0f;
   }
 
-  bool CheckPoint(float x, float y) const
+  bool CheckPoint(float const x, float const y) const
   {
-      if(m_direction <= 180.0f && y < m_origin.y())
+      if(m_direction <= 180.0f && y < m_origin.y()-kEps)
           return false;
-      if(m_direction > 180 && y >= m_origin.y())
+      if(m_direction > 180 && y >= m_origin.y()+kEps)
           return false;
-      if((m_direction <= 90 || m_direction>=270) && x < m_origin.x())
+      if((m_direction <= 90 || m_direction>=270) && x < m_origin.x()-kEps)
           return false;
-      if(m_direction > 90 && m_direction < 270 && x >= m_origin.x())
+      if(m_direction > 90 && m_direction < 270 && x >= m_origin.x()+kEps)
           return false;
       return true;
   }
@@ -189,4 +193,8 @@ private:
   Point2D m_origin = {0.0f, 0.0f};
   float m_direction = 90.0f;
 };
+
+
+
+
 

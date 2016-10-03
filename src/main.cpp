@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-  //cout << "Hello World!" << endl;
+  /*//cout << "Hello World!" << endl;
 
   int m = 3;
 
@@ -339,7 +339,18 @@ int main()
 
       break;
     }
-  }
+  }*/
+
+
+   Ray2D r{0.0f, 3.0f, 270.0f};
+   Box2D b{-1.0f, -1.0f, 1.0f, 1.0f};
+
+   cout << (r && b) << endl;
+
+   Ray2D r8={ 4.5f, 8.0f, 270.0f};  // down
+   Box2D b1 = { {-2.0f, 2.0f}, {7.0f, 6.0f} };
+
+   cout << (r8 && b1) << endl;
 
   return 0;
 }
