@@ -2,7 +2,6 @@
 
 #include "box2d.hpp"
 
-
 float constexpr RAD=M_PI/180.0f;
 
 class Ray2D
@@ -64,7 +63,7 @@ public:
   inline float const & direction() const { return m_direction; }
 
   // Setters
-  void setDirection(float direction)
+  void setDirection(float const direction)
   {
     m_direction = direction;
     CorrectDirectionAngle();
