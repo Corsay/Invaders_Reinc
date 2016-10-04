@@ -239,8 +239,8 @@ private:
 
   double Rectangle_square () const
   {
-    double ab = sqrt((top() - bottom()) * (top() - bottom()));
-    double ac = sqrt((right() - left()) * (right() - left()));
+    double ab = top() - bottom();
+    double ac = right() - left();
     return ab * ac;
   }
 

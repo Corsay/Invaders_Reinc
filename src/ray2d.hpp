@@ -2,7 +2,7 @@
 
 #include "box2d.hpp"
 
-float constexpr RAD=M_PI/180.0f;
+float constexpr RAD = M_PI / 180.0f;
 
 class Ray2D
 {
@@ -179,13 +179,13 @@ private:
 
   bool CheckPoint(float const x, float const y) const
   {
-    if(m_direction <= 180.0f && y < m_origin.y()-kEps)
+    if(m_direction <= 180.0f && y < m_origin.y() - kEps)
       return false;
-    if(m_direction > 180 && y >= m_origin.y()+kEps)
+    if(m_direction > 180 && y >= m_origin.y() + kEps)
       return false;
-    if((m_direction <= 90 || m_direction>=270) && x < m_origin.x()-kEps)
+    if((m_direction <= 90 || m_direction>=270) && x < m_origin.x() - kEps)
       return false;
-    if(m_direction > 90 && m_direction < 270 && x >= m_origin.x()+kEps)
+    if(m_direction > 90 && m_direction < 270 && x >= m_origin.x() + kEps)
       return false;
     return true;
   }
