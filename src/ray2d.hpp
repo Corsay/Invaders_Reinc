@@ -50,7 +50,7 @@ public:
   // Move constructor
   Ray2D(Ray2D && obj)
   {
-    std::swap(m_origin, obj.origin());
+    m_origin = std::move(obj.origin());
     std::swap(m_direction, obj.direction());
   }
 
@@ -83,7 +83,7 @@ public:
   Ray2D & operator = (Ray2D && obj)
   {
     if (this == &obj) return *this;
-    std::swap(m_origin, obj.origin());
+    m_origin = std::move(obj.origin());
     std::swap(m_direction, obj.direction());
     return *this;
   }

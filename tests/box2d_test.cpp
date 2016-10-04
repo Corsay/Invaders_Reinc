@@ -166,8 +166,8 @@ TEST(box2d_test, test_center)
 {
   Box2D b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
   Box2D b2 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
-  EXPECT_EQ(b1.Get_center(), Point2D(2.4, 3.6));
-  EXPECT_EQ(b2.Get_center(), Point2D(4.5, 4));
+  EXPECT_EQ(b1.GetCenter(), Point2D(2.4, 3.6));
+  EXPECT_EQ(b2.GetCenter(), Point2D(4.5, 4));
 }
 
 TEST(box2d_test, test_intersection)

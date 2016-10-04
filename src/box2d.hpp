@@ -50,8 +50,8 @@ public:
   // Move constructor
   Box2D(Box2D && obj)
   {
-    std::swap(m_leftBottom, obj.leftBottom());
-    std::swap(m_rightTop, obj.rightTop());
+    m_leftBottom = std::move(obj.m_leftBottom);
+    m_rightTop = std::move(obj.m_rightTop);
   }
 
   // Getters
@@ -77,7 +77,7 @@ public:
 
   bool operator < (Box2D const & obj) const
   {      
-    return Rectangle_square() < obj.Rectangle_square();
+    return RectangleSquare() < obj.RectangleSquare();
   }
 
   // Assignment operator.
@@ -93,8 +93,8 @@ public:
   Box2D & operator = (Box2D && obj)
   {
     if (this == &obj) return *this;
-    std::swap(m_leftBottom, obj.leftBottom());
-    std::swap(m_rightTop, obj.rightTop());
+    m_leftBottom = std::move(obj.m_leftBottom);
+    m_rightTop = std::move(obj.m_rightTop);
     return *this;
   }
 
@@ -175,7 +175,7 @@ public:
   }
 
   // Capabilities
-  Point2D Get_center() const
+  Point2D GetCenter() const
   {
     Point2D p = {(m_leftBottom.x() + m_rightTop.x()) / 2 , (m_leftBottom.y() + m_rightTop.y())/2 };
     return p;
@@ -229,7 +229,7 @@ private:
 
   void Swap()
   {  
-    if (m_leftBottom > m_rightTop) std::swap(m_leftBottom, m_rightTop);
+    if (m_leftBottom > m_rightTop) m_leftBottom = std::move(m_rightTop);
 
     if (left() > right() || bottom() > top())
     {
@@ -237,7 +237,7 @@ private:
     }
   }
 
-  double Rectangle_square () const
+  double RectangleSquare() const
   {
     double ab = top() - bottom();
     double ac = right() - left();
