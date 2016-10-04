@@ -2,7 +2,7 @@
 
 #include "box2d.hpp"
 
-float constexpr RAD=3.141592f/180.0f;
+float constexpr RAD = M_PI / 180.0f;
 
 class Ray2D
 {
@@ -14,15 +14,15 @@ public:
   Ray2D(Point2D const origin, float const direction)
     :m_origin(origin),
      m_direction(direction)
-    {
-      CorrectDirectionAngle();
-    }
+  {
+    CorrectDirectionAngle();
+  }
   Ray2D(float const originX, float const originY, float const direction)
     :m_origin(originX, originY),
      m_direction(direction)
-    {
-      CorrectDirectionAngle();
-    }
+  {
+    CorrectDirectionAngle();
+  }
 
   // Constructor with initialization list.
   Ray2D(std::initializer_list<float> const & lst)
@@ -50,25 +50,25 @@ public:
   // Move constructor
   Ray2D(Ray2D && obj)
   {
-    std::swap(m_origin, obj.origin());
+    m_origin = std::move(obj.origin());
     std::swap(m_direction, obj.direction());
   }
 
   // Getters
   inline Point2D & origin() { return m_origin; }
-  inline float const x(){ return m_origin.x(); }
-  inline float const y(){ return m_origin.y(); }
+  inline float const x() const { return m_origin.x(); }
+  inline float const y() const { return m_origin.y(); }
   inline float & direction() { return m_direction; }
   inline Point2D const & origin() const { return m_origin; }
   inline float const & direction() const { return m_direction; }
 
   // Setters
-  void direction(float direction)
+  void setDirection(float const direction)
   {
     m_direction = direction;
     CorrectDirectionAngle();
   }
-  void origin(Point2D const & origin){ m_origin = origin; }
+  void setOrigin(Point2D const & origin){ m_origin = origin; }
 
   // Assignment operator.
   Ray2D & operator = (Ray2D const & obj)
@@ -83,7 +83,7 @@ public:
   Ray2D & operator = (Ray2D && obj)
   {
     if (this == &obj) return *this;
-    std::swap(m_origin, obj.origin());
+    m_origin = std::move(obj.origin());
     std::swap(m_direction, obj.direction());
     return *this;
   }
@@ -108,28 +108,28 @@ public:
   }
 
   // Capabilities
-  bool operator &&(Box2D const & Box) const
+  bool operator &&(Box2D const & box) const
   {
-    if(Box && m_origin)
+    if(box && m_origin)
         return true;
 
     float k = tan(m_direction * RAD);
     float b = m_origin.y() - k * m_origin.x();
     float coord = 0.0f;
     //right
-    coord = k * Box.right() + b;
-    if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && CheckPoint(Box.right(), coord))
+    coord = k * box.right() + b;
+    if(coord <= box.top() + kEps && coord >= box.bottom() - kEps && CheckPoint(box.right(), coord))
       return true;
     //left
-    coord = k * Box.left() + b;
-    if(coord <= Box.top() + kEps && coord >= Box.bottom() - kEps && CheckPoint(Box.left(), coord))
+    coord = k * box.left() + b;
+    if(coord <= box.top() + kEps && coord >= box.bottom() - kEps && CheckPoint(box.left(), coord))
       return true;
 
     //top
-    coord = float((Box.top() - b)) / k;
+    coord = float((box.top() - b)) / k;
     if(fabs(coord) < kEps)
         coord = 0;
-    if(coord <=(Box.right() + kEps) && coord >=(Box.left() - kEps) && CheckPoint(coord, Box.top()))
+    if(coord <=(box.right() + kEps) && coord >=(box.left() - kEps) && CheckPoint(coord, box.top()))
       return true;
 
     return false;
@@ -179,22 +179,17 @@ private:
 
   bool CheckPoint(float const x, float const y) const
   {
-      if(m_direction <= 180.0f && y < m_origin.y()-kEps)
-          return false;
-      if(m_direction > 180 && y >= m_origin.y()+kEps)
-          return false;
-      if((m_direction <= 90 || m_direction>=270) && x < m_origin.x()-kEps)
-          return false;
-      if(m_direction > 90 && m_direction < 270 && x >= m_origin.x()+kEps)
-          return false;
-      return true;
+    if(m_direction <= 180.0f && y < m_origin.y() - kEps)
+      return false;
+    if(m_direction > 180 && y >= m_origin.y() + kEps)
+      return false;
+    if((m_direction <= 90 || m_direction>=270) && x < m_origin.x() - kEps)
+      return false;
+    if(m_direction > 90 && m_direction < 270 && x >= m_origin.x() + kEps)
+      return false;
+    return true;
   }
 
   Point2D m_origin = {0.0f, 0.0f};
   float m_direction = 90.0f;
 };
-
-
-
-
-

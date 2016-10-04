@@ -8,29 +8,29 @@ TEST(box2d_test, test_construction)
 {
   // Тест на создание объекта по умолчанию.
   Box2D b1;
-  EXPECT_EQ(b1.left_bottom(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.left_bottom().x(), 0.0f);
-  EXPECT_EQ(b1.left_bottom().y(), 0.0f);
-  EXPECT_EQ(b1.right_top(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.right_top().x(), 0.0f);
-  EXPECT_EQ(b1.right_top().y(), 0.0f);
+  EXPECT_EQ(b1.leftBottom(), Point2D(0.0f, 0.0f));
+  EXPECT_EQ(b1.leftBottom().x(), 0.0f);
+  EXPECT_EQ(b1.leftBottom().y(), 0.0f);
+  EXPECT_EQ(b1.rightTop(), Point2D(0.0f, 0.0f));
+  EXPECT_EQ(b1.rightTop().x(), 0.0f);
+  EXPECT_EQ(b1.rightTop().y(), 0.0f);
 
   // Тест на создание объекта с параметрами.
   Box2D b2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
-  EXPECT_EQ(b2.left_bottom(), Point2D(1.2f, 2.4f));
-  EXPECT_EQ(b2.left_bottom().x(), 1.2f);
-  EXPECT_EQ(b2.left_bottom().y(), 2.4f);
-  EXPECT_EQ(b2.right_top(), Point2D(2.4f, 4.8f));
-  EXPECT_EQ(b2.right_top().x(), 2.4f);
-  EXPECT_EQ(b2.right_top().y(), 4.8f);
+  EXPECT_EQ(b2.leftBottom(), Point2D(1.2f, 2.4f));
+  EXPECT_EQ(b2.leftBottom().x(), 1.2f);
+  EXPECT_EQ(b2.leftBottom().y(), 2.4f);
+  EXPECT_EQ(b2.rightTop(), Point2D(2.4f, 4.8f));
+  EXPECT_EQ(b2.rightTop().x(), 2.4f);
+  EXPECT_EQ(b2.rightTop().y(), 4.8f);
 
   Box2D b3 = { 1.0f, 2.2f, 0.0f, 1.0f };
-  EXPECT_EQ(b3.left_bottom(), Point2D(0.0f, 1.0f));
-  EXPECT_EQ(b3.left_bottom().x(), 0.0f);
-  EXPECT_EQ(b3.left_bottom().y(), 1.0f);
-  EXPECT_EQ(b3.right_top(), Point2D(1.0f, 2.2f));
-  EXPECT_EQ(b3.right_top().x(), 1.0f);
-  EXPECT_EQ(b3.right_top().y(), 2.2f);
+  EXPECT_EQ(b3.leftBottom(), Point2D(0.0f, 1.0f));
+  EXPECT_EQ(b3.leftBottom().x(), 0.0f);
+  EXPECT_EQ(b3.leftBottom().y(), 1.0f);
+  EXPECT_EQ(b3.rightTop(), Point2D(1.0f, 2.2f));
+  EXPECT_EQ(b3.rightTop().x(), 1.0f);
+  EXPECT_EQ(b3.rightTop().y(), 2.2f);
 
   // Тест на создание копии объекта.
   Box2D b4 = b3;
@@ -54,20 +54,20 @@ TEST(box2d_test, test_move)
 TEST(box2d_test, test_initializer_list)
 {
   Box2D b1 = { {1.0f, 2.0f}, {3.0f, 4.0f}, {0.0f, 1.0f} };
-  EXPECT_EQ(b1.left_bottom(), Point2D(1.0f, 2.0f));
-  EXPECT_EQ(b1.right_top(), Point2D(3.0f, 4.0f));
+  EXPECT_EQ(b1.leftBottom(), Point2D(1.0f, 2.0f));
+  EXPECT_EQ(b1.rightTop(), Point2D(3.0f, 4.0f));
 
   Box2D b2 = { {1.0f, 2.0f} };
-  EXPECT_EQ(b2.left_bottom(), Point2D(0.0f, 0.0f)); // because swap
-  EXPECT_EQ(b2.right_top(), Point2D(1.0f, 2.0f));
+  EXPECT_EQ(b2.leftBottom(), Point2D(0.0f, 0.0f)); // because swap
+  EXPECT_EQ(b2.rightTop(), Point2D(1.0f, 2.0f));
 
   Box2D b3 = { 3.0f, 4.0f, 1.0f, 2.0f, 5.0f };
-  EXPECT_EQ(b3.left_bottom(), Point2D(1.0f, 2.0f)); // because swap
-  EXPECT_EQ(b3.right_top(), Point2D(3.0f, 4.0f));
+  EXPECT_EQ(b3.leftBottom(), Point2D(1.0f, 2.0f)); // because swap
+  EXPECT_EQ(b3.rightTop(), Point2D(3.0f, 4.0f));
 
   Box2D b4 = { 1.0f, 2.0f };
-  EXPECT_EQ(b4.left_bottom(), Point2D(0.0f, 0.0f)); // because swap
-  EXPECT_EQ(b4.right_top(), Point2D(1.0f, 2.0f));
+  EXPECT_EQ(b4.leftBottom(), Point2D(0.0f, 0.0f)); // because swap
+  EXPECT_EQ(b4.rightTop(), Point2D(1.0f, 2.0f));
 }
 
 TEST(box2d_test, test_swap)
@@ -133,7 +133,6 @@ TEST(box2d_test, test_calculus)
   b2.VerticalShift(-2.5);
   EXPECT_EQ(b2, Box2D(Point2D(-2.4f, 2.7f), Point2D(-2.0f, 2.7f)));
 
-
   b1 += { {1.2f, 2.4f}, {3.6f, 4.8f} };
   EXPECT_EQ(b1, Box2D(Point2D(2.4f, 4.8f), Point2D(4.8f, 7.4f)));
 
@@ -167,8 +166,8 @@ TEST(box2d_test, test_center)
 {
   Box2D b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
   Box2D b2 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
-  EXPECT_EQ(b1.Get_center(), Point2D(2.4, 3.6));
-  EXPECT_EQ(b2.Get_center(), Point2D(4.5, 4));
+  EXPECT_EQ(b1.GetCenter(), Point2D(2.4, 3.6));
+  EXPECT_EQ(b2.GetCenter(), Point2D(4.5, 4));
 }
 
 TEST(box2d_test, test_intersection)

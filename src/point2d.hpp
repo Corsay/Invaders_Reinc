@@ -91,9 +91,9 @@ public:
   }
 
   bool operator <= (Point2D const & obj) const
-    {
-      return m_x <= obj.m_x+kEps && m_y <= obj.m_y+kEps;
-    }
+  {
+    return m_x <= obj.m_x+kEps && m_y <= obj.m_y+kEps;
+  }
 
   bool operator >= (Point2D const & obj) const
   {

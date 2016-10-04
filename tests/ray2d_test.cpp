@@ -53,9 +53,9 @@ TEST(ray2d_test, test_initializer_list)
   EXPECT_EQ(r3.y(), 2.0f);
   EXPECT_EQ(r3.direction(), 90.0f);
 
-  r1.direction(360.0f);
+  r1.setDirection(360.0f);
   EXPECT_EQ(r1.direction(), 0.0f);
-  r1.direction(405.0f);
+  r1.setDirection(405.0f);
   EXPECT_EQ(r1.direction(), 45.0f);
 }
 
@@ -109,16 +109,6 @@ TEST(ray2d_test, test_Ray2D_output)
 
 TEST(ray2d_test, test_intersection)
 {
-  //Box2D b1 = { {-1.0f, 1.0f}, {1.0f, 2.0f} };
-  //Box2D b2 = { {-2.0f, 11.0f}, {-1.0f, 1.0f} };
-  //Box2D b3 = { {-1.0f, 1.0f}, {1.0f, 2.0f} };
-  //Box2D b4 = { {-1.0f, 1.0f}, {1.0f, 2.0f} };
-
-  //Ray2D r1={ 0.0f, 0.0f, 45.0f};
-  //Ray2D r2={ 0.0f, 0.0f, 90.0f};
-  //EXPECT_TRUE(r1 && b1);
-  //EXPECT_TRUE(r2 && b1);
-
   Box2D b1 = { {2.0f, 2.0f}, {7.0f, 6.0f} };
 
   // from bottom
@@ -208,8 +198,4 @@ TEST(ray2d_test, test_intersection)
   EXPECT_FALSE(r26 && p3);
   r26.DirectionShiftAngle(180.0f);
   EXPECT_TRUE(r26 && p3);
-
-
-
-
 }
