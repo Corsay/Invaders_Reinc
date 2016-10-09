@@ -7,6 +7,9 @@ project(Invaders_Reinc)
 
 # Set up the main source folder.
 set(SOURCE_ROOT src)
+# To display subfolder and its content in QT Creator.
+set(S_SOURCE_ROOT src/gameclasses)
+aux_source_directory(${S_SOURCE_ROOT} SRC_LIST)
 # Scan source folder to find all sources and put the result to SRC_LIST.
 aux_source_directory(${SOURCE_ROOT} SRC_LIST)
 # Create executable by SRC_LIST.
