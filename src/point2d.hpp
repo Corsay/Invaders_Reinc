@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <functional>
 #include <ostream>
+#include "constants.hpp"
 
 float const kEps = 1e-5;
 

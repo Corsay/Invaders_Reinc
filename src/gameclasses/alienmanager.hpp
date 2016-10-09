@@ -12,18 +12,6 @@ public:
   // need
 
 
-  // Constructor with initialization list.
-  // need or not (?!)
-
-
-  // Copy constructor
-  // can be useful
-
-
-  // Move constructor
-  // not need
-
-
   // Getters
   // all getters for new fields
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bullet.hpp"
+#include <list>
 
 class Bullet2DManager
 {
@@ -55,5 +56,4 @@ public:
   // square brackets
 private:
 
-  Bullet2D m_bullets;      // list of current(started) bullets
 };
