@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gameentity.hpp"
+#include "box2d.hpp"
 
-class Obstacle2D : public GameEntity2D
+class Obstacle2D : public Box2D
 {
 public:
   // Allow default constructor.
@@ -16,14 +16,6 @@ public:
   // need or not (?!)
 
 
-  // Copy constructor
-  // can be useful
-
-
-  // Move constructor
-  // not need
-
-
   // Getters
   // all getters for new fields
 
@@ -34,14 +26,6 @@ public:
 
   // Logical operators
   // don't know need or not (?!)
-
-
-  // Assignment operator.
-  // can be useful =
-
-
-  // Move operator
-  // not need
 
 
   // Math operations
@@ -60,11 +44,12 @@ public:
 private:
 
   // create matrix
-  void CreateEntitiesMatrix();
+  void CreateBoxMatrix();
 
   // all m_entities == nullptr
   // -> destroy obstacle
-  GameEntity2D m_entities;      // matrix of GameEntities
+  Box2D m_boxes;          // matrix of Boxes( BAD BECAUSE IN BOX2d HAVE NOT HP)
+  float m_boxesHealth;    // matrix of Boxes health;
   // IsAlive == false - inform about need of call obstacle destructor
   // -> destroy obstacle
   float m_health = 50.0f;       // - health of all parts of obstacle

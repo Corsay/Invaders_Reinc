@@ -37,6 +37,10 @@ public:
   inline float const & x() const { return m_x; }
   inline float const & y() const { return m_y; }
 
+  // Setters
+  inline void setX(float const x) { m_x = x; }
+  inline void setY(float const y) { m_y = y; }
+
   // Конструктор со списком инициализации.
   Point2D(std::initializer_list<float> const & lst)
   {

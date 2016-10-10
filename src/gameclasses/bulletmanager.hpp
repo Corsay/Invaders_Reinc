@@ -13,18 +13,6 @@ public:
   // need
 
 
-  // Constructor with initialization list.
-  // need or not (?!)
-
-
-  // Copy constructor
-  // can be useful
-
-
-  // Move constructor
-  // not need
-
-
   // Getters
   // all getters for new fields
 
@@ -35,14 +23,6 @@ public:
 
   // Logical operators
   // don't know need or not (?!)
-
-
-  // Assignment operator.
-  // can be useful =
-
-
-  // Move operator
-  // not need
 
 
   // Math operations

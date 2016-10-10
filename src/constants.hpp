@@ -14,14 +14,3 @@
 #define BULLET_DAMAGE_INC (50.0f)
 #define BULLET_SPEED_START (5.0f)
 #define BULLET_SPEED_INC (1.0f)
-
-
-/*#define
-#define
-#define
-#define
-#define
-#define
-#define
-#define
-*/
