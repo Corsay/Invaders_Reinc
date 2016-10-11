@@ -30,10 +30,36 @@ public:
 
 
   // Capabilities
-
+  CreateAlienBullet(Point2D start)
+  {
+      m_fromAlien.push_back
+      (
+        Bullet2D
+        {
+          Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT},
+          Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT},
+          BULLET_DAMAGE_START,
+          BULLET_SPEED_START
+        }
+      );
+  }
+  CreateGunBullet(Point2D start)
+  {
+      m_fromGun.push_back
+      (
+        Bullet2D
+        {
+          Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT},
+          Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT},
+          BULLET_DAMAGE_START,
+          BULLET_SPEED_START
+        }
+      );
+  }
 
   // Redefinition
   // square brackets
 private:
-
+    list<Bullet2D> m_fromAlien;
+    list<Bullet2D> m_fromGun;
 };

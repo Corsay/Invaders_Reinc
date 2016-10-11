@@ -33,7 +33,10 @@ public:
 
 
   // Capabilities
-  void Shoot(){}
+  void Shoot()
+  {
+    //m_bulletManager.createGunBullet(this->GetCenter());//экземпляр m_bulletManager еще не создан
+  }
 
 
   // Redefinition

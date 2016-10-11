@@ -58,7 +58,10 @@ public:
 
 
   // Capabilities
-  void Shoot(){}
+  void Shoot()
+  {
+    //m_bulletManager.createAlienBullet(this->GetCenter());
+  }
 
   // Redefinition
   //Alien2D operator [] (unsigned int index) const

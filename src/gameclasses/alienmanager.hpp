@@ -1,6 +1,7 @@
 #pragma once
 
 #include "alien.hpp"
+#include <vector>
 
 class Alien2DManager
 {
@@ -9,7 +10,34 @@ public:
   Alien2DManager() = default;
 
   // Constructors with parameters.
-  // need
+  Alien2DManager(int const countRow, int const countColumn, int const level)
+  {
+    m_liveAliensCount = countRow * countColumn;
+
+    m_aliens.reserve(countRow);
+    for (int i=0; i<countRow; i++)
+    {
+      m_aliens[i].reserve(countColumn);
+      for(int j=0; j<countColumn; j++)
+        m_aliens[i][j]=new Alien
+        (
+          Point2D
+          {
+            ALIEN_BOX_LEFT+j*(AlIEN_WIDTH+ALIEN_HORIZONTAL_DISTANCE),
+            ALIEN_BOX_TOP+i*(ALIEN_HEIGHT+ALIEN_VERTICAL_DISTANCE)
+          },
+          Point2D
+          {
+            ALIEN_BOX_LEFT+j*(AlIEN_WIDTH+ALIEN_HORIZONTAL_DISTANCE)+AlIEN_WIDTH,
+            ALIEN_BOX_TOP+i*(ALIEN_HEIGHT+ALIEN_VERTICAL_DISTANCE)+ALIEN_HEIGHT,
+          },
+          ALIEN_HEALTH_START,
+          ALIEN_SPEED_SHOOT_START
+        );
+    }
+
+  }
+
 
 
   // Getters
@@ -48,7 +76,7 @@ public:
   // square brackets
 private:
 
-  Alien2D m_aliens;      // matrix of Aliens
+  vector< vector<Alien2D *> > m_aliens;      // matrix of Aliens
   // m_liveAliensCount == 0 - level passed
   // -> destroy AlienManager
   int m_liveAliensCount = 5;
