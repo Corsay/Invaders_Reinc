@@ -11,6 +11,7 @@
 #define ALIEN_BOX_TOP           (80.0f)//верхняя граница
 #define ALIEN_HORIZONTAL_DISTANCE (20.0f)
 #define ALIEN_VERTICAL_DISTANCE (20.0f)
+#define ALIENT_HORIZONTAL_STEP  (15.0f)
 
 
 #define GUN_HEALTH_START        (100.0f)

@@ -52,6 +52,11 @@ public:
 
 
   // Capabilities
+  //при выстреле вызывается m_bulletManager.NewAlienBullet(m_gun.Shoot());
+  //то есть пуля передается в мэнджер
+  //тип пули фомируется на основе типа пушки/пришельца до мэнеджера
+  //каждую n-ую часть секунды проверяются пуди на пересечение
+
 
   // function for input processing:............
   // check m_gun state

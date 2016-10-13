@@ -13,14 +13,6 @@ public:
   // need
 
 
-  // Getters
-  // all getters for new fields
-
-
-  // Setters
-  // all settsers for new fields
-
-
   // Logical operators
   // don't know need or not (?!)
 
@@ -30,36 +22,75 @@ public:
 
 
   // Capabilities
-  CreateAlienBullet(Point2D start)
+  NewAlienBullet(Bullet2D bullet)
   {
-      m_fromAlien.push_back
-      (
-        Bullet2D
-        {
-          Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT},
-          Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT},
-          BULLET_DAMAGE_START,
-          BULLET_SPEED_START
-        }
-      );
+      m_fromAlien.push_back();
   }
-  CreateGunBullet(Point2D start)
+  NewAlienBullet(Bullet2D bullet)
   {
-      m_fromGun.push_back
-      (
-        Bullet2D
-        {
-          Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT},
-          Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT},
-          BULLET_DAMAGE_START,
-          BULLET_SPEED_START
-        }
-      );
+      m_fromGun.push_back();
+  }
+  CheckAllBullets(vector< vector<Alien2D *>& aliens, Gun & gun)
+  {
+
+  }
+
+
+  void BulletsMove()
+  {
+    for(auto it = m_fromAlien.begin(); it != m_fromGun; it++)
+      it->VerticalShift(-BULLET_SPEED_START);
+
+    for(auto it = m_fromGun.begin(); it != m_fromGun; it++)
+      it->VerticalShift(BULLET_SPEED_START);
+
   }
 
   // Redefinition
   // square brackets
 private:
-    list<Bullet2D> m_fromAlien;
-    list<Bullet2D> m_fromGun;
+  bool Check(Alien2D * alien)
+  {
+    for(auto it = m_fromAlien.begin(); it != m_fromGun; it++)
+      if(*it && *alien)
+      {
+        if( *alien.GetHealth() <= BULLET_DAMAGE_START)
+        {
+          delete alien;
+          alien = nullptr;
+        }
+        else
+          *alien.SetHealth( *alien.GetHealth - BULLET_DAMAGE_START);//определяется типом пули
+        m_fromGun.erase(it);
+        return true;
+      }
+      else
+      {
+        //пересечение с препятствием/ями
+      }
+    return false;
+  }
+  bool Check(Gun & gun)
+  {
+    for(auto it = m_fromGun.begin(); it != m_fromGun; it++)
+      if(*it && gun)
+      {
+        if( gun.GetHealth() <= BULLET_DAMAGE_START)
+        {
+          cout << " минус жизнь";
+        }
+        else
+          *alien.SetHealth( *alien.GetHealth - BULLET_DAMAGE_START);//определяется типом пули
+        m_fromGun.erase(it);
+        return true;
+      }
+      else
+      {
+        //пересечение с препятствием/ями
+      }
+    return false;
+  }
+
+  list<Bullet2D> m_fromAlien;
+  list<Bullet2D> m_fromGun;
 };

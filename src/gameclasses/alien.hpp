@@ -1,6 +1,7 @@
 #pragma once
 
 #include "box2d.hpp"
+#include "bullet.hpp"
 
 class Alien2D : public Box2D
 {
@@ -58,9 +59,16 @@ public:
 
 
   // Capabilities
-  void Shoot()
+  Bullet2D& Shoot()
   {
-    //m_bulletManager.createAlienBullet(this->GetCenter());
+    Point2D start = this->GetCenter();
+    Bullet2D bullet(
+      Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT/2},
+      Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT/2},
+      BULLET_DAMAGE_START,
+      BULLET_SPEED_START
+    );
+    return bullet;
   }
 
   // Redefinition

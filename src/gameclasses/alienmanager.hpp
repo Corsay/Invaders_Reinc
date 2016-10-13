@@ -12,6 +12,7 @@ public:
   // Constructors with parameters.
   Alien2DManager(int const countRow, int const countColumn, int const level)
   {
+    //в зависимости от значения переменной level будут генерироваться разные волны пришельцев
     m_liveAliensCount = countRow * countColumn;
 
     m_aliens.reserve(countRow);
@@ -42,7 +43,20 @@ public:
 
   // Getters
   // all getters for new fields
-
+  /*Alien2D * GetAlien(unsigned int i, unsigned int j)
+  {
+    if(i>=m_aliens.size() || j>=m_aliens[0].size())
+      return ALien{};
+    return *(m_aliens[i][j]);
+  }*/
+  Alien2D* operator[](unsigned int i)
+  {
+    if(i > m_aliens.size())
+      return m_alience[i];
+    return vector<Alien2D *>;
+  }
+  int const GetCountRows(){ return m_aliens.size(); }
+  int const GetCountColumn(){ return m_aliens[0].size(); }
 
   // Setters
   // all settsers for new fields
@@ -65,6 +79,19 @@ public:
 
 
   // Capabilities
+  bool AlienMove()
+  {
+    static short StepSign = -1;
+    //отслеживать достижение границ
+    //при достижении границы сменить знак и сдвинуться вниз
+
+    for(int i = 0; i < m_aliens.size(); i++)
+      for(int j = 0; j < m_aliens[0].size(); j++)
+        m_aliens->HorizontalShift(StepSign * ALIENT_HORIZONTAL_STEP);
+
+
+
+  }
 
   // need to add function:
   // work with bulletManager
