@@ -18,30 +18,27 @@ public:
   void operator = (Bullet2D const & clone) = delete;
 
   // Getters
-  inline float const getDamage() const { return m_damage; }
-  inline float const getSpeed() const { return m_speed; }
+  inline float const GetDamage() const { return m_damage; }
+  inline float const GetSpeed() const  { return m_speed; }
   // Setters
   inline void setDamage(float new_damage) { m_damage = new_damage; }
-  inline void setSpeed(float new_speed) { m_speed = new_speed; }
-
-  // Logical operators
-  // don't know need or not (?!)
-
-
-  // Math operations
-  // don't know need or not (?!)
-
+  inline void setSpeed(float new_speed)   { m_speed = new_speed; }
 
   // Capabilities
-  void Fly(){}
+  void Move()
+  {
 
+  }
 
   // Redefinition
-  // square brackets
+  /*Bullet2D operator [] (unsigned int index) const
+  {
+    if (index > 3 || index < 0) return this;
+    return index == 0 ? m_leftBottom : index == 1 ? m_rightTop : index == 2 ? m_damage : m_speed;
+  }*/
 private:
 
-  //BulletType m_BulletType=First;
-  float m_damage = BULLET_DAMAGE_START; // - Damage of the Bullet
-  float m_speed = BULLET_SPEED_INC;   // - fly speed
+  float m_damage = BULLET_DAMAGE_START; // - damage of the Bullet
+  float m_speed = BULLET_SPEED_INC;     // - move speed
 };
 

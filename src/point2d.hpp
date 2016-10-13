@@ -27,19 +27,17 @@ public:
   // Конструктор перемещения
   Point2D(Point2D && obj)
   {
-    std::swap(m_x, obj.x());
-    std::swap(m_y, obj.y());
+    std::swap(m_x, obj.m_x);
+    std::swap(m_y, obj.m_y);
   }
 
   // Getters
-  inline float & x() { return m_x; }
-  inline float & y() { return m_y; }
   inline float const & x() const { return m_x; }
   inline float const & y() const { return m_y; }
 
   // Setters
-  inline void setX(float const x) { m_x = x; }
-  inline void setY(float const y) { m_y = y; }
+  inline void SetX(float const x) { m_x = x; }
+  inline void SetY(float const y) { m_y = y; }
 
   // Конструктор со списком инициализации.
   Point2D(std::initializer_list<float> const & lst)
@@ -64,8 +62,8 @@ public:
   Point2D & operator = (Point2D && obj)
   {
     if (this == &obj) return *this;
-    std::swap(m_x, obj.x());
-    std::swap(m_y, obj.y());
+    std::swap(m_x, obj.m_x);
+    std::swap(m_y, obj.m_y);
     return *this;
   }
 
@@ -147,6 +145,20 @@ public:
   {
     m_x -= obj.m_x;
     m_y -= obj.m_y;
+    return *this;
+  }
+
+  Point2D & operator += (float scale)
+  {
+    m_x += scale;
+    m_y += scale;
+    return *this;
+  }
+
+  Point2D & operator -= (float scale)
+  {
+    m_x -= scale;
+    m_y -= scale;
     return *this;
   }
 

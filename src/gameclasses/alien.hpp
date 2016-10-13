@@ -1,7 +1,6 @@
 #pragma once
 
 #include "box2d.hpp"
-#include "bullet.hpp"
 
 class Alien2D : public Box2D
 {
@@ -14,71 +13,31 @@ public:
     :Box2D(leftBottom, rightTop), m_health(health), m_speedShoot(speedShoot)
   {}
 
-  // Constructor with initialization list.
-  /*Alien2D(std::initializer_list<float> const & lst)
-  {
-    Box2D box;
-    auto it = lst.begin();
-    if(it != lst.end())
-    {
-      box.x() = *it;
-    }
-    if(it != lst.end())
-    {
-        box.y() = *it;
-        it++;
-    }
-    if(it != lst.end())
-    {
-      m_health = *it;
-    }
-    it++;
-    if(it != lst.end())
-    {
-      m_health = *it;
-    }
-  }*/
-
   // no copy constructor and assignment operator
   Alien2D(Alien2D const & clone) = delete;
   void operator = (Alien2D const & clone) = delete;
 
   // Getters
-  inline float const getHealth() const { return m_health; }
+  inline float const getHealth() const     { return m_health; }
   inline float const getSpeedShoot() const { return m_speedShoot; }
   // Setters
-  inline void setHealth(float const new_health) { m_health = new_health; }
+  inline void setHealth(float const new_health)         { m_health = new_health; }
   inline void setSpeedShoot(float const new_speedShoot) { m_health = new_speedShoot; }
 
-  // Logical operators
-  // don't know need or not (?!)
-
-
-  // Math operations
-  // don't know need or not (?!)
-
-
   // Capabilities
-  Bullet2D& Shoot()
+  void Move()
   {
-    Point2D start = this->GetCenter();
-    Bullet2D bullet(
-      Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT/2},
-      Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT/2},
-      BULLET_DAMAGE_START,
-      BULLET_SPEED_START
-    );
-    return bullet;
+
   }
 
   // Redefinition
-  //Alien2D operator [] (unsigned int index) const
-  //{
-    //if (index >= 2) return {0.0f,0.0f};
-    //return index == 0 ? m_leftBottom : m_rightTop;
-  //}
+  /*Alien2D operator [] (unsigned int index) const
+  {
+    if (index > 3 || index < 0) return this;
+    return index == 0 ? m_leftBottom : index == 1 ? m_rightTop : index == 2 ? m_health : m_speedShoot;
+  }*/
 private:
 
-  float m_health = ALIEN_HEALTH_START; // - health of the alien
+  float m_health = ALIEN_HEALTH_START;            // - health of the alien
   float m_speedShoot = ALIEN_SPEED_SHOOT_START;   // - shoot speed
 };

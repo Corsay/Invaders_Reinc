@@ -32,13 +32,17 @@ public:
     Swap();
   }
 
-  Box2D(std::initializer_list<float> const& lst)
+  Box2D(std::initializer_list<float> const & lst)
   {
-    float *vals[] = { &m_leftBottom.x(), &m_leftBottom.y(), &m_rightTop.x(), &m_rightTop.y() };
+    Point2D * vals[] = { &m_leftBottom, &m_rightTop };
     auto it = lst.begin();
     // writing coord's
-    for (int i=0; i<4 && it!=lst.end(); i++, ++it)
-        *vals[i] = *it;
+    for (int i = 0; i < 2 && it != lst.end(); i++, ++it)
+    {
+      vals[i]->SetX(*it);
+      it++;
+      if (it != lst.end()) vals[i]->SetY(*it);
+    }
     Swap();
   }
 
@@ -55,14 +59,21 @@ public:
   }
 
   // Getters
-  inline Point2D & leftBottom() { return m_leftBottom; }
-  inline Point2D & rightTop() { return m_rightTop; }
+  inline Box2D const GetBorder() const { return Box2D {m_leftBottom, m_rightTop}; }
   inline Point2D const & leftBottom() const { return m_leftBottom; }
   inline Point2D const & rightTop() const   { return m_rightTop; }
-  inline float const left() const   { return leftBottom().x(); } // x min
-  inline float const right() const  { return rightTop().x(); }   // x max
-  inline float const top() const    { return rightTop().y(); }   // y max
-  inline float const bottom() const { return leftBottom().y(); } // y min
+  inline float const left() const   { return m_leftBottom.x(); } // x min
+  inline float const right() const  { return m_rightTop.x(); }   // x max
+  inline float const top() const    { return m_rightTop.y(); }   // y max
+  inline float const bottom() const { return m_leftBottom.y(); } // y min
+
+  // Setters
+  inline void SetBorder(Box2D const & box)
+  {
+    this->m_leftBottom = box.m_leftBottom;
+    this->m_rightTop = box.m_rightTop;
+    Swap();
+  }
 
   // Logical operators
   bool operator == (Box2D const & obj) const
@@ -191,15 +202,17 @@ public:
     return !( P.y() < bottom() || P.y() > top() || right() < P.x() || left() > P.x() );
   }
 
-  void HorizontalShift(float shift)
+  void HorizontalShift(float const shift)
   {
-    m_leftBottom.x() += shift;
-    m_rightTop.x() += shift;
+    m_leftBottom.SetX(m_leftBottom.x() + shift);
+    m_rightTop.SetX(m_rightTop.x() + shift);
+    Swap();
   }
-  void VerticalShift(float shift)
+  void VerticalShift(float const shift)
   {
-    m_leftBottom.y() += shift;
-    m_rightTop.y() += shift;
+    m_leftBottom.SetY(m_leftBottom.y() + shift);
+    m_rightTop.SetY(m_rightTop.y() + shift);
+    Swap();
   }
 
   // Redefinition
@@ -233,7 +246,9 @@ private:
 
     if (left() > right() || bottom() > top())
     {
-       std::swap(m_leftBottom.y(), m_rightTop.y());
+      float const temp = m_leftBottom.y();
+      m_leftBottom.SetY(m_rightTop.y());
+      m_rightTop.SetY(temp);
     }
   }
 

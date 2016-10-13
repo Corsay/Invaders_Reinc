@@ -13,45 +13,58 @@ public:
   // need
 
 
-  // Logical operators
-  // don't know need or not (?!)
-
-
-  // Math operations
-  // don't know need or not (?!)
-
+  // Getters
+  inline size_t const GetCountOfAlienBullets() const { return m_fromAlien.size(); }
+  inline size_t const GetCountOfGunBullets() const   { return m_fromGun.size(); }
 
   // Capabilities
-  NewAlienBullet(Bullet2D bullet)
-  {
-      m_fromAlien.push_back();
-  }
-  NewAlienBullet(Bullet2D bullet)
-  {
-      m_fromGun.push_back();
-  }
-  CheckAllBullets(vector< vector<Alien2D *>& aliens, Gun & gun)
+  /*
+  CheckAllBullets(vector<vector<Alien2D *>> & aliens, Gun2D & gun)
   {
 
   }
+  */
 
+  bool NewBullet(Bullet2D const & bullet, int Type)
+  {
+    switch (Type)
+    case 0: // gun bullet
+    {
+      m_fromGun.push_back(bullet);
+      break;
+    }
+    case 1: // alien bullet
+    {
+      m_fromAlien.push_back(bullet);
+      break;
+    }
+    default:
+    {
+      return false; // error undefined type
+    }
+    return true; //allright
+  }
 
   void BulletsMove()
   {
-    for(auto it = m_fromAlien.begin(); it != m_fromGun; it++)
+    for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); it++)
       it->VerticalShift(-BULLET_SPEED_START);
 
-    for(auto it = m_fromGun.begin(); it != m_fromGun; it++)
+    for(auto it = m_fromGun.begin(); it != m_fromGun.end(); it++)
       it->VerticalShift(BULLET_SPEED_START);
-
   }
 
   // Redefinition
-  // square brackets
-private:
-  bool Check(Alien2D * alien)
+  /*Bullet2D * operator[](unsigned int i)
   {
-    for(auto it = m_fromAlien.begin(); it != m_fromGun; it++)
+    if (i <= m_fromAlien.size()) return m_alience[i];
+    return vector<Alien2D *>;
+  }*/
+private:
+
+  /*bool Check(Alien2D * alien)
+  {
+    for(auto it = m_fromGun.begin(); it != m_fromGun.end(); it++)
       if(*it && *alien)
       {
         if( *alien.GetHealth() <= BULLET_DAMAGE_START)
@@ -72,7 +85,7 @@ private:
   }
   bool Check(Gun & gun)
   {
-    for(auto it = m_fromGun.begin(); it != m_fromGun; it++)
+    for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); it++)
       if(*it && gun)
       {
         if( gun.GetHealth() <= BULLET_DAMAGE_START)
@@ -89,7 +102,7 @@ private:
         //пересечение с препятствием/ями
       }
     return false;
-  }
+  }*/
 
   list<Bullet2D> m_fromAlien;
   list<Bullet2D> m_fromGun;

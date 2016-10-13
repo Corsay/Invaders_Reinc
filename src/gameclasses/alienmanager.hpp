@@ -12,15 +12,15 @@ public:
   // Constructors with parameters.
   Alien2DManager(int const countRow, int const countColumn, int const level)
   {
-    //в зависимости от значения переменной level будут генерироваться разные волны пришельцев
+    // в зависимости от значения переменной level будут генерироваться разные волны пришельцев
     m_liveAliensCount = countRow * countColumn;
 
     m_aliens.reserve(countRow);
-    for (int i=0; i<countRow; i++)
+    for (int i = 0; i < countRow; i++)
     {
       m_aliens[i].reserve(countColumn);
-      for(int j=0; j<countColumn; j++)
-        m_aliens[i][j]=new Alien
+      for(int j = 0; j < countColumn; j++)
+        m_aliens[i][j] = new Alien2D
         (
           Point2D
           {
@@ -36,61 +36,30 @@ public:
           ALIEN_SPEED_SHOOT_START
         );
     }
-
   }
-
 
 
   // Getters
-  // all getters for new fields
-  /*Alien2D * GetAlien(unsigned int i, unsigned int j)
-  {
-    if(i>=m_aliens.size() || j>=m_aliens[0].size())
-      return ALien{};
-    return *(m_aliens[i][j]);
-  }*/
-  Alien2D* operator[](unsigned int i)
-  {
-    if(i > m_aliens.size())
-      return m_alience[i];
-    return vector<Alien2D *>;
-  }
-  int const GetCountRows(){ return m_aliens.size(); }
-  int const GetCountColumn(){ return m_aliens[0].size(); }
-
-  // Setters
-  // all settsers for new fields
-
-
-  // Logical operators
-  // don't know need or not (?!)
-
-
-  // Assignment operator.
-  // can be useful =
-
-
-  // Move operator
-  // not need
-
-
-  // Math operations
-  // don't know need or not (?!)
-
+  inline int const getliveAliensCount() const { return m_liveAliensCount; }
+  inline int const getCountOfRows() const     { return m_aliens.size(); }
+  inline int const getCountOfColumn() const   { return m_aliens[0].size(); }
 
   // Capabilities
-  bool AlienMove()
+  bool AliensMove(Box2D const & border)
   {
-    static short StepSign = -1;
+    static short stepSign = -1;
     //отслеживать достижение границ
     //при достижении границы сменить знак и сдвинуться вниз
 
     for(int i = 0; i < m_aliens.size(); i++)
       for(int j = 0; j < m_aliens[0].size(); j++)
-        m_aliens->HorizontalShift(StepSign * ALIENT_HORIZONTAL_STEP);
+        m_aliens->HorizontalShift(stepSign * ALIENT_HORIZONTAL_STEP);
+  }
 
-
-
+  Alien2D GetShooter(Box2D const & gunBorder)
+  {
+    // chosing by AI(Artificial intelligence) who will be shoot
+    return m_aliens[0][0];  // default
   }
 
   // need to add function:
@@ -100,10 +69,14 @@ public:
 
 
   // Redefinition
-  // square brackets
+  /*Alien2D * operator[](unsigned int i)
+  {
+    if (i <= m_aliens.size()) return m_aliens[i];
+    return vector<Alien2D *>;
+  }*/
 private:
 
-  vector< vector<Alien2D *> > m_aliens;      // matrix of Aliens
+  std::vector< std::vector<Alien2D *> > m_aliens;      // matrix of Aliens
   // m_liveAliensCount == 0 - level passed
   // -> destroy AlienManager
   int m_liveAliensCount = 5;

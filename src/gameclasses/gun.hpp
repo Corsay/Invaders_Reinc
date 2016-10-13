@@ -18,37 +18,17 @@ public:
   void operator = (Gun2D const & clone) = delete;
 
   // Getters
-  inline float const getHealth() const { return m_health; }
-  inline float const getSpeedShoot() const { return m_speedShoot; }
+  inline float const GetHealth() const     { return m_health; }
+  inline float const GetSpeedShoot() const { return m_speedShoot; }
   // Setters
-  inline void setHealth(float const new_health) { m_health = new_health; }
-  inline void setSpeedShoot(float const new_speedShoot) { m_health = new_speedShoot; }
-
-  // Logical operators
-  // don't know need or not (?!)
-
-
-  // Math operations
-  // don't know need or not (?!)
-
+  inline void SetHealth(float const new_health)         { m_health = new_health; }
+  inline void SetSpeedShoot(float const new_speedShoot) { m_health = new_speedShoot; }
 
   // Capabilities
-  Bullet2D& Shoot()
+  void Move()
   {
-    Point2D start = this->GetCenter();
-    Bullet2D bullet(
-      Point2D{start.x()-BULLET_WIDTH/2, start.y()-BULLET_HEIGHT/2},
-      Point2D{start.x()+BULLET_WIDTH/2, start.y()+BULLET_HEIGHT/2},
-      BULLET_DAMAGE_START,
-      BULLET_SPEED_START
-    );
-    return bullet;
+
   }
-
-
-
-  // Redefinition
-  // square brackets
 private:
   // Box2D
   // leftBottom() - left bottom point of the gun
@@ -58,7 +38,6 @@ private:
   // IsAlive == false - defeat
   // -> destroy gun
 
-  // GunType m_gunType=First;
-  float m_health = GUN_HEALTH_START; // - health of the gun
+  float m_health = GUN_HEALTH_START;            // - health of the gun
   float m_speedShoot = GUN_SPEED_SHOOT_START;   // - shoot speed
 };
