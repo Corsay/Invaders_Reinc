@@ -8,6 +8,9 @@ public:
   // Allow default constructor.
   Box2D() = default;
 
+  // Default destructor.
+  ~Box2D() = default;
+
   // Constructors with parameters.
   Box2D(Point2D const leftBottom, Point2D const rightTop)
     : m_leftBottom(leftBottom), m_rightTop(rightTop)

@@ -1,17 +1,22 @@
 #pragma once
 
 #include "bullet.hpp"
+#include "gun.hpp"
+#include "alien.hpp"
 #include <list>
 
 class Bullet2DManager
 {
 public:
-  // Allow default constructor.
+  // constructor.
   Bullet2DManager() = default;
 
-  // Constructors with parameters.
-  // need
+  // destructor.
+  ~Bullet2DManager() = default;
 
+  // no copy constructor and assignment operator
+  Bullet2DManager(Bullet2DManager const & obj) = delete;
+  void operator = (Bullet2DManager const & obj) = delete;
 
   // Getters
   inline size_t const GetCountOfAlienBullets() const { return m_fromAlien.size(); }
@@ -28,38 +33,37 @@ public:
   bool NewBullet(Bullet2D const & bullet, int Type)
   {
     switch (Type)
-    case 0: // gun bullet
     {
-      m_fromGun.push_back(bullet);
-      break;
+      case 0: // gun bullet
+      {
+        m_fromGun.push_back(bullet);
+        break;
+      }
+      case 1: // alien bullet
+      {
+        m_fromAlien.push_back(bullet);
+        break;
+      }
+      default:
+      {
+        return false; // error undefined type
+      }
     }
-    case 1: // alien bullet
-    {
-      m_fromAlien.push_back(bullet);
-      break;
-    }
-    default:
-    {
-      return false; // error undefined type
-    }
-    return true; //allright
+    return true; // allright
   }
 
-  void BulletsMove()
+  void BulletsMove(Box2D const & border)
   {
     for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); it++)
+    {
       it->VerticalShift(-BULLET_SPEED_START);
+    }
 
     for(auto it = m_fromGun.begin(); it != m_fromGun.end(); it++)
+    {
       it->VerticalShift(BULLET_SPEED_START);
+    }
   }
-
-  // Redefinition
-  /*Bullet2D * operator[](unsigned int i)
-  {
-    if (i <= m_fromAlien.size()) return m_alience[i];
-    return vector<Alien2D *>;
-  }*/
 private:
 
   /*bool Check(Alien2D * alien)
@@ -104,6 +108,6 @@ private:
     return false;
   }*/
 
-  list<Bullet2D> m_fromAlien;
-  list<Bullet2D> m_fromGun;
+  std::list<Bullet2D> m_fromAlien;
+  std::list<Bullet2D> m_fromGun;
 };

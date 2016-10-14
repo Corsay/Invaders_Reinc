@@ -14,6 +14,9 @@ public:
   // Разрешаем конструирование по умолчанию.
   Point2D() = default;
 
+  // Default destructor.
+  ~Point2D() = default;
+
   // Конструктор копирования.
   Point2D(Point2D const & obj)
     : m_x(obj.m_x), m_y(obj.m_y)

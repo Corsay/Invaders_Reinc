@@ -7,38 +7,26 @@
 
 enum EntitiesTypes{Gun, Alien, Obstacle};
 
-class Space2D : public Box2D
+class Space2D final : public Box2D
 {
 public:
   // Allow default constructor.
   Space2D() = default;
 
+  // Default destructor.
+  ~Space2D() = default;
+
   // Constructors with parameters.
   Space2D(Point2D left_bottom, Point2D right_top)
     :Box2D(left_bottom, right_top)
-  {
-    // initialize all inside fields
-  }
-
-  // Getters
-  // all getters for new fields
-
-
-  // Setters
-  // all setters for new fields
-
+  {}
 
   // Capabilities
-  // при выстреле вызывается m_bulletManager.NewAlienBullet(m_gun.Shoot());
-  // то есть пуля передается в мэнджер
-  // тип пули фомируется на основе типа пушки/пришельца до мэнеджера
-  // каждую n-ую часть секунды проверяются пуди на пересечение
-
   void AlienShoot()
   {
-    Alien2D alien = m_alienManager.GetShooter(m_gun.getBorder());
-    Point2D start = alien.GetCenter();
-    start.setY(alien.top());
+    Alien2D * alien = m_alienManager.GetShooter(m_gun.GetBorder());
+    Point2D start = alien->GetCenter();
+    start.SetY(alien->top());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
@@ -69,8 +57,8 @@ public:
   void CheckIntersections()
   {
     // check count of bullets in bulletManager
-    size_t countOfGunBullets = m_bulletManager.getCountOfGunBullets();
-    size_t countOfAlienBullets = m_bulletManager.getCountOfAlienBullets();
+    size_t countOfGunBullets = m_bulletManager.GetCountOfGunBullets();
+    size_t countOfAlienBullets = m_bulletManager.GetCountOfAlienBullets();
     // if count of alienBullets > 0 checkIntersections with Gun and Obstacles
     if (countOfAlienBullets > 0)
     {
@@ -96,7 +84,7 @@ public:
   void GameStep()
   {
     // move bullets
-    m_bulletManager.BulletsMove();
+    m_bulletManager.BulletsMove(this->GetBorder());
     // check intersections after bullets move
     CheckIntersections();
     // move aliens
@@ -108,7 +96,7 @@ public:
 
     // check game state
     unsigned int state = CheckGameState();  // return 0 -> allright game continued, else restart or game over
-    if (state);
+    if (state) {}
     // in the end of game step redraw game field
     RedrawSpace();
   }
@@ -117,23 +105,6 @@ public:
   {
     // redraw game field
   }
-
-  // function for input processing:............
-  // check m_gun state
-  // check m_alienManager state
-  // move gun (send command to function in gun)
-  // move aliens (standart moving or boss configuration moving) (send command to function in alienManager)
-  // move bullets (send command to function in bulletManager)
-
-  /*
-   * how can check bullets intersection with obstacle/gun/alien variant:
-   send m_bulletManager (if it state return nullptr(zero bullets strated))
-   too functions in m_obstacles (if it != nullptr) and m_alienManager (if it != nullptr) (if it == nullptr -> lvl passed)
-  */
-
-  // functions of frame update:...............
-  // redraw
-
 private:
 
   // Box2D
@@ -152,5 +123,5 @@ private:
   Bullet2DManager m_bulletManager;   // one bullet manager
   // m_obstacle == nullptr - destroyed all obstacles
   // -> nothing to do
-  Obstacle2D m_obstacles;            // vector of obstacles
+  std::list<Obstacle2D> m_obstacles; // list of obstacles
 };

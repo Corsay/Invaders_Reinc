@@ -1,6 +1,7 @@
 #pragma once
 
-//управление всеми параметрами игры из одного места
+// Game parameters management
+// for this time, later changed
 #define ALIEN_HEALTH_START      (50.0f)
 #define ALIEN_HEALTH_INC        (50.0f)
 #define ALIEN_SPEED_SHOOT_START (1.0f)
@@ -8,8 +9,8 @@
 #define AlIEN_WIDTH             (50.0f)
 #define ALIEN_HEIGHT            (40.0f)
 
-#define ALIEN_BOX_LEFT            (100.0f)  //левая граница мтрицы пришельцев на момент её построения
-#define ALIEN_BOX_TOP             (80.0f)   //верхняя граница
+#define ALIEN_BOX_LEFT            (100.0f)  // left border of aliensMatrix
+#define ALIEN_BOX_TOP             (80.0f)   // top border
 #define ALIEN_HORIZONTAL_DISTANCE (20.0f)
 #define ALIEN_VERTICAL_DISTANCE   (20.0f)
 #define ALIENT_HORIZONTAL_STEP    (15.0f)

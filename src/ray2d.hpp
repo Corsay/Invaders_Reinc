@@ -10,6 +10,9 @@ public:
   // Allow default constructor.
   Ray2D() = default;
 
+  // Default destructor.
+  ~Ray2D() = default;
+
   // Constructor with parameters.
   Ray2D(Point2D const origin, float const direction)
     :m_origin(origin),

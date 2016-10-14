@@ -26,6 +26,10 @@ set(PROJECT_TEST_NAME ${PROJECT_NAME}_test)
 include_directories(3party/googletest/googletest/include ${SOURCE_ROOT})
 # Set up testing project.
 set(TESTS_SOURCE_ROOT tests)
+# To display tests subfolder and its content in QT Creator.
+set(T_S_SOURCE_ROOT tests/gameclasses_tests)
+aux_source_directory(${T_S_SOURCE_ROOT} TEST_SRC_FILES)
+# Scan folder to find all test sources and put the result to TEST_SRC_FILES.
 aux_source_directory(${TESTS_SOURCE_ROOT} TEST_SRC_FILES)
 set(TEST_SRC_FILES ${SRC_LIST} ${TEST_SRC_FILES})
 list(REMOVE_ITEM TEST_SRC_FILES src/main.cpp)
