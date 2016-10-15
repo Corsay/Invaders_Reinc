@@ -5,33 +5,26 @@
 
 TEST(alien2dmanager_test, test_construction)
 {
-  // Тест на создание объекта по умолчанию.
-  Box2D b1;
-  EXPECT_EQ(b1.leftBottom(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.leftBottom().x(), 0.0f);
-  EXPECT_EQ(b1.leftBottom().y(), 0.0f);
-  EXPECT_EQ(b1.rightTop(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.rightTop().x(), 0.0f);
-  EXPECT_EQ(b1.rightTop().y(), 0.0f);
+  // default constructor
+  Alien2DManager am1;
+  EXPECT_EQ(am1.GetCountOfRows(), 5);
+  EXPECT_EQ(am1.GetCountOfColumn(), 11);
+  EXPECT_EQ(am1.GetLiveAliensCount(), 5*11);
 
-  // Тест на создание объекта с параметрами.
-  Box2D b2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
-  EXPECT_EQ(b2.leftBottom(), Point2D(1.2f, 2.4f));
-  EXPECT_EQ(b2.leftBottom().x(), 1.2f);
-  EXPECT_EQ(b2.leftBottom().y(), 2.4f);
-  EXPECT_EQ(b2.rightTop(), Point2D(2.4f, 4.8f));
-  EXPECT_EQ(b2.rightTop().x(), 2.4f);
-  EXPECT_EQ(b2.rightTop().y(), 4.8f);
+  // Constructors with parameters.
+  Alien2DManager am2 = {3, 7};
+  EXPECT_EQ(am2.GetCountOfRows(), 3);
+  EXPECT_EQ(am2.GetCountOfColumn(), 7);
+  EXPECT_EQ(am2.GetLiveAliensCount(), 3*7);
+}
 
-  Box2D b3 = { 1.0f, 2.2f, 0.0f, 1.0f };
-  EXPECT_EQ(b3.leftBottom(), Point2D(0.0f, 1.0f));
-  EXPECT_EQ(b3.leftBottom().x(), 0.0f);
-  EXPECT_EQ(b3.leftBottom().y(), 1.0f);
-  EXPECT_EQ(b3.rightTop(), Point2D(1.0f, 2.2f));
-  EXPECT_EQ(b3.rightTop().x(), 1.0f);
-  EXPECT_EQ(b3.rightTop().y(), 2.2f);
+TEST(alien2dmanager_test, test_assignment)
+{
+  /*Alien2DManager am1 = {5, 7};
+  //am1 = {5, 7};
+  //EXPECT_EQ(a1, Alien2DManager (Point2D(1.2f, 2.4f), Point2D(3.6f, 4.8f), ALIEN_HEALTH_START, ALIEN_SPEED_SHOOT_START));
 
-  // Тест на создание копии объекта.
-  Box2D b4 = b3;
-  EXPECT_EQ(b4, b3);
+  Alien2DManager am2;
+  am2 = am1;
+  EXPECT_EQ(am2, am1);*/
 }

@@ -16,7 +16,7 @@
 #define ALIENT_HORIZONTAL_STEP    (15.0f)
 
 
-#define GUN_LIVES_START         (5)
+#define GUN_LIVES_START         (3)
 #define GUN_HEALTH_START        (100.0f)
 #define GUN_HEALTH_INC          (50.0f)
 #define GUN_SPEED_SHOOT_START   (2.0f)

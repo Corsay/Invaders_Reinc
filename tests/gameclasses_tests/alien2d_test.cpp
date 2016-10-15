@@ -5,33 +5,38 @@
 
 TEST(alien2d_test, test_construction)
 {
-  // Тест на создание объекта по умолчанию.
-  Box2D b1;
-  EXPECT_EQ(b1.leftBottom(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.leftBottom().x(), 0.0f);
-  EXPECT_EQ(b1.leftBottom().y(), 0.0f);
-  EXPECT_EQ(b1.rightTop(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.rightTop().x(), 0.0f);
-  EXPECT_EQ(b1.rightTop().y(), 0.0f);
+  // default constructor
+  Alien2D a1;
+  EXPECT_EQ(a1.GetHealth(), ALIEN_HEALTH_START);
+  EXPECT_EQ(a1.GetSpeedShoot(), ALIEN_SPEED_SHOOT_START);
 
-  // Тест на создание объекта с параметрами.
-  Box2D b2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
-  EXPECT_EQ(b2.leftBottom(), Point2D(1.2f, 2.4f));
-  EXPECT_EQ(b2.leftBottom().x(), 1.2f);
-  EXPECT_EQ(b2.leftBottom().y(), 2.4f);
-  EXPECT_EQ(b2.rightTop(), Point2D(2.4f, 4.8f));
-  EXPECT_EQ(b2.rightTop().x(), 2.4f);
-  EXPECT_EQ(b2.rightTop().y(), 4.8f);
+  // Constructors with parameters.
+  Alien2D a2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
+  EXPECT_EQ(a2.GetHealth(), ALIEN_HEALTH_START);
+  EXPECT_EQ(a2.GetSpeedShoot(), ALIEN_SPEED_SHOOT_START);
 
-  Box2D b3 = { 1.0f, 2.2f, 0.0f, 1.0f };
-  EXPECT_EQ(b3.leftBottom(), Point2D(0.0f, 1.0f));
-  EXPECT_EQ(b3.leftBottom().x(), 0.0f);
-  EXPECT_EQ(b3.leftBottom().y(), 1.0f);
-  EXPECT_EQ(b3.rightTop(), Point2D(1.0f, 2.2f));
-  EXPECT_EQ(b3.rightTop().x(), 1.0f);
-  EXPECT_EQ(b3.rightTop().y(), 2.2f);
+  Alien2D a3 = { {5.2f, 8.4f}, {3.4f, 7.8f}, 55, 90 };
+  EXPECT_EQ(a3.GetHealth(), 55);
+  EXPECT_EQ(a3.GetSpeedShoot(), 90);
 
-  // Тест на создание копии объекта.
-  Box2D b4 = b3;
-  EXPECT_EQ(b4, b3);
+  // Setters test
+  a3.SetHealth(15);
+  a3.SetSpeedShoot(25);
+  EXPECT_EQ(a3.GetHealth(), 15);
+  EXPECT_EQ(a3.GetSpeedShoot(), 25);
+
+  // Copy constructor
+  Alien2D a4 = a2;
+  EXPECT_EQ(a4, a2);
+}
+
+TEST(alien2d_test, test_assignment)
+{
+  Alien2D a1;
+  a1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
+  EXPECT_EQ(a1, Alien2D (Point2D(1.2f, 2.4f), Point2D(3.6f, 4.8f), ALIEN_HEALTH_START, ALIEN_SPEED_SHOOT_START));
+
+  Alien2D a2;
+  a2 = a1;
+  EXPECT_EQ(a1, a2);
 }

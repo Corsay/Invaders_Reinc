@@ -9,27 +9,43 @@ public:
   // Allow default constructor.
   Alien2D() = default;
 
-  // Default destructor.
+  // Destructor.
   ~Alien2D() override = default;
 
   // Constructors with parameters.
+  Alien2D(Point2D leftBottom, Point2D rightTop)
+    :Box2D(leftBottom, rightTop)
+  {}
+
   Alien2D(Point2D leftBottom, Point2D rightTop, float health, float speedShoot)
     :Box2D(leftBottom, rightTop), m_health(health), m_speedShoot(speedShoot)
   {}
 
-  // no copy constructor and assignment operator
-  Alien2D(Alien2D const & obj) = delete;
-  void operator = (Alien2D const & obj) = delete;
+  // copy constructor and assignment operator
+  Alien2D(Alien2D const & obj)
+    :Box2D(obj.GetBorder()), m_health(obj.GetHealth()), m_speedShoot(obj.GetSpeedShoot())
+  {}
+  Alien2D & operator = (Alien2D const & obj)
+  {
+    if (this == &obj) return *this;
+    SetBorder(obj.GetBorder());
+    m_health = obj.GetHealth();
+    m_speedShoot = obj.GetSpeedShoot();
+    return *this;
+  }
 
   // Getters
   inline float const GetHealth() const     { return m_health; }
   inline float const GetSpeedShoot() const { return m_speedShoot; }
   // Setters
   inline void SetHealth(float const new_health)         { m_health = new_health; }
-  inline void SetSpeedShoot(float const new_speedShoot) { m_health = new_speedShoot; }
+  inline void SetSpeedShoot(float const new_speedShoot) { m_speedShoot = new_speedShoot; }
 
   // Capabilities
-  void Move() override {}
+  void Move() override
+  {
+    std::runtime_error("Not released.");
+  }
 private:
 
   float m_health = ALIEN_HEALTH_START;            // - health of the alien

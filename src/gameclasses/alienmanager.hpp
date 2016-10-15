@@ -3,6 +3,8 @@
 #include "alien.hpp"
 #include <vector>
 
+using AlienMatrix = std::vector< std::vector<Alien2D> >; // Alias
+
 class Alien2DManager
 {
 public:
@@ -12,79 +14,90 @@ public:
     CreateAlienMatrix(5, 11); // initialize default matrix
   }
 
-  // destructor.
+  // Destructor.
   ~Alien2DManager() = default;
 
   // Constructors with parameters.
-  Alien2DManager(int const countRow, int const countColumn)
+  Alien2DManager(size_t const countRow, size_t const countColumn)
   {
     CreateAlienMatrix(countRow, countColumn);
   }
 
-  // no copy constructor and assignment operator
+  // no copy constructor
   Alien2DManager(Alien2DManager const & obj) = delete;
-  void operator = (Alien2DManager const & obj) = delete;
-
-  // Getters
-  inline int const GetLiveAliensCount() const { return m_liveAliensCount; }
-  inline int const GetCountOfRows() const     { return m_aliens.size(); }
-  inline int const GetCountOfColumn() const   { return m_aliens[0].size(); }
-
-  // Setters
-  inline void SetliveAliensCount(int new_liveAliensCount) { m_liveAliensCount = new_liveAliensCount; }
-
-  // Capabilities
-  bool AliensMove(Box2D const & border)
+  // assignment operator (for next level reinit)
+  Alien2DManager & operator = (Alien2DManager const & obj)
   {
-    static short stepSign = -1;
-    //отслеживать достижение границ
-    //при достижении границы сменить знак и сдвинуться вниз
-
-    for(int i = 0; i < m_aliens.size(); i++)
-      for(int j = 0; j < m_aliens[i].size(); j++)
-      {
-        m_aliens[i][j]->HorizontalShift(stepSign * ALIENT_HORIZONTAL_STEP);
-      }
-
-    return true;
+    if (this == &obj) return *this;
+    m_aliens = obj.GetAlienMatrix();
+    m_liveAliensCount = obj.GetLiveAliensCount();
+    return *this;
   }
 
-  Alien2D * GetShooter(Box2D const & gunBorder)
+  // Getters
+  inline AlienMatrix const GetAlienMatrix() const { return m_aliens; }
+  inline size_t const GetLiveAliensCount() const  { return m_liveAliensCount; }
+  inline size_t const GetCountOfRows() const      { return m_aliens.size(); }
+  inline size_t const GetCountOfColumn() const
   {
-    // chosing by AI(Artificial intelligence) who will be shoot
+    try
+    {
+      return m_aliens[0].size();
+    }
+    catch (std::exception & exc)
+    {
+      return 0;
+    }
+  }
+
+  // Setters
+  inline void SetliveAliensCount(size_t new_liveAliensCount) { m_liveAliensCount = new_liveAliensCount; }
+
+  // Capabilities
+  void AliensMove(Box2D const & border)
+  {
+    std::runtime_error("Not released.");
+  }
+
+  Alien2D SelectShooter(Box2D const & gunBorder)
+  {
+    // chosing by game AI(Artificial intelligence) who will be shoot
     return m_aliens[0][0];  // default
   }
 private:
 
-  void CreateAlienMatrix(int const countRow, int const countColumn)
+  void CreateAlienMatrix(size_t const countRow, size_t const countColumn)
   {
     m_liveAliensCount = countRow * countColumn;
 
     m_aliens.reserve(countRow);
     for (int i = 0; i < countRow; i++)
     {
-      m_aliens[i].reserve(countColumn);
+      std::vector<Alien2D> temp_vect;
+      temp_vect.reserve(countColumn);
       for(int j = 0; j < countColumn; j++)
-        m_aliens[i][j] = new Alien2D
+        temp_vect.push_back
         (
-          Point2D
-          {
-            ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE),
-            ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE)
-          },
-          Point2D
-          {
-            ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + AlIEN_WIDTH,
-            ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE) + ALIEN_HEIGHT,
-          },
-          ALIEN_HEALTH_START,
-          ALIEN_SPEED_SHOOT_START
+          Alien2D
+          (
+            Point2D
+            {
+              ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE),
+              ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE)
+            },
+            Point2D
+            {
+              ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + AlIEN_WIDTH,
+              ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE) + ALIEN_HEIGHT,
+            },
+            ALIEN_HEALTH_START,
+            ALIEN_SPEED_SHOOT_START
+          )
         );
+      m_aliens.push_back(temp_vect);
     }
   }
 
-  std::vector< std::vector<Alien2D *> > m_aliens;      // matrix of Aliens
-  // m_liveAliensCount == 0 - level passed
-  // -> destroy AlienManager
-  int m_liveAliensCount = 5;
+  AlienMatrix m_aliens;          // matrix of Aliens
+  size_t m_liveAliensCount = 55; // count of live aliens
 };

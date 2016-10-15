@@ -5,33 +5,23 @@
 
 TEST(space2d_test, test_construction)
 {
-  // Тест на создание объекта по умолчанию.
-  Box2D b1;
-  EXPECT_EQ(b1.leftBottom(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.leftBottom().x(), 0.0f);
-  EXPECT_EQ(b1.leftBottom().y(), 0.0f);
-  EXPECT_EQ(b1.rightTop(), Point2D(0.0f, 0.0f));
-  EXPECT_EQ(b1.rightTop().x(), 0.0f);
-  EXPECT_EQ(b1.rightTop().y(), 0.0f);
+  // constructor
+  try
+  {
+    //Space2D s1;
+    //s1.CheckGameState();
+  }
+  catch (std::exception & e)
+  {
+    std::cout << e.what();
+  }
 
-  // Тест на создание объекта с параметрами.
-  Box2D b2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
-  EXPECT_EQ(b2.leftBottom(), Point2D(1.2f, 2.4f));
-  EXPECT_EQ(b2.leftBottom().x(), 1.2f);
-  EXPECT_EQ(b2.leftBottom().y(), 2.4f);
-  EXPECT_EQ(b2.rightTop(), Point2D(2.4f, 4.8f));
-  EXPECT_EQ(b2.rightTop().x(), 2.4f);
-  EXPECT_EQ(b2.rightTop().y(), 4.8f);
 
-  Box2D b3 = { 1.0f, 2.2f, 0.0f, 1.0f };
-  EXPECT_EQ(b3.leftBottom(), Point2D(0.0f, 1.0f));
-  EXPECT_EQ(b3.leftBottom().x(), 0.0f);
-  EXPECT_EQ(b3.leftBottom().y(), 1.0f);
-  EXPECT_EQ(b3.rightTop(), Point2D(1.0f, 2.2f));
-  EXPECT_EQ(b3.rightTop().x(), 1.0f);
-  EXPECT_EQ(b3.rightTop().y(), 2.2f);
+  // Constructors with parameters.
+  //Space2D s2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
 
-  // Тест на создание копии объекта.
-  Box2D b4 = b3;
-  EXPECT_EQ(b4, b3);
+  //Space2D s3 = { {5.2f, 8.4f}, {3.4f, 7.8f}};
+  //EXPECT_EQ(s3.GetBorder(), Box2D( Point2D(), Point2D()));
+
+
 }

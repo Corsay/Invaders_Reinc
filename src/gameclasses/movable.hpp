@@ -1,5 +1,6 @@
 #pragma once
 
+// testing multi-inheritance
 class Movable
 {
 public:

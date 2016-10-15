@@ -3,13 +3,19 @@
 #include "box2d.hpp"
 #include <vector>
 
+using BoxMatrix = std::vector< std::vector<Box2D *> >;  // Alias
+using HealthMatrix = std::vector< std::vector<float> >; // Alias
+
 class Obstacle2D : public Box2D
 {
 public:
   // Allow default constructor.
-  Obstacle2D() = default;
+  Obstacle2D()
+  {
+    FillBoxMatrix(5,11);
+  }
 
-  // destructor.
+  // Destructor.
   ~Obstacle2D() = default;
 
   // Constructors with parameters.
@@ -18,24 +24,23 @@ public:
   {}
 
   // Getters
-  inline int const GetTotalHealth() const { return m_totalHealth; }
+  inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
+  inline HealthMatrix const GetBoxexHealthMatrix() const { return m_boxesHealth; }
+  inline float const GetTotalHealth() const              { return m_totalHealth; }
+  inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
+  inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
   // Setters
   inline void SetTotalHealth(float const new_totalHealth) { m_totalHealth = new_totalHealth; }
 
 private:
 
-  // create matrix
-  void FillBoxMatrix()
+  // Fill m_boxes and m_boxesHealth Matrix
+  void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {
-
+    std::runtime_error("Not released.");
   }
 
-  std::vector< std::vector<Box2D *> > m_boxes;     // matrix of Boxes
-  std::vector< std::vector<float> > m_boxesHealth; // matrix of Boxes health;
-  // IsAlive == false - inform about need of call obstacle destructor
-  // -> destroy obstacle
+  BoxMatrix m_boxes;                           // matrix of Boxes
+  HealthMatrix m_boxesHealth;                  // matrix of Boxes health;
   float m_totalHealth = OBSTACLE_TOTAL_HEALTH;
-    // - health of all parts of obstacle
-    // to get health of one part of obstacle need to divide health of obstacle on count of parts
-    // this is need to create m_entities with correct health
 };

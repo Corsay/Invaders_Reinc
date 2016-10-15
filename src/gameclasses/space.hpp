@@ -13,7 +13,7 @@ public:
   // Allow default constructor.
   Space2D() = default;
 
-  // Default destructor.
+  // Destructor.
   ~Space2D() = default;
 
   // Constructors with parameters.
@@ -22,26 +22,12 @@ public:
   {}
 
   // Capabilities
-  void AlienShoot()
+  void GunMove()  // if add manager this code can be replaced, because later added keypress
   {
-    Alien2D * alien = m_alienManager.GetShooter(m_gun.GetBorder());
-    Point2D start = alien->GetCenter();
-    start.SetY(alien->top());
-    Bullet2D bullet(
-      Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
-      Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
-      BULLET_DAMAGE_START,
-      BULLET_SPEED_START
-    );
-    m_bulletManager.NewBullet(bullet, Alien);
+    std::runtime_error("Not released.");
   }
 
-  void GunMove() // keypress
-  {
-
-  }
-
-  void GunShoot() // keypress
+  void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
     Point2D start = m_gun.GetCenter();
     start.SetY(m_gun.top());
@@ -54,6 +40,20 @@ public:
     m_bulletManager.NewBullet(bullet, Gun);
   }
 
+  void AlienShoot()
+  {
+    Alien2D alien = m_alienManager.SelectShooter(m_gun.GetBorder());
+    Point2D start = alien.GetCenter();
+    start.SetY(alien.top());
+    Bullet2D bullet(
+      Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
+      Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
+      BULLET_DAMAGE_START,
+      BULLET_SPEED_START
+    );
+    m_bulletManager.NewBullet(bullet, Alien);
+  }
+
   void CheckIntersections()
   {
     // check count of bullets in bulletManager
@@ -62,66 +62,52 @@ public:
     // if count of alienBullets > 0 checkIntersections with Gun and Obstacles
     if (countOfAlienBullets > 0)
     {
-        // send gun and all obstacles to function in m_bulletManager
+        std::runtime_error("Not full released.");
+        // send gun and all obstacles to functions in m_bulletManager
     }
     // if count of gunBullets > 0 checkIntersections with Aliens and Obstacles
     if (countOfGunBullets > 0)
     {
-        // send aliens and all obstacles to function in m_bulletManager
+        std::runtime_error("Not full released.");
+        // send aliens and all obstacles to functions in m_bulletManager
     }
   }
 
   unsigned int CheckGameState()
   {
-    if (m_alienManager.GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed
+    if (m_alienManager.GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
     if (m_gun.GetHealth() <= 0) return 2;
-    // gun dead once       - level restart (if gun_lives > 0)   // THIS INFORMATION(gun_lives) CONTAINS NOT HERE AND NOT IN GUN
-    // gun dead last time  - game over     (if gun_lives <= 0)  // THIS INFORMATION(gun_lives) CONTAINS NOT HERE AND NOT IN GUN
+    // gun dead once       - level restart (if gun_lives > 0)
+    // gun dead last time  - game over     (if gun_lives <= 0)
 
     return 0; // game continued
   }
 
   void GameStep()
   {
-    // move bullets
-    m_bulletManager.BulletsMove(this->GetBorder());
-    // check intersections after bullets move
-    CheckIntersections();
-    // move aliens
-    m_alienManager.AliensMove(this->GetBorder());  // AI move aliens
-    // check intersections because aliens moved and it can intersect with bullets
-    CheckIntersections();
-
-    // shoot by aliens (I thing what this must be in timer(AI param))
-
-    // check game state
-    unsigned int state = CheckGameState();  // return 0 -> allright game continued, else restart or game over
-    if (state) {}
-    // in the end of game step redraw game field
-    RedrawSpace();
+    std::runtime_error("Not released.");
   }
 
   void RedrawSpace()
   {
+    std::runtime_error("Not released.");
     // redraw game field
+  }
+
+  void NewLvlPrepare(size_t const lvl)
+  {
+    std::runtime_error("Not released.");
+    // configure space class fields for new lvl
   }
 private:
 
-  // Box2D
-  // leftBottom() - left bottom point of the gun
-  // rightTop()   - right top point of the gun
-  // left()       - left/right/top/bottom border of all game space, if one of the next objects leave space(like bullets), it destroy
+  void FillObcstaclesList(size_t const count) // if add obstacles manager this code can be replaced
+  {
+    std::runtime_error("Not released.");
+  }
 
-  // m_gun == nullptr -> level failed (game over or restart level, because gun was destroyed by alien)
-  // -> destroy Space
-  Gun2D m_gun;                       // one gun
-  // m_alienManager == nullptr -> level passed (go to the next level or game succesfull finished, because all aliens on current level destroyed)
-  // -> destroy space
-  Alien2DManager m_alienManager;     // one alien manager
-  // m_bulletManager == nullptr -> incorrect work of the classes
-  // -> destroyed only then destroyed space
-  Bullet2DManager m_bulletManager;   // one bullet manager
-  // m_obstacle == nullptr - destroyed all obstacles
-  // -> nothing to do
-  std::list<Obstacle2D> m_obstacles; // list of obstacles
+  Gun2D m_gun;                       // one gun            // maybe create manager(for multiplayer game mode)
+  Alien2DManager m_alienManager;     // one alien manager  // maybe create something like Factory in it
+  Bullet2DManager m_bulletManager;   // one bullet manager // maybe create something like Factory in it
+  std::list<Obstacle2D> m_obstacles; // list of obstacles  // maybe create manager and something like Factory in it
 };
