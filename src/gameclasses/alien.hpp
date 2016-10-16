@@ -38,8 +38,8 @@ public:
   inline float const GetHealth() const     { return m_health; }
   inline float const GetSpeedShoot() const { return m_speedShoot; }
   // Setters
-  inline void SetHealth(float const new_health)         { m_health = new_health; }
-  inline void SetSpeedShoot(float const new_speedShoot) { m_speedShoot = new_speedShoot; }
+  inline void SetHealth(float const newHealth)         { m_health = newHealth; }
+  inline void SetSpeedShoot(float const newSpeedShoot) { m_speedShoot = newSpeedShoot; }
 
   // Capabilities
   void Move() override

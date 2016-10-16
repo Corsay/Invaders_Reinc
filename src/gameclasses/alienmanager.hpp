@@ -3,7 +3,8 @@
 #include "alien.hpp"
 #include <vector>
 
-using AlienMatrix = std::vector< std::vector<Alien2D> >; // Alias
+using AlienVector = std::vector<Alien2D>;     // Alias
+using AlienMatrix = std::vector<AlienVector>; // Alias
 
 class Alien2DManager
 {
@@ -38,20 +39,10 @@ public:
   inline AlienMatrix const GetAlienMatrix() const { return m_aliens; }
   inline size_t const GetLiveAliensCount() const  { return m_liveAliensCount; }
   inline size_t const GetCountOfRows() const      { return m_aliens.size(); }
-  inline size_t const GetCountOfColumn() const
-  {
-    try
-    {
-      return m_aliens[0].size();
-    }
-    catch (std::exception & exc)
-    {
-      return 0;
-    }
-  }
+  inline size_t const GetCountOfColumn() const    { return m_aliens[0].size(); }
 
   // Setters
-  inline void SetliveAliensCount(size_t new_liveAliensCount) { m_liveAliensCount = new_liveAliensCount; }
+  inline void SetliveAliensCount(size_t newLiveAliensCount) { m_liveAliensCount = newLiveAliensCount; }
 
   // Capabilities
   void AliensMove(Box2D const & border)
@@ -71,12 +62,12 @@ private:
     m_liveAliensCount = countRow * countColumn;
 
     m_aliens.reserve(countRow);
-    for (int i = 0; i < countRow; i++)
+    for (size_t i = 0; i < countRow; ++i)
     {
-      std::vector<Alien2D> temp_vect;
-      temp_vect.reserve(countColumn);
-      for(int j = 0; j < countColumn; j++)
-        temp_vect.push_back
+      std::vector<Alien2D> tempVect;
+      tempVect.reserve(countColumn);
+      for(size_t j = 0; j < countColumn; ++j)
+        tempVect.push_back
         (
           Alien2D
           (
@@ -94,7 +85,7 @@ private:
             ALIEN_SPEED_SHOOT_START
           )
         );
-      m_aliens.push_back(temp_vect);
+      m_aliens.push_back(tempVect);
     }
   }
 

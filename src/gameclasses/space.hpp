@@ -17,8 +17,8 @@ public:
   ~Space2D() = default;
 
   // Constructors with parameters.
-  Space2D(Point2D left_bottom, Point2D right_top)
-    :Box2D(left_bottom, right_top)
+  Space2D(Point2D leftBottom, Point2D rightTop)
+    :Box2D(leftBottom, rightTop)
   {}
 
   // Capabilities

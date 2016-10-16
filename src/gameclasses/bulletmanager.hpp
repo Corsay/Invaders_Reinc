@@ -29,9 +29,9 @@ public:
 
   // Getters
   inline BulletList const GetBulletsFromAliensList() const { return m_fromAlien; }
-  inline BulletList const GetBulletsFromGunList() const { return m_fromGun; }
-  inline size_t const GetCountOfAlienBullets() const { return m_fromAlien.size(); }
-  inline size_t const GetCountOfGunBullets() const   { return m_fromGun.size(); }
+  inline BulletList const GetBulletsFromGunList() const    { return m_fromGun; }
+  inline size_t const GetCountOfAlienBullets() const       { return m_fromAlien.size(); }
+  inline size_t const GetCountOfGunBullets() const         { return m_fromGun.size(); }
 
   // Capabilities
   bool CheckAllInterections()

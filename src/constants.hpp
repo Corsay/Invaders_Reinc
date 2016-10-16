@@ -17,13 +17,19 @@
 
 
 #define GUN_LIVES_START         (3)
-#define GUN_HEALTH_START        (100.0f)
+#define GUN_HEALTH_START        (50.0f)
 #define GUN_HEALTH_INC          (50.0f)
 #define GUN_SPEED_SHOOT_START   (2.0f)
 #define GUN_SPEED_SHOOT_INC     (0.7f)
 
 
-#define OBSTACLE_TOTAL_HEALTH   (500.0f)
+#define OBSTACLE_BOX_LEFT       (100.0f)
+#define OBSTACLE_BOX_BOTTOM     (80.0f)
+#define OBSTACLE_WIDTH          (100.0f)
+#define OBSTACLE_HEIGHT         (100.0f)
+#define OBSTACLE_PART_WIDTH     (10.0f)
+#define OBSTACLE_PART_HEIGHT    (10.0f)
+#define OBSTACLE_TOTAL_HEALTH   (250.0f)
 #define OBSTACLE_MIN_PARTS      (10)
 
 

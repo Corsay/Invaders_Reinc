@@ -13,12 +13,12 @@ public:
   ~Gun2D() override = default;
 
   // Constructors with parameters.
-  Gun2D(Point2D left_bottom, Point2D right_top)
-    :Box2D(left_bottom, right_top)
+  Gun2D(Point2D leftBottom, Point2D rightTop)
+    :Box2D(leftBottom, rightTop)
   {}
 
-  Gun2D(Point2D left_bottom, Point2D right_top, size_t lives, float health, float speedShoot)
-    :Box2D(left_bottom, right_top), m_lives(lives), m_health(health), m_speedShoot(speedShoot)
+  Gun2D(Point2D leftBottom, Point2D rightTop, size_t lives, float health, float speedShoot)
+    :Box2D(leftBottom, rightTop), m_lives(lives), m_health(health), m_speedShoot(speedShoot)
   {}
 
   // copy constructor and assignment operator
@@ -41,10 +41,10 @@ public:
   inline float const GetHealth() const     { return m_health; }
   inline float const GetSpeedShoot() const { return m_speedShoot; }
   // Setters
-  inline void SetLives(size_t const new_lives)          { m_lives = new_lives; }
-  inline void SetRate(float const new_gunRate)          { m_gunRate = new_gunRate; }
-  inline void SetHealth(float const new_health)         { m_health = new_health; }
-  inline void SetSpeedShoot(float const new_speedShoot) { m_speedShoot = new_speedShoot; }
+  inline void SetLives(size_t const newLives)          { m_lives = newLives; }
+  inline void SetRate(float const newGunRate)          { m_gunRate = newGunRate; }
+  inline void SetHealth(float const newHealth)         { m_health = newHealth; }
+  inline void SetSpeedShoot(float const newSpeedShoot) { m_speedShoot = newSpeedShoot; }
 
   // Capabilities
   void Move() override

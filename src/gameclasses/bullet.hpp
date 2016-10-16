@@ -13,12 +13,12 @@ public:
   ~Bullet2D() override = default;
 
   // Constructors with parameters.
-  Bullet2D(Point2D left_bottom, Point2D right_top)
-    :Box2D(left_bottom, right_top)
+  Bullet2D(Point2D leftBottom, Point2D rightTop)
+    :Box2D(leftBottom, rightTop)
   {}
 
-  Bullet2D(Point2D left_bottom, Point2D right_top, float damage, float speed)
-    :Box2D(left_bottom, right_top), m_damage(damage), m_speed(speed)
+  Bullet2D(Point2D leftBottom, Point2D rightTop, float damage, float speed)
+    :Box2D(leftBottom, rightTop), m_damage(damage), m_speed(speed)
   {}
 
   // copy constructor and assignment operator
@@ -38,8 +38,8 @@ public:
   inline float const GetDamage() const { return m_damage; }
   inline float const GetSpeed() const  { return m_speed; }
   // Setters
-  inline void SetDamage(float const new_damage) { m_damage = new_damage; }
-  inline void SetSpeed(float const new_speed)   { m_speed = new_speed; }
+  inline void SetDamage(float const newDamage) { m_damage = newDamage; }
+  inline void SetSpeed(float const newSpeed)   { m_speed = newSpeed; }
 
   // Capabilities
   void Move() override
