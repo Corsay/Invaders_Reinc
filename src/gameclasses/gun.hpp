@@ -3,7 +3,7 @@
 #include "box2d.hpp"
 #include "movable.hpp"
 
-class Gun2D : public Box2D, Movable
+class Gun2D : public Box2D, public Movable
 {
 public:
   // Allow default constructor.
@@ -13,11 +13,11 @@ public:
   ~Gun2D() override = default;
 
   // Constructors with parameters.
-  Gun2D(Point2D leftBottom, Point2D rightTop)
+  Gun2D(Point2D const & leftBottom, Point2D const & rightTop)
     :Box2D(leftBottom, rightTop)
   {}
 
-  Gun2D(Point2D leftBottom, Point2D rightTop, size_t lives, float health, float speedShoot)
+  Gun2D(Point2D const & leftBottom, Point2D const & rightTop, size_t lives, float health, float speedShoot)
     :Box2D(leftBottom, rightTop), m_lives(lives), m_health(health), m_speedShoot(speedShoot)
   {}
 
@@ -25,6 +25,7 @@ public:
   Gun2D(Gun2D const & obj)
     :Box2D(obj.GetBorder()), m_lives(obj.GetLives()), m_health(obj.GetHealth()), m_speedShoot(obj.GetSpeedShoot())
   {}
+
   Gun2D & operator = (Gun2D const & obj)
   {
     if (this == &obj) return *this;
@@ -49,7 +50,7 @@ public:
   // Capabilities
   void Move() override
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Gun2D::Move.");
   }
 private:
 

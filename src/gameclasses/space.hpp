@@ -5,8 +5,6 @@
 #include "bulletmanager.hpp"
 #include "obstacle.hpp"
 
-enum EntitiesTypes{Gun, Alien, Obstacle};
-
 class Space2D final : public Box2D
 {
 public:
@@ -17,14 +15,14 @@ public:
   ~Space2D() = default;
 
   // Constructors with parameters.
-  Space2D(Point2D leftBottom, Point2D rightTop)
+  Space2D(Point2D const & leftBottom, Point2D const & rightTop)
     :Box2D(leftBottom, rightTop)
   {}
 
   // Capabilities
   void GunMove()  // if add manager this code can be replaced, because later added keypress
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Space2D::GunMove.");
   }
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
@@ -62,13 +60,13 @@ public:
     // if count of alienBullets > 0 checkIntersections with Gun and Obstacles
     if (countOfAlienBullets > 0)
     {
-        std::runtime_error("Not full released.");
+        throw std::runtime_error("Not full released Space2D::CheckIntersections(WithGun).");
         // send gun and all obstacles to functions in m_bulletManager
     }
     // if count of gunBullets > 0 checkIntersections with Aliens and Obstacles
     if (countOfGunBullets > 0)
     {
-        std::runtime_error("Not full released.");
+        throw std::runtime_error("Not full released Space2D::CheckIntersections(WithAlien).");
         // send aliens and all obstacles to functions in m_bulletManager
     }
   }
@@ -85,25 +83,25 @@ public:
 
   void GameStep()
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Space2D::GameStep.");
   }
 
   void RedrawSpace()
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Space2D::RedrawSpace.");
     // redraw game field
   }
 
   void NewLvlPrepare(size_t const lvl)
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Space2D::NewLvlPrepare.");
     // configure space class fields for new lvl
   }
 private:
 
   void FillObcstaclesList(size_t const count) // if add obstacles manager this code can be replaced
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Space2D::FillObcstaclesList.");
   }
 
   Gun2D m_gun;                       // one gun            // maybe create manager(for multiplayer game mode)

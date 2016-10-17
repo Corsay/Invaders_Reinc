@@ -58,3 +58,9 @@ TEST(alien2dmanager_test, test_assignment)
   EXPECT_EQ(am2.GetAlienMatrix(), am1.GetAlienMatrix());
   EXPECT_EQ(am2.GetLiveAliensCount(), am1.GetLiveAliensCount());
 }
+
+TEST(alien2dmanager_test, test_throw)
+{
+  Alien2DManager am1;
+  EXPECT_THROW(am1.AliensMove(Box2D{}), std::runtime_error);
+}

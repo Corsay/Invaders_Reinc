@@ -23,13 +23,13 @@ public:
   ~Obstacle2D() = default;
 
   // Constructors with parameters.
-  Obstacle2D(Point2D leftBottom, Point2D rightTop, float totalHealth)
+  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth)
     :Box2D(leftBottom, rightTop), m_totalHealth(totalHealth)
   {
     FillBoxMatrix(1, 5);
   }
 
-  Obstacle2D(Point2D leftBottom, Point2D rightTop, float totalHealth, size_t const countRow, size_t const countColumn)
+  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth, size_t const countRow, size_t const countColumn)
     :Box2D(leftBottom, rightTop), m_totalHealth(totalHealth)
   {
     FillBoxMatrix(countRow, countColumn);
@@ -37,6 +37,7 @@ public:
 
   // no copy constructor
   Obstacle2D(Obstacle2D const & obj) = delete;
+
   // assignment operator
   Obstacle2D & operator = (Obstacle2D const & obj)
   {

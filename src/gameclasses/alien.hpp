@@ -3,7 +3,7 @@
 #include "box2d.hpp"
 #include "movable.hpp"
 
-class Alien2D : public Box2D, Movable
+class Alien2D : public Box2D, public Movable
 {
 public:
   // Allow default constructor.
@@ -13,11 +13,11 @@ public:
   ~Alien2D() override = default;
 
   // Constructors with parameters.
-  Alien2D(Point2D leftBottom, Point2D rightTop)
+  Alien2D(Point2D const & leftBottom, Point2D const & rightTop)
     :Box2D(leftBottom, rightTop)
   {}
 
-  Alien2D(Point2D leftBottom, Point2D rightTop, float health, float speedShoot)
+  Alien2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
     :Box2D(leftBottom, rightTop), m_health(health), m_speedShoot(speedShoot)
   {}
 
@@ -25,6 +25,7 @@ public:
   Alien2D(Alien2D const & obj)
     :Box2D(obj.GetBorder()), m_health(obj.GetHealth()), m_speedShoot(obj.GetSpeedShoot())
   {}
+
   Alien2D & operator = (Alien2D const & obj)
   {
     if (this == &obj) return *this;
@@ -44,7 +45,7 @@ public:
   // Capabilities
   void Move() override
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Alien2D::Move.");
   }
 private:
 

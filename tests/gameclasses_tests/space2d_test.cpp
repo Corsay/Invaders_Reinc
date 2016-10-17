@@ -16,3 +16,12 @@ TEST(space2d_test, test_construction)
   Space2D s3 = { {5.2f, 8.4f}, {3.4f, 7.8f}};
   EXPECT_EQ(s3.GetBorder(), Box2D( Point2D(5.2f, 8.4f), Point2D(3.4f, 7.8f)));
 }
+
+TEST(space2d_test, test_throw)
+{
+  Space2D s1;
+  EXPECT_THROW(s1.GameStep(), std::runtime_error);
+  EXPECT_THROW(s1.GunMove(), std::runtime_error);
+  EXPECT_THROW(s1.RedrawSpace(), std::runtime_error);
+  EXPECT_THROW(s1.NewLvlPrepare(1), std::runtime_error);
+}

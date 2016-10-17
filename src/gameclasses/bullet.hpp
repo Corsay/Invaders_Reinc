@@ -3,7 +3,7 @@
 #include "box2d.hpp"
 #include "movable.hpp"
 
-class Bullet2D : public Box2D, Movable
+class Bullet2D : public Box2D, public Movable
 {
 public:
   // Allow default constructor.
@@ -13,11 +13,11 @@ public:
   ~Bullet2D() override = default;
 
   // Constructors with parameters.
-  Bullet2D(Point2D leftBottom, Point2D rightTop)
+  Bullet2D(Point2D const & leftBottom, Point2D const & rightTop)
     :Box2D(leftBottom, rightTop)
   {}
 
-  Bullet2D(Point2D leftBottom, Point2D rightTop, float damage, float speed)
+  Bullet2D(Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
     :Box2D(leftBottom, rightTop), m_damage(damage), m_speed(speed)
   {}
 
@@ -25,6 +25,7 @@ public:
   Bullet2D(Bullet2D const & obj)
     :Box2D(obj.GetBorder()), m_damage(obj.GetDamage()), m_speed(obj.GetSpeed())
   {}
+
   Bullet2D & operator = (Bullet2D const & obj)
   {
     if (this == &obj) return *this;
@@ -44,7 +45,7 @@ public:
   // Capabilities
   void Move() override
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Bullet2D::Move.");
   }
 private:
 

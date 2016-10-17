@@ -26,6 +26,7 @@ public:
 
   // no copy constructor
   Alien2DManager(Alien2DManager const & obj) = delete;
+
   // assignment operator (for next level reinit)
   Alien2DManager & operator = (Alien2DManager const & obj)
   {
@@ -47,7 +48,7 @@ public:
   // Capabilities
   void AliensMove(Box2D const & border)
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Alien2DManager::AliensMove.");
   }
 
   Alien2D SelectShooter(Box2D const & gunBorder)
@@ -67,6 +68,7 @@ private:
       std::vector<Alien2D> tempVect;
       tempVect.reserve(countColumn);
       for(size_t j = 0; j < countColumn; ++j)
+      {
         tempVect.push_back
         (
           Alien2D
@@ -85,6 +87,7 @@ private:
             ALIEN_SPEED_SHOOT_START
           )
         );
+      }
       m_aliens.push_back(tempVect);
     }
   }

@@ -6,6 +6,7 @@
 #include <list>
 
 using BulletList = std::list<Bullet2D>; // Alias
+enum EntitiesTypes{Gun, Alien, Obstacle};
 
 class Bullet2DManager
 {
@@ -18,6 +19,7 @@ public:
 
   // no copy constructor
   Bullet2DManager(Bullet2DManager const & obj) = delete;
+
   // assignment operator (for next level reinit)
   Bullet2DManager & operator = (Bullet2DManager const & obj)
   {
@@ -36,25 +38,25 @@ public:
   // Capabilities
   bool CheckAllInterections()
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Bullet2DManager::CheckAllInterections.");
     return false;
   }
 
   void BulletsMove(Box2D const & border)
   {
-    std::runtime_error("Not released.");
+    throw std::runtime_error("Not released Bullet2DManager::BulletsMove.");
   }
 
-  bool NewBullet(Bullet2D const & bullet, int Type)
+  bool NewBullet(Bullet2D const & bullet, EntitiesTypes Type)
   {
     switch (Type)
     {
-      case 0: // gun bullet add
+      case Gun: // gun bullet add
       {
         m_fromGun.push_back(bullet);
         break;
       }
-      case 1: // alien bullet add
+      case Alien: // alien bullet add
       {
         m_fromAlien.push_back(bullet);
         break;

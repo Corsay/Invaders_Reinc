@@ -50,3 +50,9 @@ TEST(gun2d_test, test_assignment)
   g2 = g1;
   EXPECT_EQ(g1, g2);
 }
+
+TEST(gun2d_test, test_throw)
+{
+  Gun2D g1;
+  EXPECT_THROW(g1.Move(), std::runtime_error);
+}

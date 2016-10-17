@@ -35,6 +35,8 @@ public:
   }
 
   // Getters
+  inline float & x() { return m_x; }
+  inline float & y() { return m_y; }
   inline float const & x() const { return m_x; }
   inline float const & y() const { return m_y; }
 
@@ -133,8 +135,15 @@ public:
   // Деление на число.
   Point2D operator / (float scale)
   {
-    //TODO: обработать деление на 0.
-    return { m_x / scale, m_y / scale };
+    try
+    {
+      if (scale == 0) throw std::exception();
+      return { m_x / scale, m_y / scale };
+    }
+    catch (std::exception const & ex)
+    {
+      return {0, 0};
+    }
   }
 
   Point2D & operator += (Point2D const & obj)
@@ -174,10 +183,19 @@ public:
 
   Point2D & operator /= (float scale)
   {
-    //TODO: обработать деление на 0.
-    m_x /= scale;
-    m_y /= scale;
-    return *this;
+    try
+    {
+      if (scale == 0) throw std::exception();
+      m_x /= scale;
+      m_y /= scale;
+      return *this;
+    }
+    catch (std::exception const & ex)
+    {
+      m_x = 0;
+      m_y = 0;
+      return *this;
+    }
   }
 
   void HorizontalShift(float shift)

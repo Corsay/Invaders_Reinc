@@ -151,7 +151,6 @@ public:
 
   Box2D operator / (float scale)
   {
-    //TODO: обработать деление на 0.
     return
     {
       m_leftBottom / scale,
@@ -182,7 +181,6 @@ public:
 
   Box2D & operator /= (float scale)
   {
-    //TODO: обработать деление на 0.
     m_leftBottom /= scale;
     m_rightTop /= scale;
     return *this;
@@ -249,9 +247,7 @@ private:
 
     if (left() > right() || bottom() > top())
     {
-      float const temp = m_leftBottom.y();
-      m_leftBottom.SetY(m_rightTop.y());
-      m_rightTop.SetY(temp);
+      std::swap(m_leftBottom.y(), m_rightTop.y());
     }
   }
 
