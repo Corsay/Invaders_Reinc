@@ -1,19 +1,18 @@
 #pragma once
 
-#include "box2d.hpp"
+#include "moveEntity.hpp"
 #include <vector>
 
-using BoxVector = std::vector<Box2D>;           // Alias
+using BoxVector = std::vector<GameEntity2D>;    // Alias
 using BoxMatrix = std::vector<BoxVector>;       // Alias
-using HealthVector = std::vector<float>;        // Alias
-using HealthMatrix = std::vector<HealthVector>; // Alias
+
 
 class Obstacle2D : public Box2D
 {
 public:
   // constructor.
   Obstacle2D()
-  {   
+  {
     SetBorder(Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT)));
     m_totalHealth = OBSTACLE_TOTAL_HEALTH;
     FillBoxMatrix(1, 5);
@@ -43,14 +42,12 @@ public:
   {
     if (this == &obj) return *this;
     m_boxes = obj.GetBoxMatrix();
-    m_boxesHealth = obj.GetBoxesHealthMatrix();
     m_totalHealth = obj.GetTotalHealth();
     return *this;
   }
 
   // Getters
   inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
-  inline HealthMatrix const GetBoxesHealthMatrix() const { return m_boxesHealth; }
   inline float const GetTotalHealth() const              { return m_totalHealth; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
@@ -64,39 +61,36 @@ private:
     float healthOfPart = m_totalHealth / (countRow * countColumn);
 
     m_boxes.reserve(countRow);
-    m_boxesHealth.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
     {
       BoxVector tempBoxVect;
-      HealthVector tempBoxHealthVect;
       tempBoxVect.reserve(countColumn);
-      tempBoxHealthVect.reserve(countColumn);
       for(size_t j = 0; j < countColumn; ++j)
       {
         tempBoxVect.push_back
         (
-          Box2D
-          (
-            Point2D
+          GameEntity2D{
+            Box2D
             {
-              OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH,
-              OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH
-            },
-            Point2D
-            {
-              OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH + OBSTACLE_PART_WIDTH,
-              OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH + OBSTACLE_PART_HEIGHT,
+              Point2D
+              {
+                OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH,
+                OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH
+              },
+              Point2D
+              {
+                OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH + OBSTACLE_PART_WIDTH,
+                OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH + OBSTACLE_PART_HEIGHT,
+              }
             }
-          )
+            ,healthOfPart
+          }
         );
-        tempBoxHealthVect.push_back(healthOfPart);
       }
       m_boxes.push_back(tempBoxVect);
-      m_boxesHealth.push_back(tempBoxHealthVect);
     }
   }
 
   BoxMatrix m_boxes;                           // matrix of Boxes
-  HealthMatrix m_boxesHealth;                  // matrix of Boxes health;
   float m_totalHealth = OBSTACLE_TOTAL_HEALTH;
 };

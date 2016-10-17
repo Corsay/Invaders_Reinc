@@ -2,6 +2,7 @@
 
 #include "box2d.hpp"
 #include "movable.hpp"
+#include <cassert>
 
 class Bullet2D : public Box2D, public Movable
 {
@@ -19,12 +20,18 @@ public:
 
   Bullet2D(Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
     :Box2D(leftBottom, rightTop), m_damage(damage), m_speed(speed)
-  {}
+  {
+    assert(m_speed > 0);
+    assert(m_damage > 0);
+  }
 
   // copy constructor and assignment operator
   Bullet2D(Bullet2D const & obj)
     :Box2D(obj.GetBorder()), m_damage(obj.GetDamage()), m_speed(obj.GetSpeed())
-  {}
+  {
+    assert(m_speed > 0);
+    assert(m_damage > 0);
+  }
 
   Bullet2D & operator = (Bullet2D const & obj)
   {

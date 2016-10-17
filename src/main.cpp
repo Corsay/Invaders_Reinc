@@ -21,9 +21,10 @@ int main()
     Alien2DManager am1 ;
     am1 = {2, 3};
     AlienMatrix aMatrix = am1.GetAlienMatrix();
+
+    AlienVector temp_vect;
     for (auto it = aMatrix.begin(); it != aMatrix.end(); ++it)
     {
-      AlienVector temp_vect;
       temp_vect = *it;
       for(auto it2 = temp_vect.begin(); it2 != temp_vect.end(); ++it2)
       {
@@ -35,9 +36,10 @@ int main()
     Obstacle2D o1;
     cout << o1.GetBorder() << endl << endl;
     BoxMatrix bMatrix = o1.GetBoxMatrix();
+
+    BoxVector tempVect;
     for (size_t i = 0; i < bMatrix.size(); ++i)
     {
-      BoxVector tempVect;
       tempVect = bMatrix[i];
       for (size_t j = 0; j < tempVect.size(); ++j)
       {
@@ -47,7 +49,6 @@ int main()
     }
     for (auto it = bMatrix.begin(); it != bMatrix.end(); ++it)
     {
-      BoxVector tempVect;
       tempVect = *it;
       for(auto it2 = tempVect.begin(); it2 != tempVect.end(); ++it2)
       {
