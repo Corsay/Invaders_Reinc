@@ -1,11 +1,10 @@
 #pragma once
 
-#include "moveEntity.hpp"
+#include "lifegameentity.hpp"
 #include <vector>
 
 using BoxVector = std::vector<LifeGameEntity2D>;// Alias
 using BoxMatrix = std::vector<BoxVector>;       // Alias
-
 
 class Obstacle2D final : public LifeGameEntity2D
 {
@@ -13,9 +12,9 @@ public:
   // constructor.
   Obstacle2D()
   {
-    SetBorder(Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT)));
+    SetEntity(GameEntity2D{Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT))});
     FillBoxMatrix(1, 5);
-    m_health = OBSTACLE_TOTAL_HEALTH;
+    SetHealth(OBSTACLE_TOTAL_HEALTH);
   }
 
   // Destructor.
@@ -42,7 +41,7 @@ public:
   {
     if (this == &obj) return *this;
     m_boxes = obj.GetBoxMatrix();
-    m_health = obj.GetHealth();
+    SetHealth(obj.GetHealth());
     return *this;
   }
 
@@ -50,13 +49,11 @@ public:
   inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
-  // Setters
-
 private:
 
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {
-    float healthOfPart = m_health / (countRow * countColumn);
+    float healthOfPart = GetHealth() / (countRow * countColumn);
 
     m_boxes.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
@@ -80,8 +77,8 @@ private:
                 OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH + OBSTACLE_PART_WIDTH,
                 OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH + OBSTACLE_PART_HEIGHT,
               }
-            }
-            ,healthOfPart
+            },
+            healthOfPart
           }
         );
       }
@@ -89,5 +86,5 @@ private:
     }
   }
 
-  BoxMatrix m_boxes;                           // matrix of Boxes
+  BoxMatrix m_boxes;  // matrix of LifeGameEntityes
 };

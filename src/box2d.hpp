@@ -75,7 +75,6 @@ public:
   {
     this->m_leftBottom = box.m_leftBottom;
     this->m_rightTop = box.m_rightTop;
-    Swap();
   }
 
   // Logical operators

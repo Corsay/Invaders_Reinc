@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gameentity.hpp"
 #include "gun.hpp"
 #include "alienmanager.hpp"
 #include "bulletmanager.hpp"
@@ -27,8 +28,8 @@ public:
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
-    Point2D start = m_gun.GetBorder().GetCenter();
-    start.SetY(m_gun.GetBorder().top());
+    Point2D start = m_gun.GetBox().GetCenter();
+    start.SetY(m_gun.GetBox().top());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
@@ -40,9 +41,9 @@ public:
 
   void AlienShoot()
   {
-    Alien2D alien = m_alienManager.SelectShooter(m_gun.GetBorder().GetBorder());
-    Point2D start = alien.GetBorder().GetCenter();
-    start.SetY(alien.GetBorder().top());
+    Alien2D alien = m_alienManager.SelectShooter(m_gun.GetBox());
+    Point2D start = alien.GetBox().GetCenter();
+    start.SetY(alien.GetBox().top());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},

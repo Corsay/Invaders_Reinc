@@ -7,20 +7,20 @@ TEST(obstacle2d_test, test_construction)
 {
   // Constructor
   Obstacle2D o1;
-  EXPECT_EQ(o1.GetBorder(), Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT)));
+  EXPECT_EQ(o1.GetBox(), Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT)));
   EXPECT_EQ(o1.GetHealth(), OBSTACLE_TOTAL_HEALTH);
   EXPECT_EQ(o1.GetCountOfRows(), 1);
   EXPECT_EQ(o1.GetCountOfColumn(), 5);
 
 
   Obstacle2D o2 = {Point2D(0.0f, 0.0f), Point2D(100.0f, 100.0f), 500};
-  EXPECT_EQ(o2.GetBorder(), Box2D(Point2D(0.0f, 0.0f), Point2D(100.0f, 100.0f)));
+  EXPECT_EQ(o2.GetBox(), Box2D(Point2D(0.0f, 0.0f), Point2D(100.0f, 100.0f)));
   EXPECT_EQ(o2.GetHealth(), 500);
   EXPECT_EQ(o2.GetCountOfRows(), 1);
   EXPECT_EQ(o2.GetCountOfColumn(), 5);
 
   Obstacle2D o3 = {Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f), 500, 2, 4};
-  EXPECT_EQ(o3.GetBorder(), Box2D(Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f)));
+  EXPECT_EQ(o3.GetBox(), Box2D(Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f)));
   EXPECT_EQ(o3.GetHealth(), 500);
   EXPECT_EQ(o3.GetCountOfRows(), 2);
   EXPECT_EQ(o3.GetCountOfColumn(), 4);
@@ -39,7 +39,7 @@ TEST(obstacle2d_test, test_assignment)
     for (size_t j = 0; j < tempVect.size(); ++j)
     {
       // the same for Obstacle2D class
-      EXPECT_EQ(tempVect[j].GetBorder(),
+      EXPECT_EQ(tempVect[j].GetBox(),
         Box2D
         (
           Point2D

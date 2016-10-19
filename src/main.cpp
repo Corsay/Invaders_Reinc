@@ -28,13 +28,13 @@ int main()
       temp_vect = *it;
       for(auto it2 = temp_vect.begin(); it2 != temp_vect.end(); ++it2)
       {
-        cout << (*it2).GetBorder() << endl;
+        cout << (*it2).GetBox() << endl;
       }
       cout << endl;
     }
 
     Obstacle2D o1;
-    cout << o1.GetBorder() << endl << endl;
+    cout << o1.GetBox() << endl << endl;
     BoxMatrix bMatrix = o1.GetBoxMatrix();
 
     BoxVector tempVect;
@@ -43,7 +43,7 @@ int main()
       tempVect = bMatrix[i];
       for (size_t j = 0; j < tempVect.size(); ++j)
       {
-        cout << tempVect[j].GetBorder() << endl;
+        cout << tempVect[j].GetBox() << endl;
       }
       cout << endl;
     }
@@ -52,7 +52,7 @@ int main()
       tempVect = *it;
       for(auto it2 = tempVect.begin(); it2 != tempVect.end(); ++it2)
       {
-        cout << (*it2).GetBorder() << endl;
+        cout << (*it2).GetBox() << endl;
       }
       cout << endl;
     }
