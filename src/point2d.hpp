@@ -4,7 +4,7 @@
 #include <initializer_list>
 #include <functional>
 #include <ostream>
-#include "constants.hpp"
+
 
 float const kEps = 1e-5;
 
@@ -137,7 +137,7 @@ public:
   {
     try
     {
-      if (scale == 0) throw std::exception();
+      if (scale == 0) throw std::invalid_argument("Zero Division");
       return { m_x / scale, m_y / scale };
     }
     catch (std::exception const & ex)
@@ -185,7 +185,7 @@ public:
   {
     try
     {
-      if (scale == 0) throw std::exception();
+      if (scale == 0) throw std::invalid_argument("Zero Division");
       m_x /= scale;
       m_y /= scale;
       return *this;

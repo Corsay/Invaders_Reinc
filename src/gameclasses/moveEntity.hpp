@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include "gameEntity.hpp"
+#include "LifeGameEntity.hpp"
 #include "movable.hpp"
 
-class MoveEntity2D : public GameEntity2D, public Movable
+class MoveEntity2D : public LifeGameEntity2D, public Movable
 {
 public:
   // Allow default constructor.
@@ -15,16 +15,16 @@ public:
 
   // Constructors with parameters.
   MoveEntity2D(Point2D const & leftBottom, Point2D const & rightTop)
-    :GameEntity2D(leftBottom, rightTop)
+    :LifeGameEntity2D(leftBottom, rightTop)
   {}
 
-  MoveEntity2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
-    :GameEntity2D(leftBottom, rightTop, health), m_speedShoot(speedShoot)
-  { assert(speedShoot >0 ); }
+  MoveEntity2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float Speed)
+    :LifeGameEntity2D(leftBottom, rightTop, health), m_Speed(Speed)
+  { assert(Speed >0 ); }
 
-  MoveEntity2D(Box2D newBox, float health, float speedShoot)
-    :GameEntity2D(newBox, health), m_speedShoot(speedShoot)
-  { assert(speedShoot >0 ); }
+  MoveEntity2D(Box2D newBox, float health, float Speed)
+    :LifeGameEntity2D(newBox, health), m_Speed(Speed)
+  { assert(Speed >0 ); }
 
 
   MoveEntity2D & operator = (MoveEntity2D const & obj)
@@ -32,14 +32,19 @@ public:
     if (this == &obj) return *this;
     SetBorder(obj.GetBorder());
     m_health = obj.GetHealth();
-    m_speedShoot = obj.GetSpeedShoot();
+    m_Speed = obj.GetSpeed();
     return *this;
   }
 
   // Getters
-  inline float const GetSpeedShoot() const { return m_speedShoot; }
+  inline float const GetSpeed() const { return m_Speed; }
   // Setters
-  inline void SetSpeedShoot(float const newSpeedShoot) { m_speedShoot = newSpeedShoot; }
+  inline void SetSpeed(float const newSpeed) { m_Speed = newSpeed; }
+
+  bool operator == (MoveEntity2D const & obj)
+  {
+    return obj.GetBorder() == m_box && obj.GetHealth() == m_health && obj.GetSpeed() == m_Speed;
+  }
 
   // Capabilities
   void Move() override
@@ -47,5 +52,5 @@ public:
     throw std::runtime_error("Not released MoveEntity2D::Move.");
   }
 protected:
-  float m_speedShoot = ALIEN_SPEED_SHOOT_START;   // - shoot speed
+  float m_Speed = ALIEN_SPEED_SHOOT_START;   // - shoot speed
 };

@@ -3,19 +3,19 @@
 #include "moveEntity.hpp"
 #include <vector>
 
-using BoxVector = std::vector<GameEntity2D>;    // Alias
+using BoxVector = std::vector<LifeGameEntity2D>;// Alias
 using BoxMatrix = std::vector<BoxVector>;       // Alias
 
 
-class Obstacle2D : public Box2D
+class Obstacle2D final : public LifeGameEntity2D
 {
 public:
   // constructor.
   Obstacle2D()
   {
     SetBorder(Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT)));
-    m_totalHealth = OBSTACLE_TOTAL_HEALTH;
     FillBoxMatrix(1, 5);
+    m_health = OBSTACLE_TOTAL_HEALTH;
   }
 
   // Destructor.
@@ -23,13 +23,13 @@ public:
 
   // Constructors with parameters.
   Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth)
-    :Box2D(leftBottom, rightTop), m_totalHealth(totalHealth)
+    :LifeGameEntity2D(leftBottom, rightTop, totalHealth)
   {
     FillBoxMatrix(1, 5);
   }
 
   Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth, size_t const countRow, size_t const countColumn)
-    :Box2D(leftBottom, rightTop), m_totalHealth(totalHealth)
+    :LifeGameEntity2D(leftBottom, rightTop, totalHealth)
   {
     FillBoxMatrix(countRow, countColumn);
   }
@@ -42,23 +42,21 @@ public:
   {
     if (this == &obj) return *this;
     m_boxes = obj.GetBoxMatrix();
-    m_totalHealth = obj.GetTotalHealth();
+    m_health = obj.GetHealth();
     return *this;
   }
 
   // Getters
   inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
-  inline float const GetTotalHealth() const              { return m_totalHealth; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
   // Setters
-  inline void SetTotalHealth(float const newTotalHealth) { m_totalHealth = newTotalHealth; }
 
 private:
 
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {
-    float healthOfPart = m_totalHealth / (countRow * countColumn);
+    float healthOfPart = m_health / (countRow * countColumn);
 
     m_boxes.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
@@ -69,7 +67,7 @@ private:
       {
         tempBoxVect.push_back
         (
-          GameEntity2D{
+          LifeGameEntity2D{
             Box2D
             {
               Point2D
@@ -92,5 +90,4 @@ private:
   }
 
   BoxMatrix m_boxes;                           // matrix of Boxes
-  float m_totalHealth = OBSTACLE_TOTAL_HEALTH;
 };

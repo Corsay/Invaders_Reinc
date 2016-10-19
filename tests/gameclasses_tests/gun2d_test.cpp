@@ -3,7 +3,7 @@
 #include <sstream>
 #include <unordered_set>
 
-TEST(gun2d_test, test_construction)
+/*TEST(gun2d_test, test_construction)
 {
   // default constructor
   Gun2D g1;
@@ -49,7 +49,7 @@ TEST(gun2d_test, test_assignment)
   Gun2D g2;
   g2 = g1;
   EXPECT_EQ(g1, g2);
-}
+}*/
 
 TEST(gun2d_test, test_throw)
 {

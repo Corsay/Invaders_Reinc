@@ -2,7 +2,7 @@
 
 #include "moveEntity.hpp"
 
-class Gun2D : public MoveEntity2D
+class Gun2D final : public MoveEntity2D
 {
 public:
   // Allow default constructor.
@@ -17,13 +17,13 @@ public:
     :MoveEntity2D(leftBottom, rightTop)
   {GunSetStartValue();}
 
-  Gun2D(Point2D const & leftBottom, Point2D const & rightTop, size_t lives, float health, float speedShoot)
-    :MoveEntity2D(leftBottom, rightTop, health, speedShoot), m_lives(lives)
+  Gun2D(Point2D const & leftBottom, Point2D const & rightTop, size_t lives, float health, float Speed)
+    :MoveEntity2D(leftBottom, rightTop, health, Speed), m_lives(lives)
   {}
 
   // copy constructor and assignment operator
   Gun2D(Gun2D const & obj)
-    :MoveEntity2D(obj.GetBorder(), obj.GetHealth(), obj.GetSpeedShoot()), m_lives(obj.GetLives())
+    :MoveEntity2D(obj.GetBorder(), obj.GetHealth(), obj.GetSpeed()), m_lives(obj.GetLives())
   {}
 
   Gun2D & operator = (Gun2D const & obj)
@@ -32,7 +32,7 @@ public:
     SetBorder(obj.GetBorder());
     m_lives = obj.GetLives();
     SetHealth(obj.GetHealth());
-    SetSpeedShoot(obj.GetSpeedShoot());
+    SetSpeed(obj.GetSpeed());
     return *this;
   }
 
@@ -47,7 +47,7 @@ private:
   inline void GunSetStartValue()
   {
     SetHealth(GUN_HEALTH_START);
-    SetSpeedShoot(GUN_SPEED_SHOOT_START);
+    SetSpeed(GUN_SPEED_SHOOT_START);
   }
   size_t m_lives = GUN_LIVES_START;             // - default gun lives count
   float m_gunRate = 0;                          // - game rate (from original game) (increment depends on the type of shot down alien)

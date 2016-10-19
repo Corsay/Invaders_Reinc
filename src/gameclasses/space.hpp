@@ -5,7 +5,7 @@
 #include "bulletmanager.hpp"
 #include "obstacle.hpp"
 
-class Space2D final : public Box2D
+class Space2D final : public GameEntity2D
 {
 public:
   // Allow default constructor.
@@ -16,7 +16,7 @@ public:
 
   // Constructors with parameters.
   Space2D(Point2D const & leftBottom, Point2D const & rightTop)
-    :Box2D(leftBottom, rightTop)
+    :GameEntity2D(leftBottom, rightTop)
   {}
 
   // Capabilities
@@ -27,8 +27,8 @@ public:
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
-    Point2D start = m_gun.GetCenter();
-    start.SetY(m_gun.top());
+    Point2D start = m_gun.GetBorder().GetCenter();
+    start.SetY(m_gun.GetBorder().top());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
@@ -40,9 +40,9 @@ public:
 
   void AlienShoot()
   {
-    Alien2D alien = m_alienManager.SelectShooter(m_gun.GetBorder());
-    Point2D start = alien.GetCenter();
-    start.SetY(alien.top());
+    Alien2D alien = m_alienManager.SelectShooter(m_gun.GetBorder().GetBorder());
+    Point2D start = alien.GetBorder().GetCenter();
+    start.SetY(alien.GetBorder().top());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},

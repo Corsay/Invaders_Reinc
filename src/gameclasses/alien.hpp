@@ -2,7 +2,7 @@
 
 #include "moveEntity.hpp"
 
-class Alien2D : public MoveEntity2D
+class Alien2D final : public MoveEntity2D
 {
 public:
   // Allow default constructor.
@@ -24,7 +24,6 @@ public:
   Alien2D(Alien2D const & obj)
     :MoveEntity2D(obj)
   {}
-
 private:
 
 };

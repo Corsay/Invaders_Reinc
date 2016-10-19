@@ -1,53 +1,46 @@
 #pragma once
 
-#include "box2d.hpp"
+#include "moveEntity.hpp"
 #include "movable.hpp"
 #include <cassert>
 
-class Bullet2D : public Box2D, public Movable
+class Bullet2D final : public MoveEntity2D
 {
 public:
   // Allow default constructor.
-  Bullet2D() = default;
+    Bullet2D(){ Seter(); }
 
   // Destructor.
   ~Bullet2D() override = default;
 
   // Constructors with parameters.
   Bullet2D(Point2D const & leftBottom, Point2D const & rightTop)
-    :Box2D(leftBottom, rightTop)
-  {}
+    :MoveEntity2D(leftBottom, rightTop)
+  { Seter(); }
 
   Bullet2D(Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
-    :Box2D(leftBottom, rightTop), m_damage(damage), m_speed(speed)
+    :MoveEntity2D(leftBottom, rightTop, damage, speed)
   {
-    assert(m_speed > 0);
-    assert(m_damage > 0);
+    assert(m_Speed > 0);
+    assert(m_health > 0);
   }
 
   // copy constructor and assignment operator
   Bullet2D(Bullet2D const & obj)
-    :Box2D(obj.GetBorder()), m_damage(obj.GetDamage()), m_speed(obj.GetSpeed())
+    :MoveEntity2D(obj.GetBorder(), obj.GetHealth(), obj.GetSpeed())
   {
-    assert(m_speed > 0);
-    assert(m_damage > 0);
+    assert(m_Speed > 0);
+    assert(m_health > 0);
   }
 
   Bullet2D & operator = (Bullet2D const & obj)
   {
     if (this == &obj) return *this;
     SetBorder(obj.GetBorder());
-    m_damage = obj.GetDamage();
-    m_speed = obj.GetSpeed();
+    m_health = obj.GetHealth();
+    m_Speed = obj.GetSpeed();
     return *this;
   }
-
-  // Getters
-  inline float const GetDamage() const { return m_damage; }
-  inline float const GetSpeed() const  { return m_speed; }
-  // Setters
-  inline void SetDamage(float const newDamage) { m_damage = newDamage; }
-  inline void SetSpeed(float const newSpeed)   { m_speed = newSpeed; }
 
   // Capabilities
   void Move() override
@@ -55,8 +48,10 @@ public:
     throw std::runtime_error("Not released Bullet2D::Move.");
   }
 private:
-
-  float m_damage = BULLET_DAMAGE_START; // - damage of the Bullet
-  float m_speed = BULLET_SPEED_START;   // - move speed
+  Seter()
+  {
+    m_health = BULLET_DAMAGE_START;
+    m_Speed = BULLET_SPEED_START;
+  }
 };
 

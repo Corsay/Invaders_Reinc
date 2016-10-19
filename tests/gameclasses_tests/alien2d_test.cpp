@@ -3,7 +3,7 @@
 #include <sstream>
 #include <unordered_set>
 
-TEST(alien2d_test, test_construction)
+/*TEST(alien2d_test, test_construction)
 {
   // default constructor
   Alien2D a1;
@@ -39,7 +39,7 @@ TEST(alien2d_test, test_assignment)
   Alien2D a2;
   a2 = a1;
   EXPECT_EQ(a1, a2);
-}
+}*/
 
 TEST(alien2d_test, test_throw)
 {
