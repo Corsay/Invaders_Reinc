@@ -16,7 +16,6 @@ int main()
     cout << sp.CheckGameState() << endl;
 
     Gun2D gun;
-    //gun.Move();
 
     Alien2DManager am1 ;
     am1 = {2, 3};
@@ -56,8 +55,6 @@ int main()
       }
       cout << endl;
     }
-
-
 
     cout << "hello" << endl;
   }

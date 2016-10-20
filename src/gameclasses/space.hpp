@@ -61,14 +61,14 @@ public:
     // if count of alienBullets > 0 checkIntersections with Gun and Obstacles
     if (countOfAlienBullets > 0)
     {
-        throw std::runtime_error("Not full released Space2D::CheckIntersections(WithGun).");
-        // send gun and all obstacles to functions in m_bulletManager
+      throw std::runtime_error("Not full released Space2D::CheckIntersections(WithGun).");
+      // send gun and all obstacles to functions in m_bulletManager
     }
     // if count of gunBullets > 0 checkIntersections with Aliens and Obstacles
     if (countOfGunBullets > 0)
     {
-        throw std::runtime_error("Not full released Space2D::CheckIntersections(WithAlien).");
-        // send aliens and all obstacles to functions in m_bulletManager
+      throw std::runtime_error("Not full released Space2D::CheckIntersections(WithAlien).");
+      // send aliens and all obstacles to functions in m_bulletManager
     }
   }
 

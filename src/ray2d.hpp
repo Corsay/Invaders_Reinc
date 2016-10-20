@@ -35,8 +35,8 @@ public:
     it++;
     if(it != lst.end())
     {
-        m_origin.SetY(*it);
-        it++;
+      m_origin.SetY(*it);
+      it++;
     }
     if(it != lst.end())
     {
@@ -115,7 +115,7 @@ public:
   bool operator &&(Box2D const & box) const
   {
     if(box && m_origin)
-        return true;
+      return true;
 
     float k = tan(m_direction * RAD);
     float b = m_origin.y() - k * m_origin.x();
