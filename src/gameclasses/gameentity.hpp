@@ -10,7 +10,7 @@ public:
   GameEntity2D() = default;
 
   // Destructor.
-  ~GameEntity2D() = default;
+  virtual ~GameEntity2D() = default;
 
   // Constructors with parameters.
   GameEntity2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -23,7 +23,7 @@ public:
 
   // Getters
   inline Box2D const GetBox() const { return m_box; }
-  inline GameEntity2D GetEntity() const { return GameEntity2D { m_box }; }
+  inline GameEntity2D GetEntity() const { return *this; }
   // Setters
   inline void SetBox(Box2D const & newBox) { m_box = newBox; }
   inline void SetEntity(GameEntity2D const & newEntity)
@@ -32,11 +32,18 @@ public:
   }
 
   // Logical operators
-  bool operator == (GameEntity2D const & obj)
+  bool operator == (GameEntity2D const & obj) const
   {
     return obj.GetBox() == GetBox();
   }
 
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, GameEntity2D const & obj)
+  {
+    os << "GameEntity2D {" << obj.GetBox() << "}";
+    return os;
+  }
 private:
-  Box2D m_box; // safe field.
+  Box2D m_box;
+  // here must be instance of the logger class !?
 };

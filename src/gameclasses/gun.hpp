@@ -28,12 +28,12 @@ public:
   Gun2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot, size_t lives)
     :MovedGameEntity2D(leftBottom, rightTop, health, speedShoot), m_lives(lives)
   {
-    assert(lives > 0 && "Lives must be more then ZERO!");
+    if (lives <= 0) throw std::out_of_range("Lives must be more then ZERO!");
   }
 
   // copy constructor and assignment operator
   Gun2D(Gun2D const & obj)
-    :MovedGameEntity2D(obj.GetBox(), obj.GetHealth(), obj.GetSpeed()), m_lives(obj.GetLives())
+    :MovedGameEntity2D(obj.GetMovedEntity()), m_lives(obj.GetLives())
   {}
 
   Gun2D & operator = (Gun2D const & obj)
@@ -41,6 +41,7 @@ public:
     if (this == &obj) return *this;
     SetMovedEntity(obj.GetMovedEntity());
     m_lives = obj.GetLives();
+    m_gunRate = obj.GetRate();
     return *this;
   }
 

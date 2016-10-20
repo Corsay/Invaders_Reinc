@@ -28,7 +28,7 @@ public:
 
   // copy constructor and assignment operator
   Bullet2D(Bullet2D const & obj)
-    :MovedGameEntity2D(obj.GetBox(), obj.GetHealth(), obj.GetSpeed())
+    :MovedGameEntity2D(obj.GetMovedEntity())
   {}
 
   Bullet2D & operator = (Bullet2D const & obj)

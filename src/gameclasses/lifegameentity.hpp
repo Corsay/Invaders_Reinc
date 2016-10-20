@@ -10,7 +10,7 @@ public:
   LifeGameEntity2D() = default;
 
   // Destructor.
-  ~LifeGameEntity2D() = default;
+  virtual ~LifeGameEntity2D() = default;
 
   // Constructors with parameters.
   LifeGameEntity2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -20,23 +20,23 @@ public:
   LifeGameEntity2D(Point2D const & leftBottom, Point2D const & rightTop, float health)
     :GameEntity2D(Box2D{leftBottom, rightTop}), m_health(health)
   {
-    assert(health > 0 && "Health must be more then ZERO!");
+    if (health <= 0) throw std::out_of_range("Health must be more then ZERO!");
   }
 
   LifeGameEntity2D(Box2D const & newBox, float health)
     :GameEntity2D(newBox), m_health(health)
   {
-    assert(health > 0 && "Health must be more then ZERO!");
+    if (health <= 0) throw std::out_of_range("Health must be more then ZERO!");
   }
 
   LifeGameEntity2D(GameEntity2D const & newEntity, float health)
     :GameEntity2D(newEntity), m_health(health)
   {
-    assert(health > 0 && "Health must be more then ZERO!");
+    if (health <= 0) throw std::out_of_range("Health must be more then ZERO!");
   }
 
   // Getters
-  inline LifeGameEntity2D GetLifeEntity() const { return LifeGameEntity2D{ GetEntity(), m_health }; }
+  inline LifeGameEntity2D GetLifeEntity() const { return *this; }
   inline float GetHealth() const { return m_health; }
   // Setters
   inline  void SetLifeEntity(LifeGameEntity2D const & newLifeEntity)
@@ -47,11 +47,17 @@ public:
   inline void SetHealth(float const newHealth) { m_health = newHealth; }
 
   // Logical operators
-  bool operator == (LifeGameEntity2D const & obj)
+  bool operator == (LifeGameEntity2D const & obj) const
   {
     return obj.GetBox() == GetBox() && obj.GetHealth() == m_health;
   }
 
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, LifeGameEntity2D const & obj)
+  {
+    os << "LifeGameEntity2D {" << obj.GetEntity() << ", Health: " << obj.GetHealth() << "}";
+    return os;
+  }
 private:
   float m_health = DEFAULT_HEALTH; // default health
 };

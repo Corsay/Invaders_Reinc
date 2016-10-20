@@ -27,10 +27,10 @@ TEST(bullet2d_test, test_construction)
 
   // Copy constructor
   Bullet2D b4 = b2;
-  //EXPECT_EQ(b4, b2);
+  EXPECT_EQ(b4, b2);
 }
 
-/*TEST(bullet2d_test, test_assignment)
+TEST(bullet2d_test, test_assignment)
 {
   Bullet2D b1;
   b1 = { {1.2f, 2.4f}, {3.6f, 4.8f} };
@@ -39,7 +39,7 @@ TEST(bullet2d_test, test_construction)
   Bullet2D b2;
   b2 = b1;
   EXPECT_EQ(b1, b2);
-}*/
+}
 
 TEST(bullet2d_test, test_throw)
 {

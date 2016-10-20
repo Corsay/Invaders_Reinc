@@ -62,7 +62,7 @@ public:
   }
 
   // Getters
-  inline Box2D const GetBorder() const { return Box2D {m_leftBottom, m_rightTop}; }
+  inline Box2D const GetBorder() const { return *this; }
   inline Point2D const & leftBottom() const { return m_leftBottom; }
   inline Point2D const & rightTop() const   { return m_rightTop; }
   inline float const left() const   { return m_leftBottom.x(); } // x min

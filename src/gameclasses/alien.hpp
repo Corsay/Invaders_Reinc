@@ -26,19 +26,26 @@ public:
   {}
 
   // copy constructor and assignment operator
-  Alien2D(MovedGameEntity2D const & obj)
-    :MovedGameEntity2D(obj)
+  Alien2D(Alien2D const & obj)
+    :MovedGameEntity2D(obj.GetMovedEntity())
   {}
+
+  Alien2D & operator = (Alien2D const & obj)
+  {
+    if (this == &obj) return *this;
+    SetMovedEntity(obj.GetMovedEntity());
+    return *this;
+  }
 
   // Capabilities
   void Move() override
   {
-    throw std::runtime_error("Not released Bullet2D::Move.");
+    throw std::runtime_error("Not released Alien2D::Move.");
   }
 private:
   inline void DefaultAlienSetStartValue()
   {
-    SetHealth(BULLET_DAMAGE_START);
-    SetSpeed(BULLET_SPEED_START);
+    SetHealth(ALIEN_HEALTH_START);
+    SetSpeed(ALIEN_SPEED_SHOOT_START);
   }
 };
