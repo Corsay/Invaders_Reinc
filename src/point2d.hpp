@@ -5,6 +5,7 @@
 #include <functional>
 #include <ostream>
 
+
 float const kEps = 1e-5;
 
 class Point2D
@@ -12,6 +13,9 @@ class Point2D
 public:
   // Разрешаем конструирование по умолчанию.
   Point2D() = default;
+
+  // Default destructor.
+  ~Point2D() = default;
 
   // Конструктор копирования.
   Point2D(Point2D const & obj)
@@ -26,8 +30,8 @@ public:
   // Конструктор перемещения
   Point2D(Point2D && obj)
   {
-    std::swap(m_x, obj.x());
-    std::swap(m_y, obj.y());
+    std::swap(m_x, obj.m_x);
+    std::swap(m_y, obj.m_y);
   }
 
   // Getters
@@ -35,6 +39,10 @@ public:
   inline float & y() { return m_y; }
   inline float const & x() const { return m_x; }
   inline float const & y() const { return m_y; }
+
+  // Setters
+  inline void SetX(float const x) { m_x = x; }
+  inline void SetY(float const y) { m_y = y; }
 
   // Конструктор со списком инициализации.
   Point2D(std::initializer_list<float> const & lst)
@@ -59,8 +67,8 @@ public:
   Point2D & operator = (Point2D && obj)
   {
     if (this == &obj) return *this;
-    std::swap(m_x, obj.x());
-    std::swap(m_y, obj.y());
+    std::swap(m_x, obj.m_x);
+    std::swap(m_y, obj.m_y);
     return *this;
   }
 
@@ -127,8 +135,15 @@ public:
   // Деление на число.
   Point2D operator / (float scale)
   {
-    //TODO: обработать деление на 0.
-    return { m_x / scale, m_y / scale };
+    try
+    {
+      if (scale == 0) throw std::invalid_argument("Zero Division");
+      return { m_x / scale, m_y / scale };
+    }
+    catch (std::exception const & ex)
+    {
+      return {0, 0};
+    }
   }
 
   Point2D & operator += (Point2D const & obj)
@@ -145,6 +160,20 @@ public:
     return *this;
   }
 
+  Point2D & operator += (float scale)
+  {
+    m_x += scale;
+    m_y += scale;
+    return *this;
+  }
+
+  Point2D & operator -= (float scale)
+  {
+    m_x -= scale;
+    m_y -= scale;
+    return *this;
+  }
+
   Point2D & operator *= (float scale)
   {
     m_x *= scale;
@@ -154,10 +183,19 @@ public:
 
   Point2D & operator /= (float scale)
   {
-    //TODO: обработать деление на 0.
-    m_x /= scale;
-    m_y /= scale;
-    return *this;
+    try
+    {
+      if (scale == 0) throw std::invalid_argument("Zero Division");
+      m_x /= scale;
+      m_y /= scale;
+      return *this;
+    }
+    catch (std::exception const & ex)
+    {
+      m_x = 0;
+      m_y = 0;
+      return *this;
+    }
   }
 
   void HorizontalShift(float shift)

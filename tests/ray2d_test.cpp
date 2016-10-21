@@ -9,17 +9,17 @@ TEST(ray2d_test, test_construction)
   Ray2D r1;
   EXPECT_EQ(r1.x(), 0.0f);
   EXPECT_EQ(r1.y(), 0.0f);
-  EXPECT_EQ(r1.direction(), 90.0f);
+  EXPECT_EQ(r1.GetDirection(), 90.0f);
   // Тест на создание объекта с параметрами.
   Ray2D r2 = { 1.2f, 2.4f };
   EXPECT_EQ(r2.x(), 1.2f);
   EXPECT_EQ(r2.y(), 2.4f);
-  EXPECT_EQ(r2.direction(), 90.0f);
+  EXPECT_EQ(r2.GetDirection(), 90.0f);
   // Тест на создание копии объекта.
   Ray2D r3 = r2;
   EXPECT_EQ(r3.x(), 1.2f);
   EXPECT_EQ(r3.y(), 2.4f);
-  EXPECT_EQ(r3.direction(), 90.0f);
+  EXPECT_EQ(r3.GetDirection(), 90.0f);
 }
 
 TEST(ray2d_test, test_move)
@@ -41,22 +41,22 @@ TEST(ray2d_test, test_initializer_list)
   Ray2D r1 = { 1.0f, 2.0f, 37.0f };
   EXPECT_EQ(r1.x(), 1.0f);
   EXPECT_EQ(r1.y(), 2.0f);
-  EXPECT_EQ(r1.direction(), 37.0f);
+  EXPECT_EQ(r1.GetDirection(), 37.0f);
 
   Ray2D r2 = { 1.0f };
   EXPECT_EQ(r2.x(), 1.0f);
   EXPECT_EQ(r2.y(), 0.0f);
-  EXPECT_EQ(r2.direction(), 90.0f);
+  EXPECT_EQ(r2.GetDirection(), 90.0f);
 
   Ray2D r3 = { 1.0f, 2.0f, 90.0f, 17.58f };
   EXPECT_EQ(r3.x(), 1.0f);
   EXPECT_EQ(r3.y(), 2.0f);
-  EXPECT_EQ(r3.direction(), 90.0f);
+  EXPECT_EQ(r3.GetDirection(), 90.0f);
 
-  r1.setDirection(360.0f);
-  EXPECT_EQ(r1.direction(), 0.0f);
-  r1.setDirection(405.0f);
-  EXPECT_EQ(r1.direction(), 45.0f);
+  r1.SetDirection(360.0f);
+  EXPECT_EQ(r1.GetDirection(), 0.0f);
+  r1.SetDirection(405.0f);
+  EXPECT_EQ(r1.GetDirection(), 45.0f);
 }
 
 TEST(ray2d_test, test_assignment)

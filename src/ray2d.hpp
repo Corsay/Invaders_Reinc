@@ -10,6 +10,9 @@ public:
   // Allow default constructor.
   Ray2D() = default;
 
+  // Default destructor.
+  ~Ray2D() = default;
+
   // Constructor with parameters.
   Ray2D(Point2D const origin, float const direction)
     :m_origin(origin),
@@ -28,12 +31,12 @@ public:
   Ray2D(std::initializer_list<float> const & lst)
   {
     auto it = lst.begin();
-    m_origin.x() = *it;
+    m_origin.SetX(*it);
     it++;
     if(it != lst.end())
     {
-        m_origin.y() = *it;
-        it++;
+      m_origin.SetY(*it);
+      it++;
     }
     if(it != lst.end())
     {
@@ -50,25 +53,26 @@ public:
   // Move constructor
   Ray2D(Ray2D && obj)
   {
-    m_origin = std::move(obj.origin());
-    std::swap(m_direction, obj.direction());
+    m_origin = std::move(obj.m_origin);
+    std::swap(m_direction, obj.m_direction);
   }
 
   // Getters
-  inline Point2D & origin() { return m_origin; }
   inline float const x() const { return m_origin.x(); }
   inline float const y() const { return m_origin.y(); }
-  inline float & direction() { return m_direction; }
-  inline Point2D const & origin() const { return m_origin; }
-  inline float const & direction() const { return m_direction; }
+  inline Point2D const & GetOrigin() const { return m_origin; }
+  inline float const & GetDirection() const { return m_direction; }
 
   // Setters
-  void setDirection(float const direction)
+  void SetDirection(float const direction)
   {
     m_direction = direction;
     CorrectDirectionAngle();
   }
-  void setOrigin(Point2D const & origin){ m_origin = origin; }
+  void SetOrigin(Point2D const & origin)
+  {
+    m_origin = origin;
+  }
 
   // Assignment operator.
   Ray2D & operator = (Ray2D const & obj)
@@ -83,8 +87,8 @@ public:
   Ray2D & operator = (Ray2D && obj)
   {
     if (this == &obj) return *this;
-    m_origin = std::move(obj.origin());
-    std::swap(m_direction, obj.direction());
+    m_origin = std::move(obj.m_origin);
+    std::swap(m_direction, obj.m_direction);
     return *this;
   }
 
@@ -111,7 +115,7 @@ public:
   bool operator &&(Box2D const & box) const
   {
     if(box && m_origin)
-        return true;
+      return true;
 
     float k = tan(m_direction * RAD);
     float b = m_origin.y() - k * m_origin.x();
@@ -164,7 +168,7 @@ public:
 
   friend std::ostream & operator << (std::ostream & os, Ray2D const & obj)
   {
-    os << "Ray2D {" << obj.origin() << ", " << obj.direction() << "}";
+    os << "Ray2D {" << obj.GetOrigin() << ", " << obj.GetDirection() << "}";
     return os;
   }
 

@@ -8,6 +8,7 @@ TEST(box2d_test, test_construction)
 {
   // Тест на создание объекта по умолчанию.
   Box2D b1;
+  EXPECT_EQ(b1.GetBorder(), Box2D(Point2D(0.0f, 0.0f), Point2D(0.0f, 0.0f)));
   EXPECT_EQ(b1.leftBottom(), Point2D(0.0f, 0.0f));
   EXPECT_EQ(b1.leftBottom().x(), 0.0f);
   EXPECT_EQ(b1.leftBottom().y(), 0.0f);
@@ -17,6 +18,7 @@ TEST(box2d_test, test_construction)
 
   // Тест на создание объекта с параметрами.
   Box2D b2 = { {1.2f, 2.4f}, {2.4f, 4.8f} };
+  EXPECT_EQ(b2.GetBorder(), Box2D(Point2D(1.2f, 2.4f), Point2D(2.4f, 4.8f)));
   EXPECT_EQ(b2.leftBottom(), Point2D(1.2f, 2.4f));
   EXPECT_EQ(b2.leftBottom().x(), 1.2f);
   EXPECT_EQ(b2.leftBottom().y(), 2.4f);
@@ -25,6 +27,7 @@ TEST(box2d_test, test_construction)
   EXPECT_EQ(b2.rightTop().y(), 4.8f);
 
   Box2D b3 = { 1.0f, 2.2f, 0.0f, 1.0f };
+  EXPECT_EQ(b3.GetBorder(), Box2D(Point2D(0.0f, 1.0f), Point2D(1.0f, 2.2f)));
   EXPECT_EQ(b3.leftBottom(), Point2D(0.0f, 1.0f));
   EXPECT_EQ(b3.leftBottom().x(), 0.0f);
   EXPECT_EQ(b3.leftBottom().y(), 1.0f);
@@ -35,6 +38,9 @@ TEST(box2d_test, test_construction)
   // Тест на создание копии объекта.
   Box2D b4 = b3;
   EXPECT_EQ(b4, b3);
+
+  b4.SetBorder(b2.GetBorder());
+  EXPECT_EQ(b4.GetBorder(), b2.GetBorder());
 }
 
 TEST(box2d_test, test_move)
