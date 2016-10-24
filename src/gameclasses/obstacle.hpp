@@ -44,6 +44,15 @@ public:
     SetHealth(obj.GetHealth());
     return *this;
   }
+  friend std::ostream& operator << (std::ostream& os, Obstacle2D& obj)
+  {
+    os << "OBSTACLE{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", " << obj.GetHealth()
+       << "}";
+    return os;
+  }
 
   // Getters
   inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }

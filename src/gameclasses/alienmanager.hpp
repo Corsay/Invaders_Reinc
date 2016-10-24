@@ -13,6 +13,7 @@ public:
   Alien2DManager()
   {
     CreateAlienMatrix(5, 11); // initialize default matrix
+    logger << "Create Matrix of alien 5*11" << std::endl;
   }
 
   // Destructor.
@@ -22,6 +23,7 @@ public:
   Alien2DManager(size_t const countRow, size_t const countColumn)
   {
     CreateAlienMatrix(countRow, countColumn);
+    logger << "Create Matrix of alien " << countRow << "*" << countColumn << std::endl;
   }
 
   // no copy constructor

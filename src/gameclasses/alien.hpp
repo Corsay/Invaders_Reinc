@@ -2,6 +2,7 @@
 
 #include "movedgameentity.hpp"
 
+
 class Alien2D final : public MovedGameEntity2D
 {
 public:
@@ -37,6 +38,16 @@ public:
     return *this;
   }
 
+  friend std::ostream& operator << (std::ostream& os, Alien2D& obj)
+  {
+    os << "ALIEN{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", " << obj.GetHealth()
+       << ", " << obj.GetSpeed()
+       << "}";
+    return os;
+  }
   // Capabilities
   void Move() override
   {

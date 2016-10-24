@@ -38,6 +38,16 @@ public:
     return *this;
   }
 
+  friend std::ostream& operator << (std::ostream& os, Bullet2D& obj)
+  {
+    os << "BULLET{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", " << obj.GetHealth()
+       << ", " << obj.GetSpeed()
+       << "}";
+    return os;
+  }
   // Capabilities
   void Move() override
   {

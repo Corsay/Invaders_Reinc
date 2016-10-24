@@ -2,6 +2,9 @@
 
 #include "box2d.hpp"
 #include "constants.hpp"
+#include "gameclasses/logger.hpp"
+
+
 
 class GameEntity2D
 {

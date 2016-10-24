@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 int main()
 {
   try
@@ -13,10 +14,22 @@ int main()
     Space2D sp;
 
     sp.AlienShoot();
-    cout << sp.CheckGameState() << endl;
+    logger << "some alien health  = " <<  al.GetHealth() << endl;
+    logger << "to be continued..." << endl;
+
+    logger.Off();
+    //это не будет никуда записано
+    logger << "Here logger is Off" << sp << endl;
+    logger.On();
+    logger.Checkout();//запись в консоль
 
     Gun2D gun;
+    logger << "This write in concole:  " << gun << endl;
+    logger << WHERE << endl;
 
+    logger.Checkout("second_log.txt");
+    //информация о генерации матрицы и сама матрица запишутся во второй файл
+    logger << "second log file" << endl;
     Alien2DManager am1 ;
     am1 = {2, 3};
     AlienMatrix aMatrix = am1.GetAlienMatrix();
@@ -27,13 +40,16 @@ int main()
       temp_vect = *it;
       for(auto it2 = temp_vect.begin(); it2 != temp_vect.end(); ++it2)
       {
-        cout << (*it2).GetBox() << endl;
+        logger << (*it2).GetBox() << endl;
       }
-      cout << endl;
     }
 
+    logger.Checkout("log.txt");
+    //последующая информация ДОПШЕТСЯ в первый файл
+    logger << "continued" << endl;
+
     Obstacle2D o1;
-    cout << o1.GetBox() << endl << endl;
+    logger << o1.GetBox();
     BoxMatrix bMatrix = o1.GetBoxMatrix();
 
     BoxVector tempVect;
@@ -42,27 +58,22 @@ int main()
       tempVect = bMatrix[i];
       for (size_t j = 0; j < tempVect.size(); ++j)
       {
-        cout << tempVect[j].GetBox() << endl;
+        logger << tempVect[j].GetBox() << endl;
       }
-      cout << endl;
     }
     for (auto it = bMatrix.begin(); it != bMatrix.end(); ++it)
     {
       tempVect = *it;
       for(auto it2 = tempVect.begin(); it2 != tempVect.end(); ++it2)
       {
-        cout << (*it2).GetBox() << endl;
+        logger << (*it2).GetBox() << endl;
       }
-      cout << endl;
     }
-
-    cout << "hello" << endl;
   }
   catch (...)
   {
     std:cerr << "Unknown error!";
   }
-
   return 0;
 }
 
