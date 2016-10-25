@@ -38,14 +38,14 @@ public:
     return *this;
   }
 
-  friend std::ostream& operator << (std::ostream& os, Bullet2D& obj)
+  friend std::ostream & operator << (std::ostream & os, Bullet2D const & obj)
   {
-    os << "BULLET{"
-       << obj.GetBox().leftBottom()
-       << ", " << obj.GetBox().rightTop()
-       << ", " << obj.GetHealth()
-       << ", " << obj.GetSpeed()
-       << "}";
+      os << "BULLET{"
+         << obj.GetBox().leftBottom()
+         << ", " << obj.GetBox().rightTop()
+         << ", HP: " << obj.GetHealth()
+         << ", speed: " << obj.GetSpeed()
+         << "}";
     return os;
   }
   // Capabilities

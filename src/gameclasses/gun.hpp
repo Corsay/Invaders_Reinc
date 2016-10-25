@@ -9,13 +9,7 @@ public:
   Gun2D()
   {
     DefaultGunSetStartValue();
-    logger << "created standart " << "GUN{"
-           << this->GetBox().leftBottom()
-           << ", " << this->GetBox().rightTop()
-           << ", "
-           << this->GetHealth()
-           << ", " << this->GetSpeed()
-           << "}" << std::endl;
+    logger << "created standart gun" << std::endl;
   }
 
   // Destructor.
@@ -51,14 +45,15 @@ public:
     m_gunRate = obj.GetRate();
     return *this;
   }
-  friend std::ostream& operator << (std::ostream& os, Gun2D& obj)
+  friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
   {
-    os << "GUN{"
-       << obj.GetBox().leftBottom()
-       << ", " << obj.GetBox().rightTop()
-       << ", " << obj.GetHealth()
-       << ", " << obj.GetSpeed()
-       << "}";
+      os << "GUN{"
+         << obj.GetBox().leftBottom()
+         << ", " << obj.GetBox().rightTop()
+         << ", HP: " << obj.GetHealth()
+         << ", speed: " << obj.GetSpeed()
+         << ", lives: " << obj.m_lives
+         << "}";
     return os;
   }
 
