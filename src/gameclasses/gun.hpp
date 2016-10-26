@@ -9,7 +9,7 @@ public:
   Gun2D()
   {
     DefaultGunSetStartValue();
-    logger << "created standart gun" << std::endl;
+    logger << "\ncreated standart gun" << std::endl;
   }
 
   // Destructor.
@@ -47,13 +47,13 @@ public:
   }
   friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
   {
-      os << "GUN{"
-         << obj.GetBox().leftBottom()
-         << ", " << obj.GetBox().rightTop()
-         << ", HP: " << obj.GetHealth()
-         << ", speed: " << obj.GetSpeed()
-         << ", lives: " << obj.m_lives
-         << "}";
+    os << "GUN{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", HP: " << obj.GetHealth()
+       << ", speed: " << obj.GetSpeed()
+       << ", lives: " << obj.m_lives
+       << "}";
     return os;
   }
 

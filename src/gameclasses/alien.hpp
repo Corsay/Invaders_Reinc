@@ -39,12 +39,12 @@ public:
   }
   friend std::ostream & operator << (std::ostream & os, Alien2D const & obj)
   {
-      os << "ALIEN{"
-         << obj.GetBox().leftBottom()
-         << ", " << obj.GetBox().rightTop()
-         << ", HP: " << obj.GetHealth()
-         << ", speed: " << obj.GetSpeed()
-         << "}";
+    os << "ALIEN{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", HP: " << obj.GetHealth()
+       << ", speed: " << obj.GetSpeed()
+       << "}";
     return os;
   }
   // Capabilities

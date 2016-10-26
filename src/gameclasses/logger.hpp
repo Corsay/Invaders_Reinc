@@ -9,8 +9,8 @@ class SimpleLogger
 {
 public:
   static SimpleLogger& GetLogger(){
-      static SimpleLogger OnlyLogger;
-      return OnlyLogger;
+    static SimpleLogger OnlyLogger;
+    return OnlyLogger;
   }
   SetOutput(std::ostream* os) { m_os = os; }
   SetOutput(std::string const & fileName) { m_os = new std::ofstream{fileName}; }
@@ -29,15 +29,15 @@ public:
   }
   SimpleLogger & operator << (std::string const & obj)
   {
-      *m_os << obj;
-      return *this;
+    *m_os << obj;
+    return *this;
   }
   template<typename T, template<typename, typename...> class C, typename... Args>
   SimpleLogger & operator << (C<T, Args...> const & objs)
   {
-      for (auto const & obj : objs)
-        (*this) << obj << "\n";
-      return *this;
+    for (auto const & obj : objs)
+      (*this) << obj << "\n";
+    return *this;
   }
 
 
@@ -48,18 +48,19 @@ public:
   void Checkout() { m_os = &std::cout; }
   void Checkout(std::string const & fileName)
   {
-    *m_os << "jump in " << fileName << std::endl;
+    m_countJump++;
+    *m_os << "*******Jump №" << m_countJump << " in " << fileName << std::endl;
     //если при этом запуске программы еще не было записи в этот файл, то очистить
     //и записывать в начало
     if(m_files.find(fileName) == m_files.end())
     {
       m_os = new std::ofstream(fileName);
-      m_files.insert(fileName);
+      m_files.insert(m_thisFile);
     }
     else
       m_os = new std::ofstream(fileName, std::ios_base::app);
-
-    *m_os << "Jump from " << fileName << std::endl;
+    *m_os << "*******Jump №" << m_countJump << " from " << m_thisFile << std::endl;
+     m_thisFile = fileName;
   }
 private:
   SimpleLogger()=default;
@@ -70,5 +71,8 @@ private:
   std::ostream* m_os = new std::ofstream("log.txt");
   //std::ostream* m_os = &std::cout;
   bool m_loggerOn = true;
-  std::set<std::string> m_files{"log.txt"};
+  std::set<std::string> m_files;
+  std::string m_thisFile="log.txt";
+  unsigned int m_countJump = 0;
 };
+

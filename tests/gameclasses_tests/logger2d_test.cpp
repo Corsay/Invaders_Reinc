@@ -57,7 +57,7 @@ TEST(alien2d_test, test_logger_work)
       c=fin2.get();
     }
   }
-  EXPECT_EQ(file1.size(), 363);
-  EXPECT_EQ(file2.size(), 575);
+  EXPECT_EQ(file1.size(), 403);
+  EXPECT_EQ(file2.size(), 592);
 
 }
