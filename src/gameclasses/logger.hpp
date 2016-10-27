@@ -61,11 +61,27 @@ public:
   void Off() { m_loggerOn = false; }
 
   //переключиться на вывод в консоль
-  void Checkout() { m_os = &std::cout; }
+  void Checkout()
+  {
+    if(m_thisFile == "")
+      return;
+
+    m_countJump++;
+    *m_os << "*******Jump Number " << m_countJump << " in console" << std::endl;
+
+    Close();
+    m_os = &std::cout;
+    *m_os << "*******Jump Number " << m_countJump << " from " << m_thisFile << std::endl;
+    m_thisFile = "";
+
+  }
   void Checkout(std::string const & fileName)
   {
+    if(fileName == m_thisFile)
+      return;
+
     m_countJump++;
-    *m_os << "*******Jump №" << m_countJump << " in " << fileName << std::endl;
+    *m_os << "*******Jump Number" << m_countJump << " in " << fileName << std::endl;
     //если при этом запуске программы еще не было записи в этот файл, то очистить
     //и записывать в начало
     if(m_files.find(fileName) == m_files.end())
@@ -81,7 +97,7 @@ public:
 
       m_os = new std::ofstream(fileName, std::ios_base::app);
     }
-    *m_os << "*******Jump №" << m_countJump << " from " << m_thisFile << std::endl;
+    *m_os << "*******Jump Number " << m_countJump << " from " << ((m_thisFile == "")? "concole":m_thisFile) << std::endl;
     m_thisFile = fileName;
   }
 private:

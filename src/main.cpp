@@ -12,9 +12,14 @@ int main()
     logger << al1 << endl;
 
     logger.Checkout("second_log.txt");
+    logger.Checkout("second_log.txt");
+    logger.Checkout("second_log.txt");
 
     Alien2D al2(Point2D{1.0f,1.0f}, Point2D{5.0f, 5.0f}, 50.0f, 2.0f);
     logger << al2 << std::endl;
+
+    logger.Checkout();
+    logger.Checkout();
 
     Alien2DManager alM(2, 3);
     logger << alM.GetAlienMatrix();

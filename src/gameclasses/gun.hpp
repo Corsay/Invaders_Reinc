@@ -9,7 +9,7 @@ public:
   Gun2D()
   {
     DefaultGunSetStartValue();
-    logger << "\ncreated standart gun" << std::endl;
+    logger << "created standart gun" << std::endl;
   }
 
   // Destructor.
