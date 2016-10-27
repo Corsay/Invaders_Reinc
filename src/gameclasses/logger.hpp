@@ -104,8 +104,11 @@ private:
 
   void Close()
   {
+    if (m_os == nullptr)
+      return;
     ((std::ofstream *)m_os)->close();
     delete m_os;
+    m_os = nullptr;
   }
 
   SimpleLogger() = default;
