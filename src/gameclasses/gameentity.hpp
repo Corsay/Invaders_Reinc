@@ -4,8 +4,6 @@
 #include "constants.hpp"
 #include "gameclasses/logger.hpp"
 
-
-
 class GameEntity2D
 {
 public:
@@ -48,5 +46,4 @@ public:
   }
 private:
   Box2D m_box;
-  // here must be instance of the logger class !?
 };

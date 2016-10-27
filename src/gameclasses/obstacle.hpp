@@ -44,7 +44,14 @@ public:
     SetHealth(obj.GetHealth());
     return *this;
   }
-  friend std::ostream & operator << (std::ostream & os, Obstacle2D& obj)
+
+  // Getters
+  inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
+  inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
+  inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Obstacle2D & obj)
   {
     os << "OBSTACLE{"
        << obj.GetBox().leftBottom()
@@ -53,11 +60,6 @@ public:
        << "}";
     return os;
   }
-
-  // Getters
-  inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
-  inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
-  inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
 private:
 
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)

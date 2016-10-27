@@ -45,17 +45,6 @@ public:
     m_gunRate = obj.GetRate();
     return *this;
   }
-  friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
-  {
-    os << "GUN{"
-       << obj.GetBox().leftBottom()
-       << ", " << obj.GetBox().rightTop()
-       << ", HP: " << obj.GetHealth()
-       << ", speed: " << obj.GetSpeed()
-       << ", lives: " << obj.m_lives
-       << "}";
-    return os;
-  }
 
   // Getters
   inline size_t const GetLives() const { return m_lives; }
@@ -68,6 +57,19 @@ public:
   void Move() override
   {
     throw std::runtime_error("Not released Gun2D::Move.");
+  }  
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
+  {
+    os << "GUN{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", HP: " << obj.GetHealth()
+       << ", speed: " << obj.GetSpeed()
+       << ", lives: " << obj.m_lives
+       << "}";
+    return os;
   }
 private:
   inline void DefaultGunSetStartValue()

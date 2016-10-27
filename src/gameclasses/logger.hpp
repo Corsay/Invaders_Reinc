@@ -3,17 +3,20 @@
 #include <fstream>
 #include <set>
 #include <typeinfo>
+
 typedef std::ostream & (*manip)(std::ostream &);
 
 class SimpleLogger
 {
 public:
-  static SimpleLogger& GetLogger(){
+  static SimpleLogger & GetLogger()
+  {
     static SimpleLogger OnlyLogger;
     return OnlyLogger;
   }
-  SetOutput(std::ostream* os) { m_os = os; }
-  SetOutput(std::string const & fileName) { m_os = new std::ofstream{fileName}; }
+
+  void SetOutput(std::ostream * os) { m_os = os; }
+  void SetOutput(std::string const & fileName) { m_os = new std::ofstream{fileName}; }
 
   template<typename T>
   SimpleLogger & operator << (T const & obj)
@@ -22,16 +25,20 @@ public:
       (*m_os) << obj;
     return *this;
   }
-  SimpleLogger& operator << (std::ostream & (*pf)(std::ostream &)){
+
+  SimpleLogger & operator << (std::ostream & (*pf)(std::ostream &))
+  {
     if(pf == static_cast<manip>(std::endl) && m_loggerOn)
       (*m_os) << std::endl;
     return *this;
   }
+
   SimpleLogger & operator << (std::string const & obj)
   {
     *m_os << obj;
     return *this;
   }
+
   template<typename T, template<typename, typename...> class C, typename... Args>
   SimpleLogger & operator << (C<T, Args...> const & objs)
   {
@@ -40,9 +47,8 @@ public:
     return *this;
   }
 
-
-  void On() { m_loggerOn=true; }
-  void Off() { m_loggerOn=false; }
+  void On() { m_loggerOn = true; }
+  void Off() { m_loggerOn = false; }
 
   //переключиться на вывод в консоль
   void Checkout() { m_os = &std::cout; }
@@ -58,21 +64,21 @@ public:
       m_files.insert(m_thisFile);
     }
     else
+    {
       m_os = new std::ofstream(fileName, std::ios_base::app);
+    }
     *m_os << "*******Jump №" << m_countJump << " from " << m_thisFile << std::endl;
-     m_thisFile = fileName;
+    m_thisFile = fileName;
   }
 private:
-  SimpleLogger()=default;
+  SimpleLogger() = default;
   SimpleLogger(const SimpleLogger & logger);
-  SimpleLogger operator =(const SimpleLogger & logger);
+  SimpleLogger operator = (const SimpleLogger & logger);
 
-
-  std::ostream* m_os = new std::ofstream("log.txt");
-  //std::ostream* m_os = &std::cout;
+  std::ostream * m_os = new std::ofstream("log.txt");
   bool m_loggerOn = true;
   std::set<std::string> m_files;
-  std::string m_thisFile="log.txt";
+  std::string m_thisFile = "log.txt";
   unsigned int m_countJump = 0;
 };
 

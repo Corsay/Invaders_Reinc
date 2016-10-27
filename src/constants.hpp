@@ -1,6 +1,6 @@
 #pragma once
 #include "gameclasses/logger.hpp"
-extern SimpleLogger& logger;
+extern SimpleLogger & logger;
 std::string onlyFile( std::string);
 #define WHERE "File: " << onlyFile( __FILE__ ) << " Function: " << __FUNCTION__ << " Line:" << __LINE__
 

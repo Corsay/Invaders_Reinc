@@ -41,23 +41,22 @@ TEST(alien2d_test, test_logger_work)
   char c;
   if(fin1.is_open())
   {
-    c=fin1.get();
+    c = fin1.get();
     while(c != EOF)
     {
-      file1+=c;
-      c=fin1.get();
+      file1 += c;
+      c = fin1.get();
     }
   }
   if(fin2.is_open())
   {
-    c=fin2.get();
+    c = fin2.get();
     while(c != EOF)
     {
-      file2+=c;
-      c=fin2.get();
+      file2 += c;
+      c = fin2.get();
     }
   }
   EXPECT_EQ(file1.size(), 403);
   EXPECT_EQ(file2.size(), 592);
-
 }
