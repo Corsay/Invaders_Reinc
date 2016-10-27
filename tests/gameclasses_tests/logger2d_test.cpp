@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-TEST(alien2d_test, test_logger_work)
+TEST(logger_test, test_logger_work)
 {
   //очищаем файлы от предыдущих тестов
   std::ofstream fout("log.txt");
@@ -57,6 +57,6 @@ TEST(alien2d_test, test_logger_work)
       c = fin2.get();
     }
   }
-  EXPECT_EQ(file1.size(), 403);
+  EXPECT_EQ(file1.size(), 445);
   EXPECT_EQ(file2.size(), 592);
 }
