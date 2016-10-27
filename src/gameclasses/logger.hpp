@@ -15,8 +15,18 @@ public:
     return OnlyLogger;
   }
 
+  ~SimpleLogger ()
+  {
+   Close();
+  }
+
   void SetOutput(std::ostream * os) { m_os = os; }
-  void SetOutput(std::string const & fileName) { m_os = new std::ofstream{fileName}; }
+  void SetOutput(std::string const & fileName)
+  {
+    Close();
+
+    m_os = new std::ofstream{fileName};
+  }
 
   template<typename T>
   SimpleLogger & operator << (T const & obj)
@@ -60,17 +70,28 @@ public:
     //и записывать в начало
     if(m_files.find(fileName) == m_files.end())
     {
+      Close();
+
       m_os = new std::ofstream(fileName);
       m_files.insert(m_thisFile);
     }
     else
     {
+      Close();
+
       m_os = new std::ofstream(fileName, std::ios_base::app);
     }
     *m_os << "*******Jump №" << m_countJump << " from " << m_thisFile << std::endl;
     m_thisFile = fileName;
   }
 private:
+
+  void Close()
+  {
+    ((std::ofstream *)m_os)->close();
+    delete m_os;
+  }
+
   SimpleLogger() = default;
   SimpleLogger(const SimpleLogger & logger);
   SimpleLogger operator = (const SimpleLogger & logger);
