@@ -1,4 +1,8 @@
 #pragma once
+#include "gameclasses/logger.hpp"
+extern SimpleLogger & logger;
+std::string onlyFile(std::string);
+#define WHERE "File: " << onlyFile( __FILE__ ) << " Function: " << __FUNCTION__ << " Line:" << __LINE__
 
 // Game parameters management
 // for this time, later changed
@@ -25,6 +29,9 @@ const float  GUN_HEALTH_START      = 50.0f;
 const float  GUN_HEALTH_INC        = 50.0f;
 const float  GUN_SPEED_SHOOT_START = 2.0f;
 const float  GUN_SPEED_SHOOT_INC   = 0.7f;
+const float  GUN_LEFT_LIMIT        = 10.0f;
+const float  GUN_RIGHT_LIMIT       = 600.0f;
+const float  GUN_STEP              = 20.0f;
 
 
 const float OBSTACLE_BOX_LEFT     = 100.0f;
@@ -42,3 +49,6 @@ const float BULLET_SPEED_START  = 5.0f;
 const float BULLET_SPEED_INC    = 1.0f;
 const float BULLET_WIDTH        = 10.0f;
 const float BULLET_HEIGHT       = 25.0f;
+
+
+

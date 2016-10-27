@@ -42,6 +42,18 @@ public:
   {
     throw std::runtime_error("Not released Alien2D::Move.");
   }
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Alien2D const & obj)
+  {
+    os << "ALIEN{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", HP: " << obj.GetHealth()
+       << ", speed: " << obj.GetSpeed()
+       << "}";
+    return os;
+  }
 private:
   inline void DefaultAlienSetStartValue()
   {

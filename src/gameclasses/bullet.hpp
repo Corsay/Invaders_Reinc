@@ -1,7 +1,6 @@
 #pragma once
 
 #include "movedgameentity.hpp"
-//#include <cassert>
 
 class Bullet2D final : public MovedGameEntity2D
 {
@@ -42,6 +41,18 @@ public:
   void Move() override
   {
     throw std::runtime_error("Not released Bullet2D::Move.");
+  }
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Bullet2D const & obj)
+  {
+    os << "BULLET{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", HP: " << obj.GetHealth()
+       << ", speed: " << obj.GetSpeed()
+       << "}";
+    return os;
   }
 private:
   inline void DefaultBulletSetStartValue()

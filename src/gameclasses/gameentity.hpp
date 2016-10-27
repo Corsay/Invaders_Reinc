@@ -2,6 +2,7 @@
 
 #include "box2d.hpp"
 #include "constants.hpp"
+#include "gameclasses/logger.hpp"
 
 class GameEntity2D
 {
@@ -45,5 +46,4 @@ public:
   }
 private:
   Box2D m_box;
-  // here must be instance of the logger class !?
 };

@@ -49,6 +49,17 @@ public:
   inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Obstacle2D & obj)
+  {
+    os << "OBSTACLE{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", " << obj.GetHealth()
+       << "}";
+    return os;
+  }
 private:
 
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
