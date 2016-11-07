@@ -4,6 +4,8 @@
 #include "constants.hpp"
 #include "gameclasses/logger.hpp"
 
+enum EntitiesTypes{GunType, AlienType, ObstacleType, BUlletType}; // enum
+
 class GameEntity2D
 {
 public:

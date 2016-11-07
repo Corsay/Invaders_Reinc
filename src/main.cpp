@@ -7,6 +7,11 @@ int main()
 {
   try
   {
+    std::ofstream fout("log.txt");
+    fout.close();
+    fout.open("second_log.txt");
+    fout.close();
+
     Space2D sp;
     Alien2D al1;
     logger << al1 << endl;

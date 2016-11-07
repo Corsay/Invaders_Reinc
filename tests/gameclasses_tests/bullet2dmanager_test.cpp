@@ -20,7 +20,7 @@ TEST(bullet2dmanager_test, test_add_bullets)
   // add gun bullet
   bm1.NewBullet(
     Bullet2D(),
-    Gun
+    GunType
   );
   EXPECT_EQ(bm1.GetCountOfAlienBullets(), 0);
   EXPECT_EQ(bm1.GetCountOfGunBullets(), 1);
@@ -28,7 +28,7 @@ TEST(bullet2dmanager_test, test_add_bullets)
   // add alien bullet
   bm1.NewBullet(
     Bullet2D(),
-    Alien
+    AlienType
   );
   EXPECT_EQ(bm1.GetCountOfAlienBullets(), 1);
   EXPECT_EQ(bm1.GetCountOfGunBullets(), 1);

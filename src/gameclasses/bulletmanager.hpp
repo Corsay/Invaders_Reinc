@@ -6,7 +6,6 @@
 #include <list>
 
 using BulletList = std::list<Bullet2D>; // Alias
-enum EntitiesTypes{Gun, Alien, Obstacle};
 
 class Bullet2DManager
 {
@@ -51,12 +50,12 @@ public:
   {
     switch (Type)
     {
-      case Gun: // gun bullet add
+      case GunType: // gun bullet add
       {
         m_fromGun.push_back(bullet);
         break;
       }
-      case Alien: // alien bullet add
+      case AlienType: // alien bullet add
       {
         m_fromAlien.push_back(bullet);
         break;

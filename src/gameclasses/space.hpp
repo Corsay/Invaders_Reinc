@@ -36,7 +36,7 @@ public:
       BULLET_DAMAGE_START,
       BULLET_SPEED_START
     );
-    m_bulletManager.NewBullet(bullet, Gun);
+    m_bulletManager.NewBullet(bullet, GunType);
   }
 
   void AlienShoot()
@@ -50,7 +50,7 @@ public:
       BULLET_DAMAGE_START,
       BULLET_SPEED_START
     );
-    m_bulletManager.NewBullet(bullet, Alien);
+    m_bulletManager.NewBullet(bullet, AlienType);
   }
 
   void CheckIntersections()
