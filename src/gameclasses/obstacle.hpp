@@ -21,7 +21,7 @@ public:
   ~Obstacle2D() = default;
 
   // Constructors with parameters.
-  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth)
+  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth = OBSTACLE_TOTAL_HEALTH)
     :LifeGameEntity2D(leftBottom, rightTop, totalHealth)
   {
     FillBoxMatrix(1, 5);
@@ -60,6 +60,7 @@ public:
        << "}";
     return os;
   }
+  inline EntitiesTypes GetEntityType(){ return EntitiesTypes::ObstacleType; }
 private:
 
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)

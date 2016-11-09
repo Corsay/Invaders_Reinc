@@ -11,7 +11,21 @@ public:
     DefaultGunSetStartValue();
     logger << "created standart gun" << std::endl;
   }
-
+  virtual std::unique_ptr<Gun2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
+  {
+    return std::unique_ptr<Gun2D>(new Gun2D(leftBottom, rightTop, health, speedShoot));
+  }
+  virtual std::unique_ptr<Gun2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop)
+  {
+    return std::unique_ptr<Gun2D>(new Gun2D(leftBottom, rightTop));
+  }
+  virtual std::unique_ptr<Gun2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot, size_t lives)
+  {
+    return std::unique_ptr<Gun2D>(new Gun2D(leftBottom, rightTop, health, speedShoot, lives));
+  }
   // Destructor.
   ~Gun2D() override = default;
 
@@ -45,6 +59,7 @@ public:
     m_gunRate = obj.GetRate();
     return *this;
   }
+  void G(){std::cout << "GUN FROM FACTORY";}
 
   // Getters
   inline size_t const GetLives() const { return m_lives; }
@@ -71,6 +86,7 @@ public:
        << "}";
     return os;
   }
+  inline EntitiesTypes GetEntityType(){ return EntitiesTypes::GunType; }
 private:
   inline void DefaultGunSetStartValue()
   {

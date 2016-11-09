@@ -10,7 +10,16 @@ public:
   {
     DefaultBulletSetStartValue();
   }
-
+  std::unique_ptr<MovedGameEntity2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
+  {
+    return std::unique_ptr<MovedGameEntity2D>(new Bullet2D(leftBottom, rightTop, damage, speed));
+  }
+  std::unique_ptr<MovedGameEntity2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop)
+  {
+    return std::unique_ptr<MovedGameEntity2D>(new Bullet2D(leftBottom, rightTop));
+  }
   // Destructor.
   ~Bullet2D() override = default;
 
@@ -54,6 +63,7 @@ public:
        << "}";
     return os;
   }
+  inline EntitiesTypes GetEntityType(){ return EntitiesTypes::BulletType; }
 private:
   inline void DefaultBulletSetStartValue()
   {

@@ -3,8 +3,9 @@
 #include "box2d.hpp"
 #include "constants.hpp"
 #include "gameclasses/logger.hpp"
+#include <memory>
 
-enum EntitiesTypes{GunType, AlienType, ObstacleType, BUlletType}; // enum
+enum EntitiesTypes{GunType, AlienType, ObstacleType, BulletType}; // enum
 
 class GameEntity2D
 {
@@ -27,12 +28,14 @@ public:
   // Getters
   inline Box2D const GetBox() const { return m_box; }
   inline GameEntity2D GetEntity() const { return *this; }
+
   // Setters
   inline void SetBox(Box2D const & newBox) { m_box = newBox; }
   inline void SetEntity(GameEntity2D const & newEntity)
   {
     m_box = newEntity.m_box;
   }
+
 
   // Logical operators
   bool operator == (GameEntity2D const & obj) const

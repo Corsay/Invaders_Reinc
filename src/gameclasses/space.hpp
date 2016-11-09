@@ -5,6 +5,7 @@
 #include "alienmanager.hpp"
 #include "bulletmanager.hpp"
 #include "obstacle.hpp"
+#include "factory.hpp"
 
 class Space2D final : public GameEntity2D
 {
