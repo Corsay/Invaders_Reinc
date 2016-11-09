@@ -3,21 +3,20 @@
 
 using namespace std;
 
-int main(){
+int main()
+{
   try
   {
     GameEntityFactory fac;
     fac.Register(Gun2D().Create());
     auto g = static_unique_ptr_cast<Gun2D>(fac.Create(EntitiesTypes::GunType));
-    g->G();
     std::cout << g->GetBox() << std::endl;
 
 
     fac.Register(Alien2D().Create());
     auto a = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
-    a->A();
     auto aa = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
-    aa->A();
+    std::cout << a->GetBox() << std::endl << std::endl;
     std::cout << aa->GetBox() << std::endl << std::endl;
 
 

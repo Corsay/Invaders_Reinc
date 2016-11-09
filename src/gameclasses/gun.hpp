@@ -39,20 +39,6 @@ public:
   {
     return std::unique_ptr<GameEntity2D>(new Gun2D());
   }
-  /*
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
-  {
-    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop, health, speedShoot));
-  }  
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot, size_t lives)
-  {
-    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop, health, speedShoot, lives));
-  }
-  */
-  void G() { std::cout << "GUN FROM FACTORY\n"; }
-
 
   // copy constructor and assignment operator
   Gun2D(Gun2D const & obj)

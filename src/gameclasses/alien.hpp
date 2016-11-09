@@ -32,14 +32,6 @@ public:
   {
     return std::unique_ptr<GameEntity2D>(new Alien2D());
   }
-  /*
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
-  {
-    return std::unique_ptr<GameEntity2D>(new Alien2D(leftBottom, rightTop, health, speedShoot));
-  }
-  */
-  void A() { std::cout << "ALIEN FROM FACTORY\n"; }
 
 
   // copy constructor and assignment operator

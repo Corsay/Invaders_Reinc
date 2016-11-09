@@ -1,6 +1,5 @@
 #pragma once
 #include "gameentity.hpp"
-#include "gun.hpp"
 #include <unordered_map>
 
 // Factory templates
@@ -50,21 +49,6 @@ public:
 
     return m_templates[type]->Create(std::forward<Args>(args)...);
   }
-
-  // create new unique_ptr fro selected type, with initialization_list
-  /*std::unique_ptr<GameEntity2D> Create(EntitiesTypes type, Point2D const & ld, Point2D const & rt, std::initializer_list<float> const & lst)
-  {
-    if (m_templates.find(type) == m_templates.end())
-      return nullptr;
-    short l = lst.size();
-    auto it = lst.begin();
-    if(l < 2)
-      return m_templates[type]->Create(ld, rt);
-    else if((l > 4) && (type != EntitiesTypes::GunType))
-      return m_templates[type]->Create(ld, rt, *it, *(it+1), *(it+2) );
-    else
-      return m_templates[type]->Create(ld, rt, *it, *(it+1)); // return nullptr;
-  }*/
 
 private:
   std::unordered_map<int, std::unique_ptr<GameEntity2D>> m_templates;

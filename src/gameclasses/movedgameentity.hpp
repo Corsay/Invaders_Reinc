@@ -10,12 +10,6 @@ public:
 
   // Destructor.
   virtual ~MovedGameEntity2D() = default;
-  /*
-  virtual std::unique_ptr<MovedGameEntity2D> Create(){ std::cout << "MGE\n"; return nullptr; }
-  virtual std::unique_ptr<MovedGameEntity2D> Create(Point2D const & p1, Point2D const p2){ std::cout << "MGE\n"; return nullptr; }
-  virtual std::unique_ptr<MovedGameEntity2D> Create(Point2D const & p1, Point2D const p2, float f1, float f2){ std::cout << "MGE\n"; return nullptr; }
-  virtual std::unique_ptr<MovedGameEntity2D> Create(Point2D const & p1, Point2D const p2, float f1, float f2, size_t s){ std::cout << "MGE\n"; return nullptr; }
-  */
 
   // Constructors with parameters.
   MovedGameEntity2D(Point2D const & leftBottom, Point2D const & rightTop)

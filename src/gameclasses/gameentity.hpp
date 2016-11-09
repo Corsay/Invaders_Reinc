@@ -32,10 +32,6 @@ public:
   {
     return std::unique_ptr<GameEntity2D>(new GameEntity2D());
   }
-  /*std::unique_ptr<GameEntity2D> Create(Point2D const & leftBottom, Point2D const & rightTop)
-  {
-    return std::unique_ptr<GameEntity2D>(new GameEntity2D(leftBottom, rightTop));
-  }*/
 
 
   // Getters
