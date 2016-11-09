@@ -1,5 +1,6 @@
 #pragma once
-#include "movedgameentity.hpp"
+#include "gameentity.hpp"
+#include "gun.hpp"
 #include <unordered_map>
 
 // Factory templates
@@ -7,12 +8,11 @@ class Factory
 {
 public:
   template<typename T, typename... Args>
-  std::unique_ptr<T> Create(Args && ... args)
+  std::unique_ptr<T> CreateNew(Args && ... args)
   {
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
   }
 };
-
 
 
 // GameEntity factory (полиморфизм)
@@ -42,8 +42,17 @@ public:
     return m_templates[type]->Create();
   }
 
+  template <typename... Args>
+  std::unique_ptr<GameEntity2D> Create(EntitiesTypes type, Args && ... args)
+  {
+    if (m_templates.find(type) == m_templates.end())
+      return nullptr;
+
+    return m_templates[type]->Create(std::forward<Args>(args)...);
+  }
+
   // create new unique_ptr fro selected type, with initialization_list
-  std::unique_ptr<GameEntity2D> Create(EntitiesTypes type, Point2D const & ld, Point2D const & rt, std::initializer_list<float> const & lst)
+  /*std::unique_ptr<GameEntity2D> Create(EntitiesTypes type, Point2D const & ld, Point2D const & rt, std::initializer_list<float> const & lst)
   {
     if (m_templates.find(type) == m_templates.end())
       return nullptr;
@@ -55,7 +64,7 @@ public:
       return m_templates[type]->Create(ld, rt, *it, *(it+1), *(it+2) );
     else
       return m_templates[type]->Create(ld, rt, *it, *(it+1)); // return nullptr;
-  }
+  }*/
 
 private:
   std::unordered_map<int, std::unique_ptr<GameEntity2D>> m_templates;

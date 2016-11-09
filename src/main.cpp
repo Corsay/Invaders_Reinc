@@ -7,15 +7,28 @@ int main(){
   try
   {
     GameEntityFactory fac;
-    //fac.Register(Gun2D().Create());
-    auto G = static_unique_ptr_cast<Gun2D>(fac.Create(EntitiesTypes::GunType));
-    G->G();
+    fac.Register(Gun2D().Create());
+    auto g = static_unique_ptr_cast<Gun2D>(fac.Create(EntitiesTypes::GunType));
+    g->G();
+    std::cout << g->GetBox() << std::endl;
 
-    auto A = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
-    A->A();
-    auto AA = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
-    AA->A();
-    //A->G();
+
+    fac.Register(Alien2D().Create());
+    auto a = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
+    a->A();
+    auto aa = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
+    aa->A();
+    std::cout << aa->GetBox() << std::endl << std::endl;
+
+
+    // для работы варианта с шаблонами, типы должны быть указаны явно
+    Factory fact;
+    auto gun = fact.CreateNew<Gun2D>(Point2D{5.2f, 8.4f}, Point2D{3.4f, 7.8f}, 55.0f, 90.0f, 5);
+    std::cout << gun->GetBox() << std::endl;
+    std::cout << gun->GetHealth() << std::endl;
+    std::cout << gun->GetSpeed() << std::endl;
+    std::cout << gun->GetLives() << std::endl;
+    std::cout << gun->GetRate() << std::endl;
   }
   catch (...)
   {

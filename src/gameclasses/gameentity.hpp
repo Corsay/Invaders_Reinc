@@ -5,7 +5,7 @@
 #include "gameclasses/logger.hpp"
 #include <memory>
 
-enum EntitiesTypes{GunType, AlienType, ObstacleType, BulletType}; // enum
+enum EntitiesTypes{ GameEntityType, GunType, AlienType, BulletType, ObstacleType }; // enum
 
 class GameEntity2D
 {
@@ -16,13 +16,6 @@ public:
   // Destructor.
   virtual ~GameEntity2D() = default;
 
-  // for factory
-  virtual EntitiesTypes GetEntityType() { return EntitiesTypes::AlienType; }
-  virtual std::unique_ptr<GameEntity2D> Create (Point2D const & leftBottom, Point2D const & rightTop)
-  {
-    return std::unique_ptr<GameEntity2D>(new GameEntity2D(leftBottom, rightTop));
-  }
-
   // Constructors with parameters.
   GameEntity2D(Point2D const & leftBottom, Point2D const & rightTop)
     :m_box(Box2D{ leftBottom, rightTop } )
@@ -31,6 +24,19 @@ public:
   GameEntity2D(Box2D const & newBox)
     :m_box(newBox)
   {}
+
+
+  // For factory
+  virtual inline EntitiesTypes GetEntityType() { return EntitiesTypes::GameEntityType; }
+  virtual std::unique_ptr<GameEntity2D> Create()
+  {
+    return std::unique_ptr<GameEntity2D>(new GameEntity2D());
+  }
+  /*std::unique_ptr<GameEntity2D> Create(Point2D const & leftBottom, Point2D const & rightTop)
+  {
+    return std::unique_ptr<GameEntity2D>(new GameEntity2D(leftBottom, rightTop));
+  }*/
+
 
   // Getters
   inline Box2D const GetBox() const { return m_box; }
@@ -43,11 +49,13 @@ public:
     m_box = newEntity.m_box;
   }
 
+
   // Logical operators
   bool operator == (GameEntity2D const & obj) const
   {
     return obj.GetBox() == GetBox();
   }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, GameEntity2D const & obj)

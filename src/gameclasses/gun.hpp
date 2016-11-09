@@ -11,27 +11,9 @@ public:
     DefaultGunSetStartValue();
     logger << "created standart gun" << std::endl;
   }
+
   // Destructor.
   ~Gun2D() override = default;
-
-  /*
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
-  {
-    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop, health, speedShoot));
-  }
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop)
-  {
-    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop));
-  }
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot, size_t lives)
-  {
-    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop, health, speedShoot, lives));
-  }
-  */
-  void G() { std::cout << "GUN FROM FACTORY\n"; }
 
   // Constructors with parameters.
   Gun2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -49,6 +31,28 @@ public:
   {
     if (lives <= 0) throw std::out_of_range("Lives must be more then ZERO!");
   }
+
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::GunType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Gun2D());
+  }
+  /*
+  std::unique_ptr<GameEntity2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
+  {
+    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop, health, speedShoot));
+  }  
+  std::unique_ptr<GameEntity2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot, size_t lives)
+  {
+    return std::unique_ptr<GameEntity2D>(new Gun2D(leftBottom, rightTop, health, speedShoot, lives));
+  }
+  */
+  void G() { std::cout << "GUN FROM FACTORY\n"; }
+
 
   // copy constructor and assignment operator
   Gun2D(Gun2D const & obj)
@@ -90,14 +94,13 @@ public:
     return os;
   }
 
-  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::GunType; }
-
 private:
   inline void DefaultGunSetStartValue()
   {
     SetHealth(GUN_HEALTH_START);
     SetSpeed(GUN_SPEED_SHOOT_START);
   }
+
   size_t m_lives = GUN_LIVES_START;  // - default gun lives count
   float m_gunRate = 0;               // - game rate (from original game) (increment depends on the type of shot down alien)
 };

@@ -10,21 +10,9 @@ public:
   {
     DefaultBulletSetStartValue();
   }
+
   // Destructor.
   ~Bullet2D() override = default;
-
-  /*
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
-  {
-    return std::unique_ptr<MovedGameEntity2D>(new Bullet2D(leftBottom, rightTop, damage, speed));
-  }
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop)
-  {
-    return std::unique_ptr<GameEntity2D>(new Bullet2D(leftBottom, rightTop));
-  }
-  */
 
   // Constructors with parameters.
   Bullet2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -36,6 +24,23 @@ public:
   Bullet2D(Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
     :MovedGameEntity2D(leftBottom, rightTop, damage, speed)
   {}
+
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Bullet2D());
+  }
+  /*
+  std::unique_ptr<GameEntity2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
+  {
+    return std::unique_ptr<GameEntity2D>(new Bullet2D(leftBottom, rightTop, damage, speed));
+  }
+  */
+  void B() { std::cout << "BULLET FROM FACTORY\n"; }
+
 
   // copy constructor and assignment operator
   Bullet2D(Bullet2D const & obj)
@@ -66,8 +71,6 @@ public:
        << "}";
     return os;
   }
-
-  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
 
 private:
   inline void DefaultBulletSetStartValue()

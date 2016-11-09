@@ -10,22 +10,9 @@ public:
   {
     DefaultAlienSetStartValue();
   }
+
   // Destructor.
   ~Alien2D() override = default;
-
-  /*
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
-  {
-    return std::unique_ptr<GameEntity2D>(new Alien2D(leftBottom, rightTop, health, speedShoot));
-  }
-  std::unique_ptr<GameEntity2D> Create
-    (Point2D const & leftBottom, Point2D const & rightTop)
-  {
-    return std::unique_ptr<GameEntity2D>(new Alien2D(leftBottom, rightTop));
-  }
-  */
-  void A() { std::cout << "ALIEN FROM FACTORY\n"; }
 
   // Constructors with parameters.
   Alien2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -37,6 +24,23 @@ public:
   Alien2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
     :MovedGameEntity2D(leftBottom, rightTop, health, speedShoot)
   {}
+
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Alien2D());
+  }
+  /*
+  std::unique_ptr<GameEntity2D> Create
+    (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
+  {
+    return std::unique_ptr<GameEntity2D>(new Alien2D(leftBottom, rightTop, health, speedShoot));
+  }
+  */
+  void A() { std::cout << "ALIEN FROM FACTORY\n"; }
+
 
   // copy constructor and assignment operator
   Alien2D(Alien2D const & obj)
@@ -67,8 +71,6 @@ public:
        << "}";
     return os;
   }
-
-  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
 
 private:
   inline void DefaultAlienSetStartValue()
