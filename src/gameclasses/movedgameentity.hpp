@@ -10,10 +10,12 @@ public:
 
   // Destructor.
   virtual ~MovedGameEntity2D() = default;
+  /*
   virtual std::unique_ptr<MovedGameEntity2D> Create(){ std::cout << "MGE\n"; return nullptr; }
   virtual std::unique_ptr<MovedGameEntity2D> Create(Point2D const & p1, Point2D const p2){ std::cout << "MGE\n"; return nullptr; }
   virtual std::unique_ptr<MovedGameEntity2D> Create(Point2D const & p1, Point2D const p2, float f1, float f2){ std::cout << "MGE\n"; return nullptr; }
   virtual std::unique_ptr<MovedGameEntity2D> Create(Point2D const & p1, Point2D const p2, float f1, float f2, size_t s){ std::cout << "MGE\n"; return nullptr; }
+  */
 
   // Constructors with parameters.
   MovedGameEntity2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -57,8 +59,8 @@ public:
   // Getters
   inline MovedGameEntity2D GetMovedEntity() const { return *this; }
   inline float const GetSpeed() const { return m_speed; }
-  inline EntitiesTypes const GetEntityType(){};
-  //virtual Create() = 0;
+  //inline EntitiesTypes const GetEntityType() override { return  };
+
   // Setters
   inline void SetMovedEntity(MovedGameEntity2D const & newMovedEntity)
   {
@@ -85,6 +87,7 @@ public:
     os << "MovedGameEntity2D {" << obj.GetLifeEntity() << ", Speed: " << obj.GetSpeed() << "}";
     return os;
   }
+
 private:
   float m_speed = DEFAULT_SPEED;   // - default shoot speed
 };

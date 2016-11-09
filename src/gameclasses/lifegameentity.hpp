@@ -58,6 +58,7 @@ public:
     os << "LifeGameEntity2D {" << obj.GetEntity() << ", Health: " << obj.GetHealth() << "}";
     return os;
   }
+
 private:
   float m_health = DEFAULT_HEALTH; // default health
 };

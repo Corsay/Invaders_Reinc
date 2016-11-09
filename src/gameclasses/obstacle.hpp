@@ -61,8 +61,8 @@ public:
     return os;
   }
   inline EntitiesTypes GetEntityType(){ return EntitiesTypes::ObstacleType; }
-private:
 
+private:
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {
     float healthOfPart = GetHealth() / (countRow * countColumn);

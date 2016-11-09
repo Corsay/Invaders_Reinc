@@ -10,6 +10,10 @@ public:
   {
     DefaultAlienSetStartValue();
   }
+  // Destructor.
+  ~Alien2D() override = default;
+
+  /*
   std::unique_ptr<GameEntity2D> Create
     (Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
   {
@@ -20,8 +24,8 @@ public:
   {
     return std::unique_ptr<GameEntity2D>(new Alien2D(leftBottom, rightTop));
   }
-  // Destructor.
-  ~Alien2D() override = default;
+  */
+  void A() { std::cout << "ALIEN FROM FACTORY\n"; }
 
   // Constructors with parameters.
   Alien2D(Point2D const & leftBottom, Point2D const & rightTop)
@@ -64,10 +68,12 @@ public:
     return os;
   }
 
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
+
+private:
   inline void DefaultAlienSetStartValue()
   {
     SetHealth(ALIEN_HEALTH_START);
     SetSpeed(ALIEN_SPEED_SHOOT_START);
   }
-  inline EntitiesTypes GetEntityType(){ return EntitiesTypes::AlienType; }private:
 };

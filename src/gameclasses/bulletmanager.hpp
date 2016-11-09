@@ -67,8 +67,8 @@ public:
     }
     return true; // allright
   }
-private:
 
+private:
   BulletList m_fromAlien; // not need to return
   BulletList m_fromGun;   // not need to return
 };

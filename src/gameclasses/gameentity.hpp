@@ -16,9 +16,16 @@ public:
   // Destructor.
   virtual ~GameEntity2D() = default;
 
+  // for factory
+  virtual EntitiesTypes GetEntityType() { return EntitiesTypes::AlienType; }
+  virtual std::unique_ptr<GameEntity2D> Create (Point2D const & leftBottom, Point2D const & rightTop)
+  {
+    return std::unique_ptr<GameEntity2D>(new GameEntity2D(leftBottom, rightTop));
+  }
+
   // Constructors with parameters.
   GameEntity2D(Point2D const & leftBottom, Point2D const & rightTop)
-    :m_box( Box2D{ leftBottom, rightTop } )
+    :m_box(Box2D{ leftBottom, rightTop } )
   {}
 
   GameEntity2D(Box2D const & newBox)
@@ -36,7 +43,6 @@ public:
     m_box = newEntity.m_box;
   }
 
-
   // Logical operators
   bool operator == (GameEntity2D const & obj) const
   {
@@ -49,6 +55,7 @@ public:
     os << "GameEntity2D {" << obj.GetBox() << "}";
     return os;
   }
+
 private:
   Box2D m_box;
 };

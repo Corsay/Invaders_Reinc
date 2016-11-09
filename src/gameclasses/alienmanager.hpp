@@ -58,8 +58,8 @@ public:
     // chosing by game AI(Artificial intelligence) who will be shoot
     return m_aliens[0][0];  // default
   }
-private:
 
+private:
   void CreateAlienMatrix(size_t const countRow, size_t const countColumn)
   {
     m_liveAliensCount = countRow * countColumn;

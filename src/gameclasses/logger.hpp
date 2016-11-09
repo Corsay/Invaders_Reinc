@@ -10,12 +10,6 @@ typedef std::ostream & (*manip)(std::ostream &);
 class SimpleLogger: public Singleton<SimpleLogger>
 {
 public:
-  /*static SimpleLogger & GetLogger()
-  {
-    static SimpleLogger OnlyLogger;
-    return OnlyLogger;
-  }*/
-
   void SetOutput(std::ostream * os) { m_os = os; }
   void SetOutput(std::string const & fileName)
   {
@@ -88,6 +82,7 @@ public:
     *m_os << "*******Jump Number " << m_countJump << " from " << ((m_thisFile == "") ? "concole" : m_thisFile) << std::endl;
     m_thisFile = fileName;
   }
+
 private:
   friend class Singleton<SimpleLogger>;
   SimpleLogger() = default;

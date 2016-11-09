@@ -99,8 +99,8 @@ public:
     throw std::runtime_error("Not released Space2D::NewLvlPrepare.");
     // configure space class fields for new lvl
   }
-private:
 
+private:
   void FillObcstaclesList(size_t const count) // if add obstacles manager this code can be replaced
   {
     throw std::runtime_error("Not released Space2D::FillObcstaclesList.");
