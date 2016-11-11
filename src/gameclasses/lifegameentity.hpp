@@ -44,8 +44,13 @@ public:
     SetEntity(newLifeEntity.GetEntity());
     m_health = newLifeEntity.GetHealth();
   }
-  inline void SetHealth(float const newHealth) { m_health = newHealth; }
-
+  inline void SetHealth(float const newHealth)
+  {
+    if(newHealth <= 0)
+      m_health = 0;
+    else
+      m_health = newHealth;
+  }
   // Logical operators
   bool operator == (LifeGameEntity2D const & obj) const
   {

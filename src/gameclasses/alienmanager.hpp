@@ -1,9 +1,9 @@
 #pragma once
 
 #include "alien.hpp"
+#include "bullet.hpp"
 #include <vector>
-
-using AlienVector = std::vector<Alien2D>;     // Alias
+using AlienVector = std::vector<Alien2D*>;     // Alias
 using AlienMatrix = std::vector<AlienVector>; // Alias
 
 class Alien2DManager
@@ -38,16 +38,36 @@ public:
     return *this;
   }
 
+  //void SetSpace(Space2D* sp){ m_space = sp; }
+
   // Getters
-  inline AlienMatrix const GetAlienMatrix() const { return m_aliens; }
+  inline AlienMatrix const & GetAlienMatrix() const { return m_aliens; }
+  inline AlienMatrix & GetAlienMatrix() { return m_aliens; }
   inline size_t const GetLiveAliensCount() const  { return m_liveAliensCount; }
   inline size_t const GetCountOfRows() const      { return m_aliens.size(); }
   inline size_t const GetCountOfColumn() const    { return m_aliens[0].size(); }
 
-  // Setters
-  inline void SetliveAliensCount(size_t newLiveAliensCount) { m_liveAliensCount = newLiveAliensCount; }
 
   // Capabilities
+  bool CheckIntersection(Bullet2D& bul)
+  {
+    int i, j;
+    //вычисляется место пришельца в сетке
+    i = (bul.GetBox().top() - m_aliens[0][0]->GetBox().top() - ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
+    j = (bul.GetBox().left() - m_aliens[0][0]->GetBox().left() - ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
+
+    if( (m_aliens[i][j] != nullptr ) && ( m_aliens[i][j]->GetBox() && bul.GetBox() ) )
+    {
+      if( m_aliens[i][j]->GetHealth() <= bul.GetHealth() )
+      {
+        delete m_aliens[i][j];
+        m_aliens[i][j] = nullptr;
+        --m_liveAliensCount;
+      }
+      return true;
+    }
+    return false;
+  }
   void AliensMove(Box2D const & border)
   {
     throw std::runtime_error("Not released Alien2DManager::AliensMove.");
@@ -56,7 +76,7 @@ public:
   Alien2D SelectShooter(Box2D const & gunBorder)
   {
     // chosing by game AI(Artificial intelligence) who will be shoot
-    return m_aliens[0][0];  // default
+    return *m_aliens[0][0];  // default
   }
 
 private:
@@ -67,13 +87,13 @@ private:
     m_aliens.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
     {
-      std::vector<Alien2D> tempVect;
+      std::vector<Alien2D*> tempVect;
       tempVect.reserve(countColumn);
       for(size_t j = 0; j < countColumn; ++j)
       {
         tempVect.push_back
         (
-          Alien2D
+          new Alien2D
           (
             Point2D
             {
@@ -92,6 +112,9 @@ private:
       }
       m_aliens.push_back(tempVect);
     }
+    /*this->SetBox( Box2D{ m_aliens[m_aliens.size()-1][0]->getBox().leftBottom(),
+                         m_aliens[0][m_aliens[0].size()-1]->getBox().rightTop() } );*/
+
   }
 
   AlienMatrix m_aliens;          // matrix of Aliens

@@ -59,5 +59,5 @@ TEST(logger_test, test_logger_work)
     }
   }
   EXPECT_EQ(file1.size(), 232);
-  EXPECT_EQ(file2.size(), 600);
+  EXPECT_EQ(file2.size(), 261);
 }

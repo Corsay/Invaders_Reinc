@@ -36,6 +36,7 @@ public:
 
   // Getters
   inline Box2D const GetBox() const { return m_box; }
+  inline Box2D & GetBox() { return m_box; }
   inline GameEntity2D GetEntity() const { return *this; }
 
   // Setters

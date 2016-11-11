@@ -10,6 +10,7 @@ int main()
     GameEntityFactory fac;
     fac.Register(Gun2D().Create());
     auto g = static_unique_ptr_cast<Gun2D>(fac.Create(EntitiesTypes::GunType));
+
     std::cout << g->GetBox() << std::endl;
 
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "movedgameentity.hpp"
+#include "bullet.hpp"
 
 class Gun2D final : public MovedGameEntity2D
 {
@@ -79,8 +80,25 @@ public:
        << "}";
     return os;
   }
+  bool CheckIntersection(Bullet2D & bul)
+  {
+    if(! (bul.GetBox() && this->GetBox()))
+      return false;
+    //если попала
+    this->SetHealth(this->GetHealth() - bul.GetHealth());
+    if(this->GetHealth() == 0)
+    {
+      m_lives--;
+      if(m_lives > 0)
+        GunBoom();
+      else GameOver();
+    }
+    return true;
+  }
 
 private:
+  void GunBoom(){/* имитация взрыва? */}
+  void GameOver(){}
   inline void DefaultGunSetStartValue()
   {
     SetHealth(GUN_HEALTH_START);

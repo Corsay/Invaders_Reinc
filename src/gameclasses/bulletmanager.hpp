@@ -5,6 +5,7 @@
 #include "alien.hpp"
 #include <list>
 
+
 using BulletList = std::list<Bullet2D>; // Alias
 
 class Bullet2DManager
@@ -29,23 +30,22 @@ public:
   }
 
   // Getters
-  inline BulletList const GetBulletsFromAliensList() const { return m_fromAlien; }
-  inline BulletList const GetBulletsFromGunList() const    { return m_fromGun; }
+  inline BulletList  const GetBulletsFromAliensList() const { return m_fromAlien; }
+  inline BulletList  const GetBulletsFromGunList() const { return m_fromGun; }
+
+  inline BulletList & GetBulletsFromAliensList() { return m_fromAlien; }
+  inline BulletList & GetBulletsFromGunList() { return m_fromGun; }
+
   inline size_t const GetCountOfAlienBullets() const       { return m_fromAlien.size(); }
   inline size_t const GetCountOfGunBullets() const         { return m_fromGun.size(); }
 
-  // Capabilities
-  bool CheckAllInterections()
-  {
-    throw std::runtime_error("Not released Bullet2DManager::CheckAllInterections.");
-    return false;
-  }
-
   void BulletsMove(Box2D const & border)
   {
-    throw std::runtime_error("Not released Bullet2DManager::BulletsMove.");
+    for(auto it=m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
+      it->GetBox().VerticalShift(it->GetSpeed());//если в верхнем левом углу (0; 0)
+    for(auto it=m_fromGun.begin(); it != m_fromGun.end(); ++it)
+      it->GetBox().VerticalShift(-(it->GetSpeed()));//если в верхнем левом углу (0; 0)
   }
-
   bool NewBullet(Bullet2D const & bullet, EntitiesTypes Type)
   {
     switch (Type)

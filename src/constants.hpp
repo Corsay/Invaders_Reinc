@@ -41,6 +41,9 @@ const float OBSTACLE_HEIGHT       = 100.0f;
 const float OBSTACLE_PART_WIDTH   = 10.0f;
 const float OBSTACLE_PART_HEIGHT  = 10.0f;
 const float OBSTACLE_TOTAL_HEALTH = 250.0f;
+const float OBSTACLE_LEFT_LIMIT   = 20.0f;
+const float OBSTACLE_DISTANCE     = 30.0f;
+const float OBSTACLE_BOTTOM_LIMIT = 150.0f;
 
 
 const float BULLET_DAMAGE_START = 50.0f;

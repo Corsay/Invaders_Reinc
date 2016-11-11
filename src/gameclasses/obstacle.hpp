@@ -1,9 +1,10 @@
 #pragma once
 
 #include "lifegameentity.hpp"
+#include "bullet.hpp"
 #include <vector>
 
-using BoxVector = std::vector<LifeGameEntity2D>;// Alias
+using BoxVector = std::vector<LifeGameEntity2D*>;// Alias
 using BoxMatrix = std::vector<BoxVector>;       // Alias
 
 class Obstacle2D final : public LifeGameEntity2D
@@ -46,7 +47,8 @@ public:
   }
 
   // Getters
-  inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
+  inline BoxMatrix const & GetBoxMatrix() const          { return m_boxes; }
+  inline BoxMatrix & GetBoxMatrix()                      { return m_boxes; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
 
@@ -62,6 +64,30 @@ public:
   }
   inline EntitiesTypes GetEntityType(){ return EntitiesTypes::ObstacleType; }
 
+  bool CheckIntersection(Bullet2D & bul)
+  {
+    if(! (bul.GetBox() && this->GetBox() ) )
+        return false;
+
+    for (size_t i = 0; i < m_boxes.size(); ++i)
+      for(size_t j = 0; j < m_boxes[0].size(); ++j)
+        if(m_boxes[i][j] != nullptr)
+          if(m_boxes[i][j]->GetBox() && bul.GetBox())
+          {
+            this->SetHealth(this->GetHealth() - bul.GetHealth());
+
+            if( m_boxes[i][j]->GetHealth() <= bul.GetHealth() )
+            {
+              delete m_boxes[i][j];
+              m_boxes[i][j] = nullptr;
+            }
+            else
+              m_boxes[i][j]->SetHealth(m_boxes[i][j]->GetHealth() - bul.GetHealth());
+
+            return true;
+          }
+    return false;
+  }
 private:
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {
@@ -76,7 +102,7 @@ private:
       {
         tempBoxVect.push_back
         (
-          LifeGameEntity2D{
+         new LifeGameEntity2D{
             Box2D
             {
               Point2D

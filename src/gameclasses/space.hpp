@@ -6,6 +6,8 @@
 #include "bulletmanager.hpp"
 #include "obstacle.hpp"
 #include "factory.hpp"
+#include "obstaclemanager.hpp"
+#include <algorithm>
 
 class Space2D final : public GameEntity2D
 {
@@ -20,11 +22,21 @@ public:
   Space2D(Point2D const & leftBottom, Point2D const & rightTop)
     :GameEntity2D(leftBottom, rightTop)
   {}
-
   // Capabilities
-  void GunMove()  // if add manager this code can be replaced, because later added keypress
+  // if add manager this code can be replaced, because later added keypress
+  void GunMoveLeft()
   {
-    throw std::runtime_error("Not released Space2D::GunMove.");
+    if(m_gun.GetBox().left() - GUN_STEP <= GUN_LEFT_LIMIT)
+      m_gun.GetBox().HorizontalShift(m_gun.GetBox().left() - GUN_LEFT_LIMIT);
+    else
+      m_gun.GetBox().HorizontalShift(-GUN_STEP);
+  }
+  void GunMoveRight()
+  {
+    if(m_gun.GetBox().right() + GUN_STEP >= GUN_LEFT_LIMIT)
+      m_gun.GetBox().HorizontalShift( GUN_RIGHT_LIMIT - m_gun.GetBox().left());
+    else
+      m_gun.GetBox().HorizontalShift(GUN_STEP);
   }
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
@@ -54,60 +66,66 @@ public:
     m_bulletManager.NewBullet(bullet, AlienType);
   }
 
-  void CheckIntersections()
+  void CheckAllIntersections()
   {
     // check count of bullets in bulletManager
-    size_t countOfGunBullets = m_bulletManager.GetCountOfGunBullets();
-    size_t countOfAlienBullets = m_bulletManager.GetCountOfAlienBullets();
-    // if count of alienBullets > 0 checkIntersections with Gun and Obstacles
-    if (countOfAlienBullets > 0)
-    {
-      throw std::runtime_error("Not full released Space2D::CheckIntersections(WithGun).");
-      // send gun and all obstacles to functions in m_bulletManager
-    }
-    // if count of gunBullets > 0 checkIntersections with Aliens and Obstacles
-    if (countOfGunBullets > 0)
-    {
-      throw std::runtime_error("Not full released Space2D::CheckIntersections(WithAlien).");
-      // send aliens and all obstacles to functions in m_bulletManager
-    }
+    BulletList & BulletFromGun = m_bulletManager.GetBulletsFromGunList();
+    BulletList & BulletFromAlien = m_bulletManager.GetBulletsFromAliensList();
+
+    for(auto it = BulletFromGun.begin(); it != BulletFromGun.end(); ++it)
+      if( m_alienManager.CheckIntersection(*it) )
+        BulletFromGun.erase(it);
+      else if( m_obstacleManager.CheckIntersection(*it) )
+        BulletFromGun.erase(it);
+
+    for(auto it = BulletFromAlien.begin(); it != BulletFromAlien.end(); ++it)
+      if( m_obstacleManager.CheckIntersection(*it) )
+        BulletFromGun.erase(it);
+      else if(m_gun.CheckIntersection(*it))
+        BulletFromGun.erase(it);
   }
 
   unsigned int CheckGameState()
   {
     if (m_alienManager.GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
     if (m_gun.GetHealth() <= 0) return 2;
+    if (m_alienManager.GetLiveAliensCount() == 0) return 3;
     // gun dead once       - level restart (if gun_lives > 0)
     // gun dead last time  - game over     (if gun_lives <= 0)
+    //нет пришельцев - уровень пройден
 
     return 0; // game continued
   }
 
   void GameStep()
   {
-    throw std::runtime_error("Not released Space2D::GameStep.");
+    CheckAllIntersections();
+    //еще какие-то действия
+    //смена изображения
+    RedrawSpace();
   }
 
-  void RedrawSpace()
-  {
-    throw std::runtime_error("Not released Space2D::RedrawSpace.");
-    // redraw game field
-  }
+
 
   void NewLvlPrepare(size_t const lvl)
   {
     throw std::runtime_error("Not released Space2D::NewLvlPrepare.");
     // configure space class fields for new lvl
   }
-
 private:
-  void FillObcstaclesList(size_t const count) // if add obstacles manager this code can be replaced
+  void RedrawSpace()
   {
-    throw std::runtime_error("Not released Space2D::FillObcstaclesList.");
+    throw std::runtime_error("Not released Space2D::RedrawSpace.");
+    // redraw game field
+  }
+  bool CheckObstacleIntersection(Bullet2D& b)
+  {
+
   }
 
-  Gun2D m_gun;                       // one gun            // maybe create manager(for multiplayer game mode)
-  Alien2DManager m_alienManager;     // one alien manager  // maybe create something like Factory in it
-  Bullet2DManager m_bulletManager;   // one bullet manager // maybe create something like Factory in it
-  std::list<Obstacle2D> m_obstacles; // list of obstacles  // maybe create manager and something like Factory in it
+  Gun2D m_gun;                         // one gun            // maybe create manager(for multiplayer game mode)
+  Alien2DManager m_alienManager;       // one alien manager  // maybe create something like Factory in it
+  Obstacle2DManager m_obstacleManager;
+  Bullet2DManager m_bulletManager;     // one bullet manager // maybe create something like Factory in it
+  std::list<Obstacle2D> m_obstacles;   // list of obstacles  // maybe create manager and something like Factory in it
 };
