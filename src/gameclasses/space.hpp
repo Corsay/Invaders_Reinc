@@ -120,6 +120,7 @@ private:
   bool CheckObstacleIntersection(Bullet2D& b)
   {
 
+    return 0;
   }
 
   Gun2D m_gun;                         // one gun            // maybe create manager(for multiplayer game mode)

@@ -1,34 +1,27 @@
 #include <iostream>
 #include "gameclasses/space.hpp"
 
+#include <QApplication>
+#include <QMainWindow>
+#include <QSurfaceFormat>
+#include "main_window.hpp"
+
 using namespace std;
 
-int main()
+int main(int argc, char ** argv)
 {
   try
   {
-    GameEntityFactory fac;
-    fac.Register(Gun2D().Create());
-    auto g = static_unique_ptr_cast<Gun2D>(fac.Create(EntitiesTypes::GunType));
+    QApplication a(argc, argv);
 
-    std::cout << g->GetBox() << std::endl;
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    QSurfaceFormat::setDefaultFormat(format);
 
-
-    fac.Register(Alien2D().Create());
-    auto a = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
-    auto aa = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
-    std::cout << a->GetBox() << std::endl << std::endl;
-    std::cout << aa->GetBox() << std::endl << std::endl;
-
-
-    // для работы варианта с шаблонами, типы должны быть указаны явно
-    Factory fact;
-    auto gun = fact.CreateNew<Gun2D>(Point2D{5.2f, 8.4f}, Point2D{3.4f, 7.8f}, 55.0f, 90.0f, 5);
-    std::cout << gun->GetBox() << std::endl;
-    std::cout << gun->GetHealth() << std::endl;
-    std::cout << gun->GetSpeed() << std::endl;
-    std::cout << gun->GetLives() << std::endl;
-    std::cout << gun->GetRate() << std::endl;
+    MainWindow mw;
+    mw.show();
+    return a.exec();
   }
   catch (...)
   {

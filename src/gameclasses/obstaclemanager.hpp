@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Obstacle.hpp"
+#include "obstacle.hpp"
 #include "bullet.hpp"
 #include <vector>
 
@@ -47,6 +47,7 @@ public:
     for(auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
       if((*it)->CheckIntersection(bul))
         break;
+    return 0;
   }
 
 private:
