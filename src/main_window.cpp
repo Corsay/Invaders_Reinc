@@ -11,6 +11,12 @@ MainWindow::MainWindow()
   LoadSettings();
   MoveWindowToCenter();
 
+  //temp palette for buttons color
+  QPalette p = QPalette(QColor(qRgb(20, 20, 60)));
+  p.setColor(QPalette::Window, QColor(qRgb(0, 0, 20))); // фон
+  p.setColor(QPalette::WindowText, Qt::white);          // цвет шрифт
+  this->setPalette(p);
+
   // FOR MAIN MENU
   // buttons
   m_pbMenuNewGame = new QPushButton("New game");
@@ -52,21 +58,23 @@ MainWindow::MainWindow()
   m_layoutMenu->addWidget(m_pbMenuContinueGame, 2, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbMenuSaveGame, 3, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbToSet, 4, 1, 1, 1);
-  m_layoutMenu->addWidget(m_pbExit, 5, 1, 1, 1);
-  m_layoutMenu->addWidget(bottomFiller, 6, 0, 1, 3);
+  m_layoutMenu->addWidget(m_pbExit, 6, 1, 1, 1);
+  m_layoutMenu->addWidget(bottomFiller, 7, 0, 1, 3);
 
   m_layoutMenu->setMargin(20);
   m_layoutMenu->setColumnStretch(0, m_size.width()/100*30);
-  m_layoutMenu->setColumnStretch(1, m_size.width()/100*40);
+  m_layoutMenu->setColumnStretch(1, 100);
   m_layoutMenu->setColumnStretch(2, m_size.width()/100*30);
   m_layoutMenu->setRowStretch(0, m_size.height()/100*10);
-  m_layoutMenu->setRowStretch(4, m_size.height()/100*5);
-  m_layoutMenu->setRowStretch(6, m_size.height()/100*15);
+  m_layoutMenu->setRowStretch(5, m_size.height()/100*2);
+  m_layoutMenu->setRowStretch(7, m_size.height()/100*15);
 
   // widget
   m_widgetMenu = new QWidget(this);
   m_widgetMenu->setMinimumSize(m_size);
   m_widgetMenu->setLayout(m_layoutMenu);
+  m_widgetMenu->setPalette(p);           // цвет кнопок
+
   setCentralWidget(m_widgetMenu);
   // set current widget
   m_widgetCurrent = m_widgetMenu;
@@ -75,30 +83,28 @@ MainWindow::MainWindow()
   // FOR SETTINGS
   // buttons
   m_pbToMenu = new QPushButton("Menu");
-  m_pbToMenu->setToolTip("Click on this button to back to the main menu");
+  m_pbToMenu->setToolTip("Back to the main menu");
   connect(m_pbToMenu, SIGNAL(clicked(bool)), this, SLOT(CheckoutToMenu()));
 
   m_pbSaveSettings = new QPushButton("Save settings");
-  m_pbSaveSettings->setToolTip("Click on this button to save settings to data/settings.bin");
+  m_pbSaveSettings->setToolTip("Save settings to data/settings.bin");
   connect(m_pbSaveSettings, SIGNAL(clicked(bool)), this, SLOT(SaveSettings()));
 
   m_pbLoadSettings = new QPushButton("Load settings");
-  m_pbLoadSettings->setToolTip("Click on this button to load settings from data/settings.bin");
+  m_pbLoadSettings->setToolTip("Load settings from data/settings.bin");
   connect(m_pbLoadSettings, SIGNAL(clicked(bool)), this, SLOT(LoadSettings()));
 
   // QLabels
-  QLabel * lControls = new QLabel;
-  lControls->setText("Controls:");
   QLabel * lControlGunMoveLeft = new QLabel;
-  lControlGunMoveLeft->setText("Button to gun move left: ");
+  lControlGunMoveLeft->setText("Gun move left button");
   QLabel * lControlGunMoveRight = new QLabel;
-  lControlGunMoveRight->setText("Button to gun move right:");
+  lControlGunMoveRight->setText("Gun move right button");
   QLabel * lControlGunShoot = new QLabel;
-  lControlGunShoot->setText("Button to gun shoot:     ");
+  lControlGunShoot->setText("Button to gun shoot");
   QLabel * lControlPause = new QLabel;
-  lControlPause->setText("Game pause:              ");
+  lControlPause->setText("Game pause");
   QLabel * lResolution = new QLabel;
-  lResolution->setText("Resolution:              ");
+  lResolution->setText("Resolution");
 
   // Work with Values and Keys
   // NOT RELEASED
@@ -123,25 +129,26 @@ MainWindow::MainWindow()
   // layout
   m_layoutSettings = new QGridLayout;
   m_layoutSettings->addWidget(m_pbToMenu, 0, 0);
-  //m_layoutSettings->addWidget(topFiller, 1, 0, 1, 3);
-  m_layoutSettings->addLayout(m_controlGunMoveLeft, 2, 0, 1, 2);
-  m_layoutSettings->addLayout(m_controlGunMoveRight, 3, 0, 1, 2);
-  m_layoutSettings->addLayout(m_controlGunShoot, 4, 0, 1, 2);
-  m_layoutSettings->addLayout(m_controlPause, 5, 0, 1, 2);
-  m_layoutSettings->addLayout(m_resolution, 6, 0, 1, 2);
-  m_layoutSettings->addWidget(m_pbSaveSettings, 7, 0);
-  m_layoutSettings->addWidget(m_pbLoadSettings, 7, 1);
-  m_layoutSettings->addWidget(bottomFiller, 8, 0, 1, 3);
+  m_layoutSettings->addWidget(new QLabel("Control buttons:"), 2, 0, 1, 2);
+  m_layoutSettings->addLayout(m_controlGunMoveLeft, 3, 0, 1, 2);
+  m_layoutSettings->addLayout(m_controlGunMoveRight, 4, 0, 1, 2);
+  m_layoutSettings->addLayout(m_controlGunShoot, 5, 0, 1, 2);
+  m_layoutSettings->addLayout(m_controlPause, 6, 0, 1, 2);
+  m_layoutSettings->addWidget(new QLabel("Screen:"), 7, 0, 1, 2);
+  m_layoutSettings->addLayout(m_resolution, 8, 0, 1, 2);
+  m_layoutSettings->addWidget(m_pbSaveSettings, 9, 0);
+  m_layoutSettings->addWidget(m_pbLoadSettings, 9, 1);
+  m_layoutSettings->addWidget(bottomFiller, 10, 0, 1, 3);
 
   m_layoutSettings->setMargin(20);
-  m_layoutSettings->setRowStretch(0, m_size.height()/100*10);
-
-  m_layoutSettings->setRowStretch(8, m_size.height()/100*15);
+  m_layoutSettings->setRowStretch(1, m_size.height()/100*0.5);
+  m_layoutSettings->setRowStretch(10, m_size.height()/100*15);
 
   // widget
   m_widgetSettings = new QWidget(this);
   m_widgetSettings->setMinimumSize(m_size);
   m_widgetSettings->setLayout(m_layoutSettings);
+  m_widgetSettings->setPalette(p);           // цвет кнопок
   m_widgetSettings->hide();
 
 
@@ -179,8 +186,16 @@ void MainWindow::ShowMenuItems()
   if (m_gameStarted) m_pbMenuNewGame->hide();
   else               m_pbMenuNewGame->show();
 
-  if (m_gameStarted) m_pbMenuContinueGame->setText("Continue game");
-  else               m_pbMenuContinueGame->setText("Load game");
+  if (m_gameStarted)
+  {
+    m_pbMenuContinueGame->setText("Continue game");
+    m_pbMenuContinueGame->setToolTip("Continue current game");
+  }
+  else
+  {
+    m_pbMenuContinueGame->setText("Load game");
+    m_pbMenuContinueGame->setToolTip("Load game from the save file");
+  }
 
   if (m_gameStarted) m_pbMenuSaveGame->show();
   else               m_pbMenuSaveGame->hide();
@@ -192,10 +207,11 @@ void MainWindow::ShowDialog(QString const & msg)
   //std::cout << msg.toStdString() << std::endl;
 }
 
+
 // Загрузка настроек из файла, с проверкой (и корректировкой под по-умолчанию)
 void MainWindow::LoadSettings()
 {
-  // from /data/settings.bin
+  // load settings from /data/settings.bin
   m_size = QSize(0,0);
 
 
