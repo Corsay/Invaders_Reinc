@@ -38,8 +38,6 @@ public:
     return *this;
   }
 
-  //void SetSpace(Space2D* sp){ m_space = sp; }
-
   // Getters
   inline AlienMatrix const & GetAlienMatrix() const { return m_aliens; }
   inline AlienMatrix & GetAlienMatrix() { return m_aliens; }
@@ -47,27 +45,31 @@ public:
   inline size_t const GetCountOfRows() const      { return m_aliens.size(); }
   inline size_t const GetCountOfColumn() const    { return m_aliens[0].size(); }
 
-
   // Capabilities
-  bool CheckIntersection(Bullet2D& bul)
+  bool CheckIntersection(Bullet2D const & bul)
   {
     int i, j;
     //вычисляется место пришельца в сетке
     i = (bul.GetBox().top() - m_aliens[0][0]->GetBox().top() - ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
     j = (bul.GetBox().left() - m_aliens[0][0]->GetBox().left() - ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
 
-    if( (m_aliens[i][j] != nullptr ) && ( m_aliens[i][j]->GetBox() && bul.GetBox() ) )
-    {
-      if( m_aliens[i][j]->GetHealth() <= bul.GetHealth() )
+    if( (m_aliens[i][j] != nullptr) && ( m_aliens[i][j]->GetBox() && bul.GetBox()))
+    {    
+      if( m_aliens[i][j]->GetHealth() <= bul.GetHealth())
       {
         delete m_aliens[i][j];
         m_aliens[i][j] = nullptr;
         --m_liveAliensCount;
       }
+      else  // ec heals
+      {
+        m_aliens[i][j]->SetHealth(m_aliens[i][j]->GetHealth() - bul.GetHealth());
+      }
       return true;
     }
     return false;
   }
+
   void AliensMove(Box2D const & border)
   {
     throw std::runtime_error("Not released Alien2DManager::AliensMove.");
@@ -112,9 +114,6 @@ private:
       }
       m_aliens.push_back(tempVect);
     }
-    /*this->SetBox( Box2D{ m_aliens[m_aliens.size()-1][0]->getBox().leftBottom(),
-                         m_aliens[0][m_aliens[0].size()-1]->getBox().rightTop() } );*/
-
   }
 
   AlienMatrix m_aliens;          // matrix of Aliens

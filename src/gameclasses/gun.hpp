@@ -62,12 +62,6 @@ public:
   inline void SetLives(size_t const newLives) { m_lives = newLives; }
   inline void SetRate(float const newGunRate) { m_gunRate = newGunRate; }
 
-  // Capabilities
-  void Move() override
-  {
-    throw std::runtime_error("Not released Gun2D::Move.");
-  }  
-
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
   {
@@ -80,7 +74,7 @@ public:
        << "}";
     return os;
   }
-  bool CheckIntersection(Bullet2D & bul)
+  bool CheckIntersection(Bullet2D const & bul)
   {
     if(! (bul.GetBox() && this->GetBox()))
       return false;
@@ -91,14 +85,12 @@ public:
       m_lives--;
       if(m_lives > 0)
         GunBoom();
-      else GameOver();
     }
     return true;
   }
 
 private:
   void GunBoom(){/* имитация взрыва? */}
-  void GameOver(){}
   inline void DefaultGunSetStartValue()
   {
     SetHealth(GUN_HEALTH_START);

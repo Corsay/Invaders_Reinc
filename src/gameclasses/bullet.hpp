@@ -25,7 +25,6 @@ public:
     :MovedGameEntity2D(leftBottom, rightTop, damage, speed)
   {}
 
-
   // For factory
   inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
   std::unique_ptr<GameEntity2D> Create() override
@@ -44,12 +43,6 @@ public:
     if (this == &obj) return *this;
     SetMovedEntity(obj.GetMovedEntity());
     return *this;
-  }
-
-  // Capabilities
-  void Move() override
-  {
-    throw std::runtime_error("Not released Bullet2D::Move.");
   }
 
   // Redefinition

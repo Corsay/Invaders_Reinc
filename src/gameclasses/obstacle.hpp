@@ -62,9 +62,11 @@ public:
        << "}";
     return os;
   }
+
+  // for Factory
   inline EntitiesTypes GetEntityType(){ return EntitiesTypes::ObstacleType; }
 
-  bool CheckIntersection(Bullet2D & bul)
+  bool CheckIntersection(Bullet2D const & bul)
   {
     if(! (bul.GetBox() && this->GetBox() ) )
         return false;

@@ -46,12 +46,6 @@ public:
     return *this;
   }
 
-  // Capabilities
-  void Move() override
-  {
-    throw std::runtime_error("Not released Alien2D::Move.");
-  }
-
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Alien2D const & obj)
   {

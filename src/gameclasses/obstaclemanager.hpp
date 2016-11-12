@@ -3,7 +3,9 @@
 #include "Obstacle.hpp"
 #include "bullet.hpp"
 #include <vector>
-using ObstacleVector = std::vector<Obstacle2D*>;     // Alias
+
+using ObstacleVector = std::vector<Obstacle2D *>;     // Alias
+
 class Obstacle2DManager
 {
 public:
@@ -46,9 +48,6 @@ public:
       if((*it)->CheckIntersection(bul))
         break;
   }
-
-
-
 
 private:
   void CreateObstacleVector(size_t const countObstacle)

@@ -7,7 +7,6 @@
 #include "obstacle.hpp"
 #include "factory.hpp"
 #include "obstaclemanager.hpp"
-#include <algorithm>
 
 class Space2D final : public GameEntity2D
 {
@@ -90,8 +89,8 @@ public:
     if (m_alienManager.GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
     if (m_gun.GetHealth() <= 0) return 2;
     if (m_alienManager.GetLiveAliensCount() == 0) return 3;
-    // gun dead once       - level restart (if gun_lives > 0)
-    // gun dead last time  - game over     (if gun_lives <= 0)
+    // gun dead once       - continue  (if gun_lives > 0)
+    // gun dead last time  - game over (if gun_lives <= 0)
     //нет пришельцев - уровень пройден
 
     return 0; // game continued
