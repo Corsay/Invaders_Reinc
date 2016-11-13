@@ -12,10 +12,10 @@
 #include <QShortcut>
 
 #include <QPushButton>
-#include <QLineEdit>
 
-/*
+#include <QCheckBox>
 #include <QSlider>
+/*
 #include <QProgressBar>
 #include <QSpinBox>
 
@@ -31,12 +31,6 @@ enum DialogTypes
   OnClose,
   OnBackToMainFromSettings
 };
-enum GameWindowStateTypes
-{
-  FullScreen,
-  MinimizedWindow,
-  MaximizedWindow
-};
 enum GameResolutionTypes
 {
   Size800x600,
@@ -50,6 +44,17 @@ enum GameResolutionTypes
   Size1600x900,
   Size1680x1050,
   Size1920x1080
+};
+enum GameWindowStateTypes
+{
+  FullScreen,
+  MinimizedWindow,
+  MaximizedWindow
+};
+enum GameLanguages
+{
+  English,
+  Russian
 };
 
 class MainWindow : public QMainWindow
@@ -87,6 +92,7 @@ private slots:
   void CheckoutToMenu();
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
+  void ChangeLanguage(int state);
 
 private:
   int L2D(size_t px) const { return px * devicePixelRatio(); }

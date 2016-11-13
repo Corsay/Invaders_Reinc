@@ -24,16 +24,29 @@ MainWindow::MainWindow()
   m_palette.setColor(QPalette::WindowText, QColor(qRgb(200, 200, 200))); // цвет шрифт
   m_palette.setColor(QPalette::ButtonText, QColor(qRgb(240, 240, 240))); // цвет шрифт кнопок
 
+  // QShortcuts
+  m_shortcutGunMoveLeft = new QShortcut(this);
+  m_shortcutGunMoveLeft->setKey(Qt::Key_Left);
+  connect(m_shortcutGunMoveLeft, SIGNAL(activated()), this, SLOT(ShortcutGunMoveLeft()));
+  m_shortcutGunMoveRight = new QShortcut(this);;
+  m_shortcutGunMoveRight->setKey(Qt::Key_Right);
+  connect(m_shortcutGunMoveRight, SIGNAL(activated()), this, SLOT(ShortcutGunMoveRight()));
+  m_shortcutGunShoot = new QShortcut(this);
+  m_shortcutGunShoot->setKey(Qt::Key_Up);
+  connect(m_shortcutGunShoot, SIGNAL(activated()), this, SLOT(ShortcutGunShoot()));
+  m_shortcutGamePause = new QShortcut(this);
+  m_shortcutGamePause->setKey(Qt::Key_Escape);
+  connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
+
   // window settings
   QIcon * icon = new QIcon("data/alien.png");
   this->setWindowIcon(*icon);
   this->setWindowTitle("Invaders Reincarnation");
   this->setMinimumSize(m_size);
-  //this->setWindowModality(Qt::WindowModality::NonModal);
-  //this->setWindowFlags(Qt::WindowFlags::Widget);
   this->setWindowIconText("IR");
   this->setWindowState(Qt::WindowState::WindowActive);
   this->setPalette(m_palette);
+
 
   // FOR MAIN MENU
   // buttons
@@ -119,25 +132,47 @@ MainWindow::MainWindow()
   QLabel * lControlGunShoot = new QLabel("Button to gun shoot");
   QLabel * lControlPause = new QLabel("Game pause");
 
-  QLabel * lScreenComment = new QLabel("Screen:");
-  QLabel * lWindowSize = new QLabel("Window size");
-  QLabel * lWindowState = new QLabel("Window state");
+  QLabel * lGameParamComment = new QLabel("Game:");
+  QLabel * lGPAliensCount = new QLabel("Count of aliens");
+  QLabel * lGPObstacleCount = new QLabel("Count of obstacles");
+  QLabel * lGPObstacleRedraw = new QLabel("Redraw obstacles only at first level");
+  QLabel * lGPGunStartLives = new QLabel("Start gun lives count");
+  QLabel * lGPGunAddLive = new QLabel("Add one life to gun at every level");
 
-  // QShortcuts
-  m_shortcutGunMoveLeft = new QShortcut(this);
-  m_shortcutGunMoveLeft->setKey(Qt::Key_Left);
-  connect(m_shortcutGunMoveLeft, SIGNAL(activated()), this, SLOT(ShortcutGunMoveLeft()));
-  m_shortcutGunMoveRight = new QShortcut(this);;
-  m_shortcutGunMoveRight->setKey(Qt::Key_Right);
-  connect(m_shortcutGunMoveRight, SIGNAL(activated()), this, SLOT(ShortcutGunMoveRight()));
-  m_shortcutGunShoot = new QShortcut(this);
-  m_shortcutGunShoot->setKey(Qt::Key_Up);
-  connect(m_shortcutGunShoot, SIGNAL(activated()), this, SLOT(ShortcutGunShoot()));
-  m_shortcutGamePause = new QShortcut(this);
-  m_shortcutGamePause->setKey(Qt::Key_Escape);
-  connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
+  QLabel * lScreenComment = new QLabel("Main:");
+  QLabel * lWindowSize = new QLabel("Window size");
+  QLabel * lWindowState = new QLabel("Window state");  
+  QLabel * lLanguage = new QLabel("Language:");
 
   // Work with Values and Keys
+    // Control
+
+
+    // Game
+  QSlider * slGPAliensCount = new QSlider(Qt::Horizontal);
+  slGPAliensCount->setRange(25, 200);
+  slGPAliensCount->setValue(55);
+  //connect(cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
+
+  QSlider * slGPObstacleCount = new QSlider(Qt::Horizontal);
+  slGPObstacleCount->setRange(0, 6);
+  slGPObstacleCount->setValue(4);
+  //connect(cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
+
+  QCheckBox * chbGPObstacleRedraw = new QCheckBox;  // сменить цвет
+  chbGPObstacleRedraw->setChecked(false);
+  //connect(cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
+
+  QSlider * slGPGunStartLives = new QSlider(Qt::Horizontal);
+  slGPGunStartLives->setRange(1, 5);
+  slGPGunStartLives->setValue(3);
+  //connect(cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
+
+  QCheckBox * chbGPGunAddLive = new QCheckBox;  // сменить цвет
+  chbGPGunAddLive->setChecked(true);
+  //connect(cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
+
+    // Main
   QComboBox * cbWindowState = new QComboBox();
   cbWindowState->addItem("Full screen", GameWindowStateTypes::FullScreen);
   cbWindowState->addItem("Minimized window", GameWindowStateTypes::MinimizedWindow);
@@ -160,18 +195,38 @@ MainWindow::MainWindow()
   m_cbWindowSize->setCurrentIndex(GameResolutionTypes::Size800x600);
   connect(m_cbWindowSize, SIGNAL(activated(int)), this, SLOT(ChangeResolution(int)));
 
+  QComboBox * cbLanguage = new QComboBox();
+  cbLanguage->addItem("English", GameLanguages::English);
+  cbLanguage->addItem("Russian", GameLanguages::Russian);
+  cbLanguage->setCurrentIndex(GameLanguages::English);
+  connect(cbLanguage, SIGNAL(activated(int)), this, SLOT(ChangeLanguage(int)));
+
   // QHBoxLayouts
+
   QHBoxLayout * hbControlGunMoveLeft = new QHBoxLayout;
   hbControlGunMoveLeft->addWidget(lControlGunMoveLeft);
-
   QHBoxLayout * hbControlGunMoveRight = new QHBoxLayout;
   hbControlGunMoveRight->addWidget(lControlGunMoveRight);
-
   QHBoxLayout * hbControlGunShoot = new QHBoxLayout;
   hbControlGunShoot->addWidget(lControlGunShoot);
-
   QHBoxLayout * hbControlPause = new QHBoxLayout;
   hbControlPause->addWidget(lControlPause);
+
+  QHBoxLayout * hbGPAlienCount = new QHBoxLayout;
+  hbGPAlienCount->addWidget(lGPAliensCount);
+  hbGPAlienCount->addWidget(slGPAliensCount);
+  QHBoxLayout * hbGPObstacleCount = new QHBoxLayout;
+  hbGPObstacleCount->addWidget(lGPObstacleCount);
+  hbGPObstacleCount->addWidget(slGPObstacleCount);
+  QHBoxLayout * hbGPObstacleRedraw = new QHBoxLayout;
+  hbGPObstacleRedraw->addWidget(lGPObstacleRedraw);
+  hbGPObstacleRedraw->addWidget(chbGPObstacleRedraw);
+  QHBoxLayout * hbGPGunStartLives = new QHBoxLayout;
+  hbGPGunStartLives->addWidget(lGPGunStartLives);
+  hbGPGunStartLives->addWidget(slGPGunStartLives);
+  QHBoxLayout * hbGPGunAddLive = new QHBoxLayout;
+  hbGPGunAddLive->addWidget(lGPGunAddLive);
+  hbGPGunAddLive->addWidget(chbGPGunAddLive);
 
   QHBoxLayout * hbWindowSize = new QHBoxLayout;
   hbWindowSize->addWidget(lWindowSize);
@@ -179,30 +234,44 @@ MainWindow::MainWindow()
   QHBoxLayout * hbWindowState = new QHBoxLayout;
   hbWindowState->addWidget(lWindowState);
   hbWindowState->addWidget(cbWindowState);
+  QHBoxLayout * hbLanguage = new QHBoxLayout;
+  hbLanguage->addWidget(lLanguage);
+  hbLanguage->addWidget(cbLanguage);
 
   // layout
   m_layoutSettings = new QGridLayout;
   m_layoutSettings->addWidget(m_pbToMenu, 0, 0);
-  /*m_layoutSettings->addWidget(lControlComment, 2, 0, 1, 2);
+  m_layoutSettings->addWidget(lControlComment, 2, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlGunMoveLeft, 3, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlGunMoveRight, 4, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlGunShoot, 5, 0, 1, 2);
-  m_layoutSettings->addLayout(hbControlPause, 6, 0, 1, 2);*/
+  m_layoutSettings->addLayout(hbControlPause, 6, 0, 1, 2);
+
+  m_layoutSettings->addWidget(lGameParamComment, 2, 2, 1, 2);
+  m_layoutSettings->addLayout(hbGPAlienCount, 3, 2, 1, 2);
+  m_layoutSettings->addLayout(hbGPObstacleCount, 4, 2, 1, 2);
+  m_layoutSettings->addLayout(hbGPObstacleRedraw, 5, 2, 1, 2);
+  m_layoutSettings->addLayout(hbGPGunStartLives, 6, 2, 1, 2);
+  m_layoutSettings->addLayout(hbGPGunAddLive, 7, 2, 1, 2);
+
   m_layoutSettings->addWidget(lScreenComment, 8, 0, 1, 2);
   m_layoutSettings->addLayout(hbWindowSize, 9, 0, 1, 2);
   m_layoutSettings->addLayout(hbWindowState, 10, 0, 1, 2);
-  m_layoutSettings->addWidget(m_pbSaveSettings, 11, 0);
-  m_layoutSettings->addWidget(m_pbLoadSettings, 11, 1);
-  m_layoutSettings->addWidget(bottomFiller, 12, 0, 1, 3);
+  m_layoutSettings->addLayout(hbLanguage, 11, 0, 1, 2);
+  m_layoutSettings->addWidget(m_pbSaveSettings, 12, 0);
+  m_layoutSettings->addWidget(m_pbLoadSettings, 12, 1);
+  m_layoutSettings->addWidget(bottomFiller, 13, 0, 1, 4);
 
   m_layoutSettings->setMargin(20);
   m_layoutSettings->setColumnMinimumWidth(0, 140);
   m_layoutSettings->setColumnMinimumWidth(1, 140);
-  m_layoutSettings->setColumnStretch(2, m_size.width()/100*30);
+  m_layoutSettings->setColumnMinimumWidth(2, 140);
+  m_layoutSettings->setColumnMinimumWidth(3, 140);
+  m_layoutSettings->setColumnStretch(4, m_size.width()/100*30);
   m_layoutSettings->setRowMinimumHeight(1, 15);
-  //m_layoutSettings->setRowMinimumHeight(7, 15);
-  m_layoutSettings->setRowMinimumHeight(11, 45);
-  m_layoutSettings->setRowStretch(12, m_size.height()/100*15);
+  m_layoutSettings->setRowMinimumHeight(7, 15);
+  m_layoutSettings->setRowMinimumHeight(12, 45);
+  m_layoutSettings->setRowStretch(13, m_size.height()/100*15);
 
   // widget
   m_widgetSettings = new QWidget(this);
@@ -270,7 +339,7 @@ void MainWindow::ShowMenuItems()
 // Предлагает сохранить игру -> вызывает SaveGame в случае подтверждения пользователем
 void MainWindow::ShowDialog(QString const & msg, DialogTypes type)
 {
-  //std::cout << msg.toStdString() << std::endl;
+  std::cout << msg.toStdString() << std::endl;
 }
 
 void MainWindow::Resize(size_t w, size_t h)
@@ -319,7 +388,10 @@ void MainWindow::ShortcutGunShoot()
 
 void MainWindow::ShortcutPause()
 {
+  // set game pause
 
+
+  if (m_widgetCurrent != m_widgetMenu) CheckoutToMenu();
 }
 
 
@@ -414,6 +486,25 @@ void MainWindow::ChangeWindowState(int state)
   }
   m_size.setWidth(this->width());
   m_size.setHeight(this->height());
+  // set flag
+  m_settingsChanged = true;
+}
+
+void MainWindow::ChangeLanguage(int state)
+{
+  switch (state)
+  {
+    case GameLanguages::English:
+    {
+      // for english localization
+      break;
+    }
+    case GameLanguages::Russian:
+    {
+      // для русской локализации
+      break;
+    }
+  }
   // set flag
   m_settingsChanged = true;
 }
