@@ -16,7 +16,12 @@ public:
   }
 
   // Destructor.
-  ~Obstacle2DManager() = default;
+  ~Obstacle2DManager()
+  {
+      for(size_t i = 0; i!=m_obstacles.size(); ++i)
+        delete m_obstacles[i];
+      m_obstacles.clear();
+  }
 
   // Constructors with parameters.
   Obstacle2DManager(size_t const countObstacle)
@@ -46,8 +51,16 @@ public:
   {
     for(auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
       if((*it)->CheckIntersection(bul))
+<<<<<<< Updated upstream
         break;
     return 0;
+=======
+      {
+        bul.Inform(*(*it));
+        return true;
+      }
+    return false;
+>>>>>>> Stashed changes
   }
 
 private:

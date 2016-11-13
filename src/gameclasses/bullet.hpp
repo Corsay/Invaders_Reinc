@@ -2,6 +2,8 @@
 
 #include "movedgameentity.hpp"
 
+using TOnUpdateHandler = std::function<void(GameEntity2D const &)>;
+
 class Bullet2D final : public MovedGameEntity2D
 {
 public:
@@ -24,6 +26,17 @@ public:
   Bullet2D(Point2D const & leftBottom, Point2D const & rightTop, float damage, float speed)
     :MovedGameEntity2D(leftBottom, rightTop, damage, speed)
   {}
+
+  void SetUpdateHandler(TOnUpdateHandler const & handler)
+  {
+    m_updateHandler = handler;
+  }
+
+  void Inform(GameEntity2D const & ge) const
+  {
+    if (m_updateHandler != nullptr)
+      m_updateHandler(ge);
+  }
 
   // For factory
   inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
@@ -63,5 +76,6 @@ private:
     SetHealth(BULLET_DAMAGE_START);
     SetSpeed(BULLET_SPEED_START);
   }
+  TOnUpdateHandler m_updateHandler = nullptr;
 };
 

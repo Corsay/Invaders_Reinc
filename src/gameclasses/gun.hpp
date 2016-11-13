@@ -79,6 +79,7 @@ public:
     if(! (bul.GetBox() && this->GetBox()))
       return false;
     //если попала
+    bul.Inform(*this);
     this->SetHealth(this->GetHealth() - bul.GetHealth());
     if(this->GetHealth() == 0)
     {

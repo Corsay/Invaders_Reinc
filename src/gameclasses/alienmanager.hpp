@@ -17,7 +17,13 @@ public:
   }
 
   // Destructor.
-  ~Alien2DManager() = default;
+  ~Alien2DManager()
+  {
+    for(size_t i = 0; i!=m_aliens.size(); ++i)
+      for(size_t j = 0; j!=m_aliens[0].size(); ++j)
+        delete m_aliens[i][j];
+    m_aliens.clear();
+  }
 
   // Constructors with parameters.
   Alien2DManager(size_t const countRow, size_t const countColumn)
@@ -50,23 +56,25 @@ public:
   {
     int i, j;
     //вычисляется место пришельца в сетке
-    i = (bul.GetBox().top() - m_aliens[0][0]->GetBox().top() - ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
-    j = (bul.GetBox().left() - m_aliens[0][0]->GetBox().left() - ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
-
-    if( (m_aliens[i][j] != nullptr) && ( m_aliens[i][j]->GetBox() && bul.GetBox()))
-    {    
-      if( m_aliens[i][j]->GetHealth() <= bul.GetHealth())
-      {
-        delete m_aliens[i][j];
-        m_aliens[i][j] = nullptr;
-        --m_liveAliensCount;
-      }
-      else  // ec heals
-      {
-        m_aliens[i][j]->SetHealth(m_aliens[i][j]->GetHealth() - bul.GetHealth());
-      }
-      return true;
-    }
+    i = (bul.GetBox().top() - m_aliens[0][0]->GetBox().top() + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
+    j = (bul.GetBox().left() - m_aliens[0][0]->GetBox().left() + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
+    //std::cout << "i = " << i << "\tj = " << j << "\t" << *m_aliens[i][j] << std::endl;
+    if(i<m_aliens.size() && j<m_aliens[0].size())
+      if(m_aliens[i][j] != nullptr);
+        if(m_aliens[i][j]->GetBox() && bul.GetBox())
+        {
+          bul.Inform(*m_aliens[i][j]);
+          if( m_aliens[i][j]->GetHealth() <= bul.GetHealth())
+          {
+            delete m_aliens[i][j];
+            --m_liveAliensCount;
+          }
+          else  // ec heals
+          {
+            m_aliens[i][j]->SetHealth(m_aliens[i][j]->GetHealth() - bul.GetHealth());
+          }
+          return true;
+        }
     return false;
   }
 

@@ -23,20 +23,6 @@ public:
   {}
   // Capabilities
   // if add manager this code can be replaced, because later added keypress
-  void GunMoveLeft()
-  {
-    if(m_gun.GetBox().left() - GUN_STEP <= GUN_LEFT_LIMIT)
-      m_gun.GetBox().HorizontalShift(m_gun.GetBox().left() - GUN_LEFT_LIMIT);
-    else
-      m_gun.GetBox().HorizontalShift(-GUN_STEP);
-  }
-  void GunMoveRight()
-  {
-    if(m_gun.GetBox().right() + GUN_STEP >= GUN_LEFT_LIMIT)
-      m_gun.GetBox().HorizontalShift( GUN_RIGHT_LIMIT - m_gun.GetBox().left());
-    else
-      m_gun.GetBox().HorizontalShift(GUN_STEP);
-  }
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
@@ -48,6 +34,7 @@ public:
       BULLET_DAMAGE_START,
       BULLET_SPEED_START
     );
+    bullet.SetUpdateHandler( [&](GameEntity2D const & ge){ std::cout << "the bullet from the gun hit in " << ge << std::endl; }  );
     m_bulletManager.NewBullet(bullet, GunType);
   }
 
@@ -62,6 +49,7 @@ public:
       BULLET_DAMAGE_START,
       BULLET_SPEED_START
     );
+    bullet.SetUpdateHandler( [&](GameEntity2D const & ge){ std::cout << "the bullet from the aliens hit in " << ge << std::endl; }  );
     m_bulletManager.NewBullet(bullet, AlienType);
   }
 
