@@ -11,6 +11,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 
+FILE(GLOB ProjectHeaders "src/*.hpp")
+FILE(GLOB ProjectSubHeaders "src/gameclasses/*.hpp")
+
 # Set up the main source folder.
 set(SOURCE_ROOT src)
 # To display subfolder and its content in QT Creator.
@@ -20,7 +23,7 @@ aux_source_directory(${S_SOURCE_ROOT} SRC_LIST)
 aux_source_directory(${SOURCE_ROOT} SRC_LIST)
 qt5_wrap_cpp(QT_WRAPPED_SRC ${SRC_LIST})
 # Create executable by SRC_LIST.
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${QT_WRAPPED_SRC})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${QT_WRAPPED_SRC} ${ProjectHeaders} ${ProjectSubHeaders})
 
 # Qt modules
 qt5_use_modules(${PROJECT_NAME} Widgets OpenGL)

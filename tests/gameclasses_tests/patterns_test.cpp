@@ -35,4 +35,5 @@ TEST(patterns_test, test_observer)
   bul.SetUpdateHandler( [&](GameEntity2D const & ge){ std::cout << "the bullet from the alien hit in " << ge << std::endl; }  );
 
   EXPECT_TRUE(gun.CheckIntersection(bul));
+  // the bullet from the alien hit in GameEntity2D {Box2D {Point2D {3.4, 7.8}, Point2D {5.2, 8.4}}}
 }
