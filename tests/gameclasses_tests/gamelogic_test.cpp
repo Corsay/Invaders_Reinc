@@ -16,7 +16,7 @@ TEST(gamelogic_test, alien_intersection)
     EXPECT_FALSE(al.CheckIntersection(b4));
 }
 
-TEST(gun_test, alien_intersection)
+TEST(gamelogic_test, gun_intersection)
 {
     Gun2D g( Point2D{100.0f, 80.0f}, Point2D{150.0f,120.0f});
     Bullet2D b1( Point2D{155.0f, 90.0f}, Point2D{165.0f, 100.0f});
@@ -28,7 +28,7 @@ TEST(gun_test, alien_intersection)
     EXPECT_FALSE(g.CheckIntersection(b3));
 }
 
-TEST(obstacle_test, alien_intersection)
+/*TEST(gamelogic_test, obstacle_intersection)
 {
     Obstacle2DManager O(2);
     Bullet2D b1( Point2D{155.0f, 90.0f}, Point2D{165.0f, 100.0f});
@@ -38,5 +38,4 @@ TEST(obstacle_test, alien_intersection)
     EXPECT_FALSE(O.CheckIntersection(b1));
     EXPECT_TRUE(O.CheckIntersection(b2));
     EXPECT_FALSE(O.CheckIntersection(b3));
-}
-
+}*/

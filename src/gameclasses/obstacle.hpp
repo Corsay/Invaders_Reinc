@@ -46,26 +46,23 @@ public:
     return *this;
   }
 
+
+  // for Factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::ObstacleType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Obstacle2D());
+  }
+
+
   // Getters
   inline BoxMatrix const & GetBoxMatrix() const          { return m_boxes; }
   inline BoxMatrix & GetBoxMatrix()                      { return m_boxes; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
 
-  // Redefinition
-  friend std::ostream & operator << (std::ostream & os, Obstacle2D & obj)
-  {
-    os << "OBSTACLE{"
-       << obj.GetBox().leftBottom()
-       << ", " << obj.GetBox().rightTop()
-       << ", " << obj.GetHealth()
-       << "}";
-    return os;
-  }
 
-  // for Factory
-  inline EntitiesTypes GetEntityType(){ return EntitiesTypes::ObstacleType; }
-
+  // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
     if(! (bul.GetBox() && this->GetBox() ) )
@@ -90,6 +87,19 @@ public:
           }
     return false;
   }
+
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Obstacle2D & obj)
+  {
+    os << "OBSTACLE{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", " << obj.GetHealth()
+       << "}";
+    return os;
+  }
+
 private:
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {

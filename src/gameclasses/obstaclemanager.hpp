@@ -40,6 +40,7 @@ public:
     return *this;
   }
 
+
   // Getters
   inline ObstacleVector const & GetObstacleVector() const { return m_obstacles; }
   inline ObstacleVector & GetObstacleVector() { return m_obstacles; }
@@ -47,20 +48,15 @@ public:
 
 
   // Capabilities
-  bool CheckIntersection(Bullet2D& bul)
+  bool CheckIntersection(Bullet2D const & bul)
   {
     for(auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
       if((*it)->CheckIntersection(bul))
-<<<<<<< Updated upstream
-        break;
-    return 0;
-=======
       {
         bul.Inform(*(*it));
         return true;
       }
     return false;
->>>>>>> Stashed changes
   }
 
 private:
@@ -71,21 +67,21 @@ private:
     for (size_t i = 0; i < countObstacle; ++i)
     {
       m_obstacles.push_back
+      (
+        new Obstacle2D
         (
-          new Obstacle2D
-          (
-            Point2D
-            {
-              OBSTACLE_LEFT_LIMIT + (i+1) * OBSTACLE_DISTANCE + i * OBSTACLE_WIDTH
-              , OBSTACLE_BOTTOM_LIMIT
-            },
-            Point2D
-            {
-              OBSTACLE_LEFT_LIMIT + (i+1) * ( OBSTACLE_DISTANCE + OBSTACLE_WIDTH )
-              , OBSTACLE_BOTTOM_LIMIT + OBSTACLE_HEIGHT
-            }
-          )
-        );
+          Point2D
+          {
+            OBSTACLE_LEFT_LIMIT + (i + 1) * OBSTACLE_DISTANCE + i * OBSTACLE_WIDTH,
+            OBSTACLE_BOTTOM_LIMIT
+          },
+          Point2D
+          {
+            OBSTACLE_LEFT_LIMIT + (i + 1) * ( OBSTACLE_DISTANCE + OBSTACLE_WIDTH ),
+            OBSTACLE_BOTTOM_LIMIT + OBSTACLE_HEIGHT
+          }
+        )
+      );
     }
   }
 

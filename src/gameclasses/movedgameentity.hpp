@@ -50,10 +50,10 @@ public:
     return *this;
   }
 
+
   // Getters
   inline MovedGameEntity2D GetMovedEntity() const { return *this; }
   inline float const GetSpeed() const { return m_speed; }
-  //inline EntitiesTypes const GetEntityType() override { return  };
 
   // Setters
   inline void SetMovedEntity(MovedGameEntity2D const & newMovedEntity)
@@ -63,17 +63,20 @@ public:
   }
   inline void SetSpeed(float const newSpeed) { m_speed = newSpeed; }
 
+
   // Logical operators
   bool operator == (MovedGameEntity2D const & obj) const
   {
     return obj.GetBox() == GetBox() && obj.GetHealth() == GetHealth() && obj.GetSpeed() == m_speed;
   }
 
+
   // Capabilities
   virtual void Move(size_t horiz, size_t vert)
   {
     throw std::runtime_error("Not released MoveEntity2D::Move.");
   }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, MovedGameEntity2D const & obj)

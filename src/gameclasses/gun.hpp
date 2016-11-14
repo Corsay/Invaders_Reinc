@@ -33,14 +33,6 @@ public:
     if (lives <= 0) throw std::out_of_range("Lives must be more then ZERO!");
   }
 
-
-  // For factory
-  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::GunType; }
-  std::unique_ptr<GameEntity2D> Create() override
-  {
-    return std::unique_ptr<GameEntity2D>(new Gun2D());
-  }
-
   // copy constructor and assignment operator
   Gun2D(Gun2D const & obj)
     :MovedGameEntity2D(obj.GetMovedEntity()), m_lives(obj.GetLives())
@@ -55,25 +47,25 @@ public:
     return *this;
   }
 
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::GunType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Gun2D());
+  }
+
+
   // Getters
   inline size_t const GetLives() const { return m_lives; }
   inline float const GetRate() const   { return m_gunRate; }
+
   // Setters
   inline void SetLives(size_t const newLives) { m_lives = newLives; }
   inline void SetRate(float const newGunRate) { m_gunRate = newGunRate; }
 
-  // Redefinition
-  friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
-  {
-    os << "GUN{"
-       << obj.GetBox().leftBottom()
-       << ", " << obj.GetBox().rightTop()
-       << ", HP: " << obj.GetHealth()
-       << ", speed: " << obj.GetSpeed()
-       << ", lives: " << obj.m_lives
-       << "}";
-    return os;
-  }
+
+  // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
     if(! (bul.GetBox() && this->GetBox()))
@@ -90,8 +82,23 @@ public:
     return true;
   }
 
+
+  // Redefinition
+  friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
+  {
+    os << "GUN{"
+       << obj.GetBox().leftBottom()
+       << ", " << obj.GetBox().rightTop()
+       << ", HP: " << obj.GetHealth()
+       << ", speed: " << obj.GetSpeed()
+       << ", lives: " << obj.m_lives
+       << "}";
+    return os;
+  }
+
 private:
   void GunBoom(){/* имитация взрыва? */}
+
   inline void DefaultGunSetStartValue()
   {
     SetHealth(GUN_HEALTH_START);

@@ -27,24 +27,11 @@ public:
     :MovedGameEntity2D(leftBottom, rightTop, damage, speed)
   {}
 
+  // Setters
   void SetUpdateHandler(TOnUpdateHandler const & handler)
   {
     m_updateHandler = handler;
   }
-
-  void Inform(GameEntity2D const & ge) const
-  {
-    if (m_updateHandler != nullptr)
-      m_updateHandler(ge);
-  }
-
-  // For factory
-  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
-  std::unique_ptr<GameEntity2D> Create() override
-  {
-    return std::unique_ptr<GameEntity2D>(new Bullet2D());
-  }
-
 
   // copy constructor and assignment operator
   Bullet2D(Bullet2D const & obj)
@@ -57,6 +44,23 @@ public:
     SetMovedEntity(obj.GetMovedEntity());
     return *this;
   }
+
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Bullet2D());
+  }
+
+
+  // Capabilities
+  void Inform(GameEntity2D const & ge) const
+  {
+    if (m_updateHandler != nullptr)
+      m_updateHandler(ge);
+  }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Bullet2D const & obj)
@@ -76,6 +80,7 @@ private:
     SetHealth(BULLET_DAMAGE_START);
     SetSpeed(BULLET_SPEED_START);
   }
+
   TOnUpdateHandler m_updateHandler = nullptr;
 };
 

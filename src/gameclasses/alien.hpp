@@ -25,15 +25,6 @@ public:
     :MovedGameEntity2D(leftBottom, rightTop, health, speedShoot)
   {}
 
-
-  // For factory
-  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
-  std::unique_ptr<GameEntity2D> Create() override
-  {
-    return std::unique_ptr<GameEntity2D>(new Alien2D());
-  }
-
-
   // copy constructor and assignment operator
   Alien2D(Alien2D const & obj)
     :MovedGameEntity2D(obj.GetMovedEntity())
@@ -45,6 +36,15 @@ public:
     SetMovedEntity(obj.GetMovedEntity());
     return *this;
   }
+
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Alien2D());
+  }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Alien2D const & obj)

@@ -33,10 +33,3 @@ TEST(bullet2dmanager_test, test_add_bullets)
   EXPECT_EQ(bm1.GetCountOfAlienBullets(), 1);
   EXPECT_EQ(bm1.GetCountOfGunBullets(), 1);
 }
-
-TEST(bullet2dmanager_test, test_throw)
-{
-  Bullet2DManager bm1;
-  //EXPECT_THROW(bm1.CheckAllInterections(), std::runtime_error);
-  //EXPECT_THROW(bm1.BulletsMove(Box2D{}), std::runtime_error);
-}

@@ -4,8 +4,6 @@
 #include "gun.hpp"
 #include "alienmanager.hpp"
 #include "bulletmanager.hpp"
-#include "obstacle.hpp"
-#include "factory.hpp"
 #include "obstaclemanager.hpp"
 
 class Space2D final : public GameEntity2D
@@ -21,9 +19,9 @@ public:
   Space2D(Point2D const & leftBottom, Point2D const & rightTop)
     :GameEntity2D(leftBottom, rightTop)
   {}
-  // Capabilities
-  // if add manager this code can be replaced, because later added keypress
 
+
+  // Capabilities
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
     Point2D start = m_gun.GetBox().GetCenter();
@@ -76,10 +74,8 @@ public:
   {
     if (m_alienManager.GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
     if (m_gun.GetHealth() <= 0) return 2;
-    if (m_alienManager.GetLiveAliensCount() == 0) return 3;
     // gun dead once       - continue  (if gun_lives > 0)
     // gun dead last time  - game over (if gun_lives <= 0)
-    //нет пришельцев - уровень пройден
 
     return 0; // game continued
   }
@@ -92,28 +88,27 @@ public:
     RedrawSpace();
   }
 
-
-
   void NewLvlPrepare(size_t const lvl)
   {
     throw std::runtime_error("Not released Space2D::NewLvlPrepare.");
     // configure space class fields for new lvl
   }
-private:
+
   void RedrawSpace()
   {
     throw std::runtime_error("Not released Space2D::RedrawSpace.");
     // redraw game field
   }
-  bool CheckObstacleIntersection(Bullet2D& b)
+
+private:
+  /*bool CheckObstacleIntersection(Bullet2D const & b)
   {
 
     return 0;
-  }
+  }*/
 
-  Gun2D m_gun;                         // one gun            // maybe create manager(for multiplayer game mode)
-  Alien2DManager m_alienManager;       // one alien manager  // maybe create something like Factory in it
-  Obstacle2DManager m_obstacleManager;
-  Bullet2DManager m_bulletManager;     // one bullet manager // maybe create something like Factory in it
-  std::list<Obstacle2D> m_obstacles;   // list of obstacles  // maybe create manager and something like Factory in it
+  Gun2D m_gun;                         // one gun
+  Alien2DManager m_alienManager;       // one alien manager
+  Obstacle2DManager m_obstacleManager; // one obstacle manager
+  Bullet2DManager m_bulletManager;     // one bullet manager
 };

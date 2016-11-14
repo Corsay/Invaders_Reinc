@@ -28,16 +28,17 @@ public:
     return *this;
   }
 
+
   // Getters
   inline BulletList  const & GetBulletsFromAliensList() const { return m_fromAlien; }
-  inline BulletList  const & GetBulletsFromGunList() const { return m_fromGun; }
+  inline BulletList  const & GetBulletsFromGunList() const    { return m_fromGun; }
+  inline BulletList & GetBulletsFromAliensList()      { return m_fromAlien; }
+  inline BulletList & GetBulletsFromGunList()         { return m_fromGun; }
+  inline size_t const GetCountOfAlienBullets() const  { return m_fromAlien.size(); }
+  inline size_t const GetCountOfGunBullets() const    { return m_fromGun.size(); }
 
-  inline BulletList & GetBulletsFromAliensList() { return m_fromAlien; }
-  inline BulletList & GetBulletsFromGunList() { return m_fromGun; }
 
-  inline size_t const GetCountOfAlienBullets() const       { return m_fromAlien.size(); }
-  inline size_t const GetCountOfGunBullets() const         { return m_fromGun.size(); }
-
+  // Capabilities
   void BulletsMove(Box2D const & border)
   {
     for(auto it=m_fromAlien.begin(); it != m_fromAlien.end(); ++it)

@@ -17,13 +17,13 @@ public:
   }
 
   // Destructor.
-  ~Alien2DManager()
-  {
-    for(size_t i = 0; i!=m_aliens.size(); ++i)
-      for(size_t j = 0; j!=m_aliens[0].size(); ++j)
+  ~Alien2DManager() = default;
+  /*{
+    for(size_t i = 0; i != m_aliens.size(); ++i)
+      for(size_t j = 0; j != m_aliens[0].size(); ++j)
         delete m_aliens[i][j];
     m_aliens.clear();
-  }
+  }*/
 
   // Constructors with parameters.
   Alien2DManager(size_t const countRow, size_t const countColumn)
@@ -44,6 +44,7 @@ public:
     return *this;
   }
 
+
   // Getters
   inline AlienMatrix const & GetAlienMatrix() const { return m_aliens; }
   inline AlienMatrix & GetAlienMatrix() { return m_aliens; }
@@ -51,17 +52,17 @@ public:
   inline size_t const GetCountOfRows() const      { return m_aliens.size(); }
   inline size_t const GetCountOfColumn() const    { return m_aliens[0].size(); }
 
+
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
     int i, j;
-    //вычисляется место пришельца в сетке
+    // get shooted alien position
     i = (bul.GetBox().top() - m_aliens[0][0]->GetBox().top() + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
     j = (bul.GetBox().left() - m_aliens[0][0]->GetBox().left() + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
-    //std::cout << "i = " << i << "\tj = " << j << "\t" << *m_aliens[i][j] << std::endl;
-    if(i<m_aliens.size() && j<m_aliens[0].size())
-      if(m_aliens[i][j] != nullptr);
-        if(m_aliens[i][j]->GetBox() && bul.GetBox())
+    if (i < m_aliens.size() && j < m_aliens[0].size())
+      if (m_aliens[i][j] != nullptr)
+        if (m_aliens[i][j]->GetBox() && bul.GetBox())
         {
           bul.Inform(*m_aliens[i][j]);
           if( m_aliens[i][j]->GetHealth() <= bul.GetHealth())
