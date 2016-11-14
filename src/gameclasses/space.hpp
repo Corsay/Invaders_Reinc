@@ -101,12 +101,6 @@ public:
   }
 
 private:
-  /*bool CheckObstacleIntersection(Bullet2D const & b)
-  {
-
-    return 0;
-  }*/
-
   Gun2D m_gun;                         // one gun
   Alien2DManager m_alienManager;       // one alien manager
   Obstacle2DManager m_obstacleManager; // one obstacle manager

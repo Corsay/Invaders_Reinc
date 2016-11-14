@@ -9,27 +9,23 @@
 
 #include <QComboBox>
 #include <QLabel>
+
 #include <QShortcut>
+#include <QKeySequenceEdit>
 
 #include <QPushButton>
 
 #include <QCheckBox>
 #include <QSlider>
-/*
-#include <QProgressBar>
-#include <QSpinBox>
-
-#include <QGroupBox>
-#include <QTabWidget>
-*/
 
 //#include <QTimer>
 //#include <QOpenGLWidget>
+#include "gameclasses/space.hpp"
 
 enum DialogTypes
 {
-  OnClose,
-  OnBackToMainFromSettings
+  OnSubmitGameSave,
+  OnSubmitSettingsLeave
 };
 enum GameResolutionTypes
 {
@@ -76,20 +72,33 @@ protected:
   void Resize(size_t w, size_t h);
 
 private slots:
-  void LoadSettings();
-  void SaveSettings();
-  // shortcuts
+  // SHORTCUTS
   void ShortcutGunMoveLeft();
   void ShortcutGunMoveRight();
   void ShortcutGunShoot();
   void ShortcutPause();
-  // menu
+  // MENU
   void NewGame();
   void ContinueOrLoadGame();
   void SaveGame();
   void CheckoutToSettings();
-  // settings
+  // SETTINGS
+  // buttons
   void CheckoutToMenu();
+  void LoadSettings();
+  void SaveSettings();
+  // control
+  void ChangeShortcutGunMoveLeft(QKeySequence key);
+  void ChangeShortcutGunMoveRight(QKeySequence key);
+  void ChangeShortcutGunShoot(QKeySequence key);
+  void ChangeShortcutGamePause(QKeySequence key);
+  // game
+  void ChangeAliensCount(int state);
+  void ChangeObstacleCount(int state);
+  void ChangeGunStartLives(int state);
+  void ChangeObstacleRedrawState(bool state);
+  void ChangeGunAddLiveState(bool state);
+  // main
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
   void ChangeLanguage(int state);
@@ -109,6 +118,10 @@ private:
   QPushButton * m_pbLoadSettings = nullptr;
 
   QComboBox * m_cbWindowSize = nullptr;
+
+  QLabel * m_lGPAliensCount = nullptr;
+  QLabel * m_lGPObstacleCount = nullptr;
+  QLabel * m_lGPGunStartLives = nullptr;
 
   QShortcut * m_shortcutGunMoveLeft = nullptr;
   QShortcut * m_shortcutGunMoveRight = nullptr;

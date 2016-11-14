@@ -72,7 +72,7 @@ public:
 
 
   // Capabilities
-  virtual void Move(size_t horiz, size_t vert)
+  virtual void Move(float x, float y)
   {
     throw std::runtime_error("Not released MoveEntity2D::Move.");
   }

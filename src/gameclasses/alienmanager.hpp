@@ -18,12 +18,6 @@ public:
 
   // Destructor.
   ~Alien2DManager() = default;
-  /*{
-    for(size_t i = 0; i != m_aliens.size(); ++i)
-      for(size_t j = 0; j != m_aliens[0].size(); ++j)
-        delete m_aliens[i][j];
-    m_aliens.clear();
-  }*/
 
   // Constructors with parameters.
   Alien2DManager(size_t const countRow, size_t const countColumn)

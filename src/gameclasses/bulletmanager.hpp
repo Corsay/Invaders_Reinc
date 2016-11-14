@@ -1,8 +1,6 @@
 #pragma once
 
 #include "bullet.hpp"
-#include "gun.hpp"
-#include "alien.hpp"
 #include <list>
 
 using BulletList = std::list<Bullet2D>; // Alias
