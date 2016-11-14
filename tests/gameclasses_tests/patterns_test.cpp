@@ -27,3 +27,12 @@ TEST(patterns_test, test_abstract_factory)
   EXPECT_EQ(a->GetBox(), Box2D(Point2D(0.0f, 0.0f), Point2D(0.0f, 0.0f)));
   EXPECT_EQ(aa->GetBox(), Box2D(Point2D(0.0f, 0.0f), Point2D(0.0f, 0.0f)));
 }
+
+TEST(patterns_test, test_observer)
+{
+  Gun2D gun = { {5.2f, 8.4f}, {3.4f, 7.8f}, 55, 90, 5 };
+  Bullet2D bul = { {5.0f, 8.0f}, {5.0f, 8.0f} };
+  bul.SetUpdateHandler( [&](GameEntity2D const & ge){ std::cout << "the bullet from the alien hit in " << ge << std::endl; }  );
+
+  EXPECT_TRUE(gun.CheckIntersection(bul));
+}
