@@ -45,8 +45,8 @@ GLWidget::GLWidget(MainWindow * mw, QColor const & background)
   : m_mainWindow(mw)
   , m_background(background)
 {
-  setMinimumSize(1024, 768);             // минимальный размер окна
-  setFocusPolicy(Qt::StrongFocus);       // ? без этого ничто не движется
+  //setMinimumSize(800, 600);             // минимальный размер окна
+  //setFocusPolicy(Qt::StrongFocus);
 }
 
 GLWidget::~GLWidget()
@@ -138,7 +138,7 @@ void GLWidget::Render()
   // m_position или QVector2D(400, 400) - Позиция обьекта относительно левого нижнего угла
   // QSize(64, 64)                      - размер обьекта
   // m_screenSize                       - размер окна
-  m_texturedRect->Render(m_texture, m_position, QSize(64, 64), m_screenSize);               // подвижный Alien с его позицией
+  m_texturedRect->Render(m_texture, m_position, QSize(128, 128), m_screenSize);               // подвижный Alien с его позицией
   m_texturedRect->Render(m_texture, QVector2D(400, 400), QSize(128, 128), m_screenSize);    // неподвижный Alien по середине    поверх предыдущего
   m_texturedRect->Render(m_texture, QVector2D(600, 600), QSize(128, 128), m_screenSize);    // неподвижный Alien справа сверху  поверх предыдущих двух
 }

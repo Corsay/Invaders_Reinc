@@ -3,18 +3,13 @@
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QApplication>
-
 #include <QGridLayout>
 #include <QHBoxLayout>
-
 #include <QComboBox>
 #include <QLabel>
-
 #include <QShortcut>
 #include <QKeySequenceEdit>
-
 #include <QPushButton>
-
 #include <QCheckBox>
 #include <QSlider>
 
@@ -62,12 +57,10 @@ public:
   ~MainWindow();
 
 protected:
-  //void mousePressEvent(QMouseEvent * e) override;
-  //void mouseReleaseEvent(QMouseEvent * e) override;
-
-  void MoveWindowToCenter();
+  // MENU
   void ShowMenuItems();
-
+  // WINDOW
+  void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
   void Resize(size_t w, size_t h);
 
@@ -92,7 +85,7 @@ private slots:
   void ChangeShortcutGunMoveRight(QKeySequence key);
   void ChangeShortcutGunShoot(QKeySequence key);
   void ChangeShortcutGamePause(QKeySequence key);
-  // game
+  // game parameters
   void ChangeAliensCount(int state);
   void ChangeObstacleCount(int state);
   void ChangeGunStartLives(int state);
@@ -102,42 +95,71 @@ private slots:
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
   void ChangeLanguage(int state);
+  // GAME
+  // {TODO}
 
 private:
-  int L2D(size_t px) const { return px * devicePixelRatio(); }
-
-  bool m_gameStarted = false;
-  bool m_settingsChanged = false;
-  QPushButton * m_pbMenuNewGame = nullptr;
-  QPushButton * m_pbMenuContinueGame = nullptr;
-  QPushButton * m_pbMenuSaveGame = nullptr;
-  QPushButton * m_pbExit = nullptr;
-  QPushButton * m_pbToSet = nullptr;
-  QPushButton * m_pbToMenu = nullptr;
-  QPushButton * m_pbSaveSettings = nullptr;
-  QPushButton * m_pbLoadSettings = nullptr;
-
-  QComboBox * m_cbWindowSize = nullptr;
-
-  QLabel * m_lGPAliensCount = nullptr;
-  QLabel * m_lGPObstacleCount = nullptr;
-  QLabel * m_lGPGunStartLives = nullptr;
-
+  // SHORTCUTS
   QShortcut * m_shortcutGunMoveLeft = nullptr;
   QShortcut * m_shortcutGunMoveRight = nullptr;
   QShortcut * m_shortcutGunShoot = nullptr;
   QShortcut * m_shortcutGamePause = nullptr;
-
+  // MENU
+  bool m_gameStarted = false; 
+  QPushButton * m_pbMenuNewGame = nullptr;
+  QPushButton * m_pbMenuContinueGame = nullptr;
+  QPushButton * m_pbMenuSaveGame = nullptr;
+  QPushButton * m_pbToSet = nullptr;
+  QPushButton * m_pbExit = nullptr;
   QGridLayout * m_layoutMenu = nullptr;
-  QGridLayout * m_layoutSettings = nullptr;
-
   QWidget * m_widgetMenu = nullptr;
+  // SETTINGS
+  bool m_settingsChanged = false;
+    // button
+  QPushButton * m_pbToMenu = nullptr;
+  QPushButton * m_pbSaveSettings = nullptr;
+  QPushButton * m_pbLoadSettings = nullptr;
+    // label
+  QLabel * m_lControlComment = nullptr;
+  QLabel * m_lControlGunMoveLeft = nullptr;
+  QLabel * m_lControlGunMoveRight = nullptr;
+  QLabel * m_lControlGunShoot = nullptr;
+  QLabel * m_lControlGamePause = nullptr;
+  QLabel * m_lGameParamComment = nullptr;
+  QLabel * m_lGPAliensCount = nullptr;
+  QLabel * m_lGPObstacleCount = nullptr;
+  QLabel * m_lGPObstacleRedraw = nullptr;
+  QLabel * m_lGPGunStartLives = nullptr;
+  QLabel * m_lGPGunAddLive = nullptr;
+  QLabel * m_lWindowComment = nullptr;
+  QLabel * m_lWindowSize = nullptr;
+  QLabel * m_lWindowState = nullptr;
+  QLabel * m_lLanguage = nullptr;
+    // keysequenceedit
+  QKeySequenceEdit * m_kseGunMoveLeft = nullptr;
+  QKeySequenceEdit * m_kseGunMoveRight = nullptr;
+  QKeySequenceEdit * m_kseGunShoot = nullptr;
+  QKeySequenceEdit * m_kseGamePause = nullptr;
+    // slider
+  QSlider * m_slGPAliensCount = nullptr;
+  QSlider * m_slGPObstacleCount = nullptr;
+  QSlider * m_slGPGunStartLives = nullptr;
+    // checkbox
+  QCheckBox * m_chbGPObstacleRedraw = nullptr;
+  QCheckBox * m_chbGPGunAddLive = nullptr;
+    // combobox
+  QComboBox * m_cbWindowState = nullptr;
+  QComboBox * m_cbWindowSize = nullptr;
+  QComboBox * m_cbLanguage = nullptr;
+    // gridlayout
+  QGridLayout * m_layoutSettings = nullptr;
+    // widget
   QWidget * m_widgetSettings = nullptr;
-
+  // GAME
+  //QTimer * m_timer = nullptr;
+  //QOpenGLWidget * m_glWidget = nullptr;
+  // WINDOW
   QWidget * m_widgetCurrent = nullptr;      // for show and hide
   QSize m_size;
   QPalette m_palette;
-
-  //QTimer * m_timer = nullptr;
-  //QOpenGLWidget * m_glWidget = nullptr;
 };

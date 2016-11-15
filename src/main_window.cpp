@@ -1,18 +1,15 @@
 #include <iostream>
-#include <string>
 #include "main_window.hpp"
+#include "window_labels.hpp"
 
+// TODO: game widget
 //#include "gl_widget.hpp"
-
 //typedef void (QWidget::*QWidgetVoidSlot)();
 
+
+// WINDOW
 MainWindow::MainWindow()
 {
-  // create all needed objects
-  // try to load settings from file
-  // else set default settings
-
-  // CREATE ALL OBJECTS
   // window and widgets size
   m_size = QSize(800,600);
 
@@ -21,58 +18,59 @@ MainWindow::MainWindow()
   // qRgb(240, 240, 240)
   // qRgb(20, 20, 50)
   m_palette = QPalette(QColor(qRgb(20, 20, 50)));
-  m_palette.setColor(QPalette::Window, QColor(qRgb(0, 0, 20)));          // фон
-  m_palette.setColor(QPalette::WindowText, QColor(qRgb(200, 200, 200))); // цвет шрифт
-  m_palette.setColor(QPalette::ButtonText, QColor(qRgb(240, 240, 240))); // цвет шрифт кнопок
+  m_palette.setColor(QPalette::Window, QColor(qRgb(0, 0, 20)));          // background color
+  m_palette.setColor(QPalette::WindowText, QColor(qRgb(200, 200, 200))); // text color
+  m_palette.setColor(QPalette::ButtonText, QColor(qRgb(240, 240, 240))); // button text color
 
   // QShortcuts
   m_shortcutGunMoveLeft = new QShortcut(this);
-  m_shortcutGunMoveLeft->setKey(Qt::Key_Left);
   connect(m_shortcutGunMoveLeft, SIGNAL(activated()), this, SLOT(ShortcutGunMoveLeft()));
-  m_shortcutGunMoveRight = new QShortcut(this);;
-  m_shortcutGunMoveRight->setKey(Qt::Key_Right);
+  m_shortcutGunMoveLeft->setKey(Qt::Key_Left);
+  m_shortcutGunMoveRight = new QShortcut(this);
   connect(m_shortcutGunMoveRight, SIGNAL(activated()), this, SLOT(ShortcutGunMoveRight()));
+  m_shortcutGunMoveRight->setKey(Qt::Key_Right);
   m_shortcutGunShoot = new QShortcut(this);
-  m_shortcutGunShoot->setKey(Qt::Key_Up);
   connect(m_shortcutGunShoot, SIGNAL(activated()), this, SLOT(ShortcutGunShoot()));
+  m_shortcutGunShoot->setKey(Qt::Key_Up);
   m_shortcutGamePause = new QShortcut(this);
-  m_shortcutGamePause->setKey(Qt::Key_Escape);
   connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
+  m_shortcutGamePause->setKey(Qt::Key_Escape);
+
 
   // window settings
-  QIcon * icon = new QIcon("data/alien.png");
+  QIcon * icon = new QIcon(WINDOW_ICON_FOLDER);
   this->setWindowIcon(*icon);
-  this->setWindowTitle("Invaders Reincarnation");
+  this->setWindowTitle(WINDOW_TITLE);
   this->setMinimumSize(m_size);
-  this->setWindowIconText("IR");
   this->setWindowState(Qt::WindowState::WindowActive);
   this->setPalette(m_palette);
 
 
   // FOR MAIN MENU
   // buttons
-  m_pbMenuNewGame = new QPushButton("New game");
+  m_pbMenuNewGame = new QPushButton(MENU_BT_NEW_GAME);
   connect(m_pbMenuNewGame, SIGNAL(clicked(bool)), this, SLOT(NewGame()));
-  m_pbMenuNewGame->setToolTip("Start new game");
+  m_pbMenuNewGame->setToolTip(MENU_BTTT_NEW_GAME);
 
-  m_pbMenuContinueGame = new QPushButton("Load game");
+  m_pbMenuContinueGame = new QPushButton(MENU_BT_LOAD_GAME);
   connect(m_pbMenuContinueGame, SIGNAL(clicked(bool)), this, SLOT(ContinueOrLoadGame()));
+  m_pbMenuContinueGame->setToolTip(MENU_BTTT_LOAD_GAME);
 
-  m_pbMenuSaveGame = new QPushButton("Save game");
+  m_pbMenuSaveGame = new QPushButton(MENU_BT_SAVE_GAME);
   connect(m_pbMenuSaveGame, SIGNAL(clicked(bool)), this, SLOT(SaveGame()));
-  m_pbMenuSaveGame->setToolTip("Save current game state to the file");
+  m_pbMenuSaveGame->setToolTip(MENU_BTTT_SAVE_GAME);
 
-  m_pbToSet = new QPushButton("Settings");
+  m_pbToSet = new QPushButton(MENU_BT_TO_SETTINGS);
   connect(m_pbToSet, SIGNAL(clicked(bool)), this, SLOT(CheckoutToSettings()));
-  m_pbToSet->setToolTip("Move to the settings");
+  m_pbToSet->setToolTip(MENU_BTTT_TO_SETTINGS);
 
-  m_pbExit = new QPushButton("Exit");
+  m_pbExit = new QPushButton(MENU_BT_EXIT);
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
       {
-        if (m_gameStarted) ShowDialog("Do you want to save the current state of the game before closing?", DialogTypes::OnSubmitGameSave);
+        if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
         this->close();
       });
-  m_pbExit->setToolTip("Close program");
+  m_pbExit->setToolTip(MENU_BTTT_EXIT);
 
   // default button settings (game not started)
   ShowMenuItems();
@@ -93,14 +91,6 @@ MainWindow::MainWindow()
   m_layoutMenu->addWidget(m_pbExit, 6, 1, 1, 1);
   m_layoutMenu->addWidget(bottomFiller, 7, 0, 1, 3);
 
-  m_layoutMenu->setMargin(20);
-  m_layoutMenu->setColumnStretch(0, m_size.width()/100*30);
-  m_layoutMenu->setColumnMinimumWidth(1, 225);
-  m_layoutMenu->setColumnStretch(2, m_size.width()/100*30);
-  m_layoutMenu->setRowStretch(0, m_size.height()/100*10);
-  m_layoutMenu->setRowMinimumHeight(5, 36);
-  m_layoutMenu->setRowStretch(7, m_size.height()/100*15);
-
   // widget
   m_widgetMenu = new QWidget(this);
   m_widgetMenu->setMinimumSize(m_size);
@@ -114,82 +104,80 @@ MainWindow::MainWindow()
 
   // FOR SETTINGS
   // buttons
-  m_pbToMenu = new QPushButton("Menu");
-  m_pbToMenu->setToolTip("Back to the main menu");
+  m_pbToMenu = new QPushButton(SETTINGS_BT_TO_MENU);
+  m_pbToMenu->setToolTip(SETTINGS_BTTT_TO_MENU);
   connect(m_pbToMenu, SIGNAL(clicked(bool)), this, SLOT(CheckoutToMenu()));
 
-  m_pbSaveSettings = new QPushButton("Save settings");
-  m_pbSaveSettings->setToolTip("Save settings to data/settings.bin");
+  m_pbSaveSettings = new QPushButton(SETTINGS_BT_SAVE);
+  m_pbSaveSettings->setToolTip(SETTINGS_BTTT_SAVE);
   connect(m_pbSaveSettings, SIGNAL(clicked(bool)), this, SLOT(SaveSettings()));
 
-  m_pbLoadSettings = new QPushButton("Load settings");
-  m_pbLoadSettings->setToolTip("Load settings from data/settings.bin");
+  m_pbLoadSettings = new QPushButton(SETTINGS_BT_LOAD);
+  m_pbLoadSettings->setToolTip(SETTINGS_BTTT_LOAD);
   connect(m_pbLoadSettings, SIGNAL(clicked(bool)), this, SLOT(LoadSettings()));
 
   // QLabels
-  QLabel * lControlComment = new QLabel("_________________Control buttons:_________________");
-  QLabel * lControlGunMoveLeft = new QLabel("Gun move left button---");
-  QLabel * lControlGunMoveRight = new QLabel("Gun move right button-");
-  QLabel * lControlGunShoot = new QLabel("Button to gun shoot-----");
-  QLabel * lControlGamePause = new QLabel("Game pause---------------");
+  m_lControlComment = new QLabel(SETTINGS_LC_COMMENT);
+  m_lControlGunMoveLeft = new QLabel(SETTINGS_LC_GUN_MOVE_LEFT);
+  m_lControlGunMoveRight = new QLabel(SETTINGS_LC_GUN_MOVE_RIGHT);
+  m_lControlGunShoot = new QLabel(SETTINGS_LC_GUN_SHOOT);
+  m_lControlGamePause = new QLabel(SETTINGS_LC_GAME_PAUSE);
 
-  QLabel * lGameParamComment = new QLabel("____________________Game:_____________________");
-  m_lGPAliensCount = new QLabel("Count of aliens = 55");
-  m_lGPObstacleCount = new QLabel("Count of obstacles = 4");
-  QLabel * lGPObstacleRedraw = new QLabel("Redraw obstacles only at first level");
-  m_lGPGunStartLives = new QLabel("Start gun lives count = 3");
-  QLabel * lGPGunAddLive = new QLabel("Add one life to gun at every level");
+  m_lGameParamComment = new QLabel(SETTINGS_LGP_COMMENT);
+  m_lGPAliensCount = new QLabel(SETTINGS_LGP_ALIENS_COUNT + QString::number(55));
+  m_lGPObstacleCount = new QLabel(SETTINGS_LGP_OBSTACLES_COUNT + QString::number(4));
+  m_lGPObstacleRedraw = new QLabel(SETTINGS_LGP_OBSTACLE_REDRAW);
+  m_lGPGunStartLives = new QLabel(SETTINGS_LGP_GUN_START_LIVES + QString::number(3));
+  m_lGPGunAddLive = new QLabel(SETTINGS_LGP_GUN_ADD_LIVE);
 
-  QLabel * lScreenComment = new QLabel("______________________Main:_______________________");
-  QLabel * lWindowSize = new QLabel("Window size");
-  QLabel * lWindowState = new QLabel("Window state");  
-  QLabel * lLanguage = new QLabel("Language:");
+  m_lWindowComment = new QLabel(SETTINGS_LW_COMMENT);
+  m_lWindowSize = new QLabel(SETTINGS_LW_SIZE);
+  m_lWindowState = new QLabel(SETTINGS_LW_STATE);
+  m_lLanguage = new QLabel(SETTINGS_LW_LANGUAGE);
 
   // Work with Values and Keys
     // Control
-  QKeySequenceEdit * kseGunMoveLeft = new QKeySequenceEdit(m_shortcutGunMoveLeft->key());
-  connect(kseGunMoveLeft, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGunMoveLeft(QKeySequence)));
-  QKeySequenceEdit * kseGunMoveRight = new QKeySequenceEdit(m_shortcutGunMoveRight->key());
-  connect(kseGunMoveRight, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGunMoveRight(QKeySequence)));
-  QKeySequenceEdit * kseGunShoot = new QKeySequenceEdit(m_shortcutGunShoot->key());
-  connect(kseGunShoot, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGunShoot(QKeySequence)));
-  QKeySequenceEdit * kseGamePause = new QKeySequenceEdit(m_shortcutGamePause->key());
-  connect(kseGamePause, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGamePause(QKeySequence)));
+  m_kseGunMoveLeft = new QKeySequenceEdit(m_shortcutGunMoveLeft->key());
+  connect(m_kseGunMoveLeft, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGunMoveLeft(QKeySequence)));
+  m_kseGunMoveRight = new QKeySequenceEdit(m_shortcutGunMoveRight->key());
+  connect(m_kseGunMoveRight, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGunMoveRight(QKeySequence)));
+  m_kseGunShoot = new QKeySequenceEdit(m_shortcutGunShoot->key());
+  connect(m_kseGunShoot, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGunShoot(QKeySequence)));
+  m_kseGamePause = new QKeySequenceEdit(m_shortcutGamePause->key());
+  connect(m_kseGamePause, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGamePause(QKeySequence)));
+    // Game parameters
+  m_slGPAliensCount = new QSlider(Qt::Horizontal);
+  m_slGPAliensCount->setRange(25, 200);
+  m_slGPAliensCount->setValue(55);
+  m_slGPAliensCount->setPageStep(1);
+  connect(m_slGPAliensCount, SIGNAL(valueChanged(int)), this, SLOT(ChangeAliensCount(int)));
 
-    // Game
-  QSlider * slGPAliensCount = new QSlider(Qt::Horizontal);
-  slGPAliensCount->setRange(25, 200);
-  slGPAliensCount->setValue(55);
-  slGPAliensCount->setPageStep(1);
-  connect(slGPAliensCount, SIGNAL(valueChanged(int)), this, SLOT(ChangeAliensCount(int)));
+  m_slGPObstacleCount = new QSlider(Qt::Horizontal);
+  m_slGPObstacleCount->setRange(0, 6);
+  m_slGPObstacleCount->setValue(4);
+  m_slGPObstacleCount->setPageStep(1);
+  connect(m_slGPObstacleCount, SIGNAL(valueChanged(int)), this, SLOT(ChangeObstacleCount(int)));
 
-  QSlider * slGPObstacleCount = new QSlider(Qt::Horizontal);
-  slGPObstacleCount->setRange(0, 6);
-  slGPObstacleCount->setValue(4);
-  slGPObstacleCount->setPageStep(1);
-  connect(slGPObstacleCount, SIGNAL(valueChanged(int)), this, SLOT(ChangeObstacleCount(int)));
+  m_slGPGunStartLives = new QSlider(Qt::Horizontal);
+  m_slGPGunStartLives->setRange(1, 5);
+  m_slGPGunStartLives->setValue(3);
+  m_slGPGunStartLives->setPageStep(1);
+  connect(m_slGPGunStartLives, SIGNAL(valueChanged(int)), this, SLOT(ChangeGunStartLives(int)));
 
-  QSlider * slGPGunStartLives = new QSlider(Qt::Horizontal);
-  slGPGunStartLives->setRange(1, 5);
-  slGPGunStartLives->setValue(3);
-  slGPGunStartLives->setPageStep(1);
-  connect(slGPGunStartLives, SIGNAL(valueChanged(int)), this, SLOT(ChangeGunStartLives(int)));
+  m_chbGPObstacleRedraw = new QCheckBox;
+  m_chbGPObstacleRedraw->setChecked(false);
+  connect(m_chbGPObstacleRedraw, SIGNAL(clicked(bool)), this, SLOT(ChangeObstacleRedrawState(bool)));
 
-  QCheckBox * chbGPObstacleRedraw = new QCheckBox;  // сменить цвет
-  chbGPObstacleRedraw->setChecked(false);
-  connect(chbGPObstacleRedraw, SIGNAL(clicked(bool)), this, SLOT(ChangeObstacleRedrawState(bool)));
-
-  QCheckBox * chbGPGunAddLive = new QCheckBox;  // сменить цвет
-  chbGPGunAddLive->setChecked(true);
-  connect(chbGPGunAddLive, SIGNAL(clicked(bool)), this, SLOT(ChangeGunAddLiveState(bool)));
-
+  m_chbGPGunAddLive = new QCheckBox;
+  m_chbGPGunAddLive->setChecked(true);
+  connect(m_chbGPGunAddLive, SIGNAL(clicked(bool)), this, SLOT(ChangeGunAddLiveState(bool)));
     // Main
-  QComboBox * cbWindowState = new QComboBox();
-  cbWindowState->addItem("Full screen", GameWindowStateTypes::FullScreen);
-  cbWindowState->addItem("Minimized window", GameWindowStateTypes::MinimizedWindow);
-  cbWindowState->addItem("Maximized window", GameWindowStateTypes::MaximizedWindow);
-  cbWindowState->setCurrentIndex(GameWindowStateTypes::MinimizedWindow);
-  connect(cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
+  m_cbWindowState = new QComboBox();
+  m_cbWindowState->addItem(SETTINGS_WSB_FULLSCREEN, GameWindowStateTypes::FullScreen);
+  m_cbWindowState->addItem(SETTINGS_WSB_MINWINDOW, GameWindowStateTypes::MinimizedWindow);
+  m_cbWindowState->addItem(SETTINGS_WSB_MAXWINDOW, GameWindowStateTypes::MaximizedWindow);
+  m_cbWindowState->setCurrentIndex(GameWindowStateTypes::MinimizedWindow);
+  connect(m_cbWindowState, SIGNAL(activated(int)), this, SLOT(ChangeWindowState(int)));
 
   m_cbWindowSize = new QComboBox();
   m_cbWindowSize->addItem("800x600", GameResolutionTypes::Size800x600);
@@ -206,86 +194,78 @@ MainWindow::MainWindow()
   m_cbWindowSize->setCurrentIndex(GameResolutionTypes::Size800x600);
   connect(m_cbWindowSize, SIGNAL(activated(int)), this, SLOT(ChangeResolution(int)));
 
-  QComboBox * cbLanguage = new QComboBox();
-  cbLanguage->addItem("English", GameLanguages::English);
-  cbLanguage->addItem("Russian", GameLanguages::Russian);
-  cbLanguage->setCurrentIndex(GameLanguages::English);
-  connect(cbLanguage, SIGNAL(activated(int)), this, SLOT(ChangeLanguage(int)));
+  m_cbLanguage = new QComboBox();
+  m_cbLanguage->addItem(SETTINGS_LB_EN, GameLanguages::English);
+  m_cbLanguage->addItem(SETTINGS_LB_RU, GameLanguages::Russian);
+  m_cbLanguage->setCurrentIndex(GameLanguages::English);
+  connect(m_cbLanguage, SIGNAL(activated(int)), this, SLOT(ChangeLanguage(int)));
 
   // QHBoxLayouts
+    // control
   QHBoxLayout * hbControlGunMoveLeft = new QHBoxLayout;
-  hbControlGunMoveLeft->addWidget(lControlGunMoveLeft);
-  hbControlGunMoveLeft->addWidget(kseGunMoveLeft);
+  hbControlGunMoveLeft->addWidget(m_lControlGunMoveLeft);
+  hbControlGunMoveLeft->addWidget(m_kseGunMoveLeft);
   QHBoxLayout * hbControlGunMoveRight = new QHBoxLayout;
-  hbControlGunMoveRight->addWidget(lControlGunMoveRight);
-  hbControlGunMoveRight->addWidget(kseGunMoveRight);
+  hbControlGunMoveRight->addWidget(m_lControlGunMoveRight);
+  hbControlGunMoveRight->addWidget(m_kseGunMoveRight);
   QHBoxLayout * hbControlGunShoot = new QHBoxLayout;
-  hbControlGunShoot->addWidget(lControlGunShoot);
-  hbControlGunShoot->addWidget(kseGunShoot);
+  hbControlGunShoot->addWidget(m_lControlGunShoot);
+  hbControlGunShoot->addWidget(m_kseGunShoot);
   QHBoxLayout * hbControlPause = new QHBoxLayout;
-  hbControlPause->addWidget(lControlGamePause);
-  hbControlPause->addWidget(kseGamePause);
-
+  hbControlPause->addWidget(m_lControlGamePause);
+  hbControlPause->addWidget(m_kseGamePause);
+    // game param
   QHBoxLayout * hbGPAlienCount = new QHBoxLayout;
   hbGPAlienCount->addWidget(m_lGPAliensCount);
-  hbGPAlienCount->addWidget(slGPAliensCount);
+  hbGPAlienCount->addWidget(m_slGPAliensCount);
   QHBoxLayout * hbGPObstacleCount = new QHBoxLayout;
   hbGPObstacleCount->addWidget(m_lGPObstacleCount);
-  hbGPObstacleCount->addWidget(slGPObstacleCount);
+  hbGPObstacleCount->addWidget(m_slGPObstacleCount);
   QHBoxLayout * hbGPObstacleRedraw = new QHBoxLayout;
-  hbGPObstacleRedraw->addWidget(lGPObstacleRedraw);
-  hbGPObstacleRedraw->addWidget(chbGPObstacleRedraw);
+  hbGPObstacleRedraw->addWidget(m_lGPObstacleRedraw);
+  hbGPObstacleRedraw->addWidget(m_chbGPObstacleRedraw);
   QHBoxLayout * hbGPGunStartLives = new QHBoxLayout;
   hbGPGunStartLives->addWidget(m_lGPGunStartLives);
-  hbGPGunStartLives->addWidget(slGPGunStartLives);
+  hbGPGunStartLives->addWidget(m_slGPGunStartLives);
   QHBoxLayout * hbGPGunAddLive = new QHBoxLayout;
-  hbGPGunAddLive->addWidget(lGPGunAddLive);
-  hbGPGunAddLive->addWidget(chbGPGunAddLive);
-
+  hbGPGunAddLive->addWidget(m_lGPGunAddLive);
+  hbGPGunAddLive->addWidget(m_chbGPGunAddLive);
+    // window
   QHBoxLayout * hbWindowSize = new QHBoxLayout;
-  hbWindowSize->addWidget(lWindowSize);
+  hbWindowSize->addWidget(m_lWindowSize);
   hbWindowSize->addWidget(m_cbWindowSize);
   QHBoxLayout * hbWindowState = new QHBoxLayout;
-  hbWindowState->addWidget(lWindowState);
-  hbWindowState->addWidget(cbWindowState);
+  hbWindowState->addWidget(m_lWindowState);
+  hbWindowState->addWidget(m_cbWindowState);
   QHBoxLayout * hbLanguage = new QHBoxLayout;
-  hbLanguage->addWidget(lLanguage);
-  hbLanguage->addWidget(cbLanguage);
+  hbLanguage->addWidget(m_lLanguage);
+  hbLanguage->addWidget(m_cbLanguage);
 
   // layout
   m_layoutSettings = new QGridLayout;
   m_layoutSettings->addWidget(m_pbToMenu, 0, 0);
-  m_layoutSettings->addWidget(lControlComment, 2, 0, 1, 2);
+    // control
+  m_layoutSettings->addWidget(m_lControlComment, 2, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlGunMoveLeft, 3, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlGunMoveRight, 4, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlGunShoot, 5, 0, 1, 2);
   m_layoutSettings->addLayout(hbControlPause, 6, 0, 1, 2);
-
-  m_layoutSettings->addWidget(lGameParamComment, 2, 2, 1, 2);
+    // game param
+  m_layoutSettings->addWidget(m_lGameParamComment, 2, 2, 1, 2);
   m_layoutSettings->addLayout(hbGPAlienCount, 3, 2, 1, 2);
   m_layoutSettings->addLayout(hbGPObstacleCount, 4, 2, 1, 2);
   m_layoutSettings->addLayout(hbGPObstacleRedraw, 5, 2, 1, 2);
   m_layoutSettings->addLayout(hbGPGunStartLives, 6, 2, 1, 2);
   m_layoutSettings->addLayout(hbGPGunAddLive, 7, 2, 1, 2);
-
-  m_layoutSettings->addWidget(lScreenComment, 8, 0, 1, 2);
+    // window
+  m_layoutSettings->addWidget(m_lWindowComment, 8, 0, 1, 2);
   m_layoutSettings->addLayout(hbWindowSize, 9, 0, 1, 2);
   m_layoutSettings->addLayout(hbWindowState, 10, 0, 1, 2);
   m_layoutSettings->addLayout(hbLanguage, 11, 0, 1, 2);
+    // buttons
   m_layoutSettings->addWidget(m_pbSaveSettings, 12, 0);
   m_layoutSettings->addWidget(m_pbLoadSettings, 12, 1);
   m_layoutSettings->addWidget(bottomFiller, 13, 0, 1, 4);
-
-  m_layoutSettings->setMargin(20);
-  m_layoutSettings->setColumnMinimumWidth(0, 140);
-  m_layoutSettings->setColumnMinimumWidth(1, 140);
-  m_layoutSettings->setColumnMinimumWidth(2, 140);
-  m_layoutSettings->setColumnMinimumWidth(3, 140);
-  m_layoutSettings->setColumnStretch(4, m_size.width()/100*30);
-  m_layoutSettings->setRowMinimumHeight(1, 15);
-  m_layoutSettings->setRowMinimumHeight(7, 15);
-  m_layoutSettings->setRowMinimumHeight(12, 45);
-  m_layoutSettings->setRowStretch(13, m_size.height()/100*15);
 
   // widget
   m_widgetSettings = new QWidget(this);
@@ -296,8 +276,7 @@ MainWindow::MainWindow()
 
 
   // GAME
-  // layout
-
+  // {TODO:}
   // glwidget
   //m_glWidget = new GLWidget(this, qRgb(20, 20, 50));   // Виджет игры (окно, задний фон) (наш класс наследуемый от QOpenGLWidget и QOpenGLFunctions)
   //m_timer = new QTimer(this);                          // таймер
@@ -305,14 +284,44 @@ MainWindow::MainWindow()
   //setCentralWidget(m_glWidget);                        // Главный виджет текущего окна this->setCentralWidget
   //connect(m_timer, &QTimer::timeout, m_glWidget, static_cast<QWidgetVoidSlot>(&QWidget::update));
   //m_timer->start();                                    // запуск таймера
-
-  setFocusPolicy(Qt::StrongFocus);
+  //setFocusPolicy(Qt::StrongFocus);
 
   // load all user settings from file
-  LoadSettings();
+  // {TODO:}
+  // new shortcut keys
+  // new m_size
+  // new language
 
-  // set default settings
-  Resize(800,600);
+  // set new settings
+    // shortcut
+  // {TODO: shortcuts load}
+  // m_shortcutGunMoveLeft->setKey(Qt::Key_Left);
+  // m_shortcutGunMoveRight->setKey(Qt::Key_Right);
+  // m_shortcutGunShoot->setKey(Qt::Key_Up);
+  // m_shortcutGamePause->setKey(Qt::Key_Escape);
+    // size
+  Resize(m_size.width(),m_size.height());
+      // menu layout
+  m_layoutMenu->setMargin(20);
+  m_layoutMenu->setColumnStretch(0, m_size.width()/100*30);
+  m_layoutMenu->setColumnMinimumWidth(1, 225);
+  m_layoutMenu->setColumnStretch(2, m_size.width()/100*30);
+  m_layoutMenu->setRowStretch(0, m_size.height()/100*10);
+  m_layoutMenu->setRowMinimumHeight(5, 36);
+  m_layoutMenu->setRowStretch(7, m_size.height()/100*15);
+      // settings layout
+  m_layoutSettings->setMargin(20);
+  m_layoutSettings->setColumnMinimumWidth(0, 140);
+  m_layoutSettings->setColumnMinimumWidth(1, 140);
+  m_layoutSettings->setColumnMinimumWidth(2, 140);
+  m_layoutSettings->setColumnMinimumWidth(3, 140);
+  m_layoutSettings->setColumnStretch(4, m_size.width()/100*30);
+  m_layoutSettings->setRowMinimumHeight(1, 15);
+  m_layoutSettings->setRowMinimumHeight(7, 15);
+  m_layoutSettings->setRowMinimumHeight(12, 45);
+  m_layoutSettings->setRowStretch(13, m_size.height()/100*15);
+    // language
+  // {TODO: language files and it's load}
 }
 
 // Деструктор
@@ -327,27 +336,6 @@ void MainWindow::MoveWindowToCenter()
   QRect frect = frameGeometry();
   frect.moveCenter(QDesktopWidget().availableGeometry().center());
   move(frect.topLeft());
-}
-
-// отображение кнопок в соответствии с текущим состоянием игры
-void MainWindow::ShowMenuItems()
-{
-  if (m_gameStarted) m_pbMenuNewGame->hide();
-  else               m_pbMenuNewGame->show();
-
-  if (m_gameStarted)
-  {
-    m_pbMenuContinueGame->setText("Continue game");
-    m_pbMenuContinueGame->setToolTip("Continue current game");
-  }
-  else
-  {
-    m_pbMenuContinueGame->setText("Load game");
-    m_pbMenuContinueGame->setToolTip("Load game from the save file");
-  }
-
-  if (m_gameStarted) m_pbMenuSaveGame->show();
-  else               m_pbMenuSaveGame->hide();  
 }
 
 // Предлагает сохранить игру -> вызывает SaveGame в случае подтверждения пользователем
@@ -366,6 +354,8 @@ void MainWindow::Resize(size_t w, size_t h)
   MoveWindowToCenter();
 }
 
+
+// SHORTCUTS
 // shortcuts  slots
 void MainWindow::ShortcutGunMoveLeft()
 {
@@ -390,6 +380,26 @@ void MainWindow::ShortcutPause()
   if (m_widgetCurrent != m_widgetMenu) CheckoutToMenu();
 }
 
+
+// MENU
+// check current game state and show needed buttons in main menu
+void MainWindow::ShowMenuItems()
+{
+  if (m_gameStarted)
+  {
+    m_pbMenuNewGame->hide();
+    m_pbMenuContinueGame->setText(MENU_BT_CONTINUE_GAME);
+    m_pbMenuContinueGame->setToolTip(MENU_BTTT_CONTINUE_GAME);
+    m_pbMenuSaveGame->show();
+  }
+  else
+  {
+    m_pbMenuNewGame->show();
+    m_pbMenuContinueGame->setText(MENU_BT_LOAD_GAME);
+    m_pbMenuContinueGame->setToolTip(MENU_BTTT_LOAD_GAME);
+    m_pbMenuSaveGame->hide();
+  }
+}
 
 // menu button slots
 void MainWindow::NewGame()
@@ -433,6 +443,7 @@ void MainWindow::CheckoutToSettings()
 }
 
 
+// SETTINGS
 // settings button slots
 void MainWindow::CheckoutToMenu()
 {
@@ -440,13 +451,12 @@ void MainWindow::CheckoutToMenu()
   m_widgetMenu->show();
   m_widgetCurrent = m_widgetMenu;
 
-  if (m_settingsChanged) ShowDialog("Do you want to save the current settings of the game before back to the main menu?", DialogTypes::OnSubmitSettingsLeave);
+  if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
 }
 
 // Загрузка настроек из файла, с проверкой (и корректировкой под по-умолчанию)
 void MainWindow::LoadSettings()
 {
-  // reset flag
   m_settingsChanged = false;
 
   std::cout << "Not full relased" << std::endl;
@@ -455,7 +465,6 @@ void MainWindow::LoadSettings()
 // Сохранение настроек в файл
 void MainWindow::SaveSettings()
 {
-  // reset flag
   m_settingsChanged = false;
 
   std::cout << "Not full relased" << std::endl;
@@ -486,38 +495,32 @@ void MainWindow::ChangeShortcutGamePause(QKeySequence key)
 void MainWindow::ChangeAliensCount(int state)
 {
   ALIEN_COUNT = state;
-  // set flag
+  m_lGPAliensCount->setText(SETTINGS_LGP_ALIENS_COUNT + QString::number(state));
   m_settingsChanged = true;
-
-  m_lGPAliensCount->setText("Count of aliens = " + QString::number(state));
 }
 
 void MainWindow::ChangeObstacleCount(int state)
 {
   OBSTACLE_COUNT = state;
-  // set flag
+  m_lGPObstacleCount->setText(SETTINGS_LGP_OBSTACLES_COUNT + QString::number(state));
   m_settingsChanged = true;
-  m_lGPObstacleCount->setText("Count of obstacles = " + QString::number(state));
 }
 void MainWindow::ChangeGunStartLives(int state)
 {
   GUN_LIVES_START = state;
-  // set flag
+  m_lGPGunStartLives->setText(SETTINGS_LGP_GUN_START_LIVES + QString::number(state));
   m_settingsChanged = true;
-  m_lGPGunStartLives->setText("Start gun lives count = " + QString::number(state));
 }
 
 void MainWindow::ChangeObstacleRedrawState(bool state)
 {
   OBSTACLE_REDRAW_EVERY_LEVEL = state;
-  // set flag
   m_settingsChanged = true;
 }
 
 void MainWindow::ChangeGunAddLiveState(bool state)
 {
   GUN_LIVES_INC_EVERY_LEVEL = state;
-  // set flag
   m_settingsChanged = true;
 }
 
@@ -539,7 +542,6 @@ void MainWindow::ChangeResolution(int state)
     case Size1920x1080: { w = 1920; h = 1080; break; }
   }
   Resize(w,h);
-  // set flag
   m_settingsChanged = true;
 }
 
@@ -547,7 +549,7 @@ void MainWindow::ChangeWindowState(int state)
 {
   if (state == GameWindowStateTypes::FullScreen)
   {
-    this->showFullScreen(); //setWindowState(Qt::WindowState::WindowFullScreen);
+    this->showFullScreen();
     m_cbWindowSize->setDisabled(true);
     m_cbWindowSize->setStyleSheet("QComboBox { background-color : black; color : white; }");
   }
@@ -566,7 +568,6 @@ void MainWindow::ChangeWindowState(int state)
   }
   m_size.setWidth(this->width());
   m_size.setHeight(this->height());
-  // set flag
   m_settingsChanged = true;
 }
 
@@ -577,6 +578,7 @@ void MainWindow::ChangeLanguage(int state)
     case GameLanguages::English:
     {
       // for english localization
+      // {TODO: localization files, load it, function to set new labels}
       std::cout << "Not Implemented" << std::endl;
       break;
     }
@@ -587,6 +589,5 @@ void MainWindow::ChangeLanguage(int state)
       break;
     }
   }
-  // set flag
   m_settingsChanged = true;
 }
