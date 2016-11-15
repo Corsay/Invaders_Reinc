@@ -61,4 +61,4 @@ static QString SETTINGS_WSB_MINWINDOW = "Minimized window";
 static QString SETTINGS_WSB_MAXWINDOW = "Maximized window";
   // Language box
 static QString SETTINGS_LB_EN = "English";
-static QString SETTINGS_LB_RU = "Russian";
+static QString SETTINGS_LB_RU = "Русский";

@@ -63,6 +63,7 @@ protected:
   void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
   void Resize(size_t w, size_t h);
+  void SetTextsForCurLang();
 
 private slots:
   // SHORTCUTS
