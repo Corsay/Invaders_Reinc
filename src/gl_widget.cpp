@@ -15,7 +15,6 @@
 
 namespace
 {
-
 int constexpr kLeftDirection = 0;
 int constexpr kRightDirection = 1;
 int constexpr kUpDirection = 2;

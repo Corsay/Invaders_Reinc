@@ -6,7 +6,7 @@
 //#include "gl_widget.hpp"
 //typedef void (QWidget::*QWidgetVoidSlot)();
 
-
+#include <fstream>
 // WINDOW
 MainWindow::MainWindow()
 {
@@ -17,10 +17,10 @@ MainWindow::MainWindow()
   // qRgb(120, 120, 120)
   // qRgb(240, 240, 240)
   // qRgb(20, 20, 50)
-  m_palette = QPalette(QColor(qRgb(20, 20, 50)));
-  m_palette.setColor(QPalette::Window, QColor(qRgb(0, 0, 20)));          // background color
-  m_palette.setColor(QPalette::WindowText, QColor(qRgb(200, 200, 200))); // text color
-  m_palette.setColor(QPalette::ButtonText, QColor(qRgb(240, 240, 240))); // button text color
+  m_palette = QPalette(QColor(qRgb(20, 200, 50)));
+  m_palette.setBrush(QPalette::Background,QImage("data/images/background.jpg") );
+  m_palette.setColor(QPalette::WindowText, QColor(qRgb(0, 200, 200))); // text color
+  m_palette.setColor(QPalette::ButtonText, QColor(qRgb(0, 0, 240))); // button text color
 
   // QShortcuts
   m_shortcutGunMoveLeft = new QShortcut(this);
@@ -61,6 +61,13 @@ MainWindow::MainWindow()
         if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
         this->close();
       });
+  m_pbMenuNewGame->setStyleSheet("background-color: rgb(100, 100, 255);");
+    m_pbMenuNewGame->setIcon(QIcon("data/images/buttonIcons/begin.ico"));
+  m_pbMenuContinueGame->setStyleSheet("background-color: rgb(100, 100, 235);");
+  m_pbMenuSaveGame->setStyleSheet("background-color: rgb(100, 100, 215);");
+  m_pbToSet->setStyleSheet("background-color: rgb(100, 100, 190);");
+  m_pbExit->setStyleSheet("background-color: rgb(120, 120, 120);");
+    m_pbExit->setIcon(QIcon("data/images/buttonIcons/end.ico"));
 
   // default button settings (game not started)
   ShowMenuItems();
@@ -100,6 +107,10 @@ MainWindow::MainWindow()
   connect(m_pbSaveSettings, SIGNAL(clicked(bool)), this, SLOT(SaveSettings()));
   m_pbLoadSettings = new QPushButton();
   connect(m_pbLoadSettings, SIGNAL(clicked(bool)), this, SLOT(LoadSettings()));
+
+  m_pbToMenu->setStyleSheet("background-color: rgb(100, 100, 180);");
+  m_pbSaveSettings->setStyleSheet("background-color: rgb(100, 100, 200);");
+  m_pbLoadSettings->setStyleSheet("background-color: rgb(100, 100, 200);");
 
   // QLabels
   m_lControlComment = new QLabel();

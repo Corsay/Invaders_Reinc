@@ -50,5 +50,5 @@ private:
   TexturedRect * m_texturedRect = nullptr;                            //
 
   QVector2D m_position = QVector2D(100, 100);                         // Позиция двигаемого alien
-  std::array<bool, 4> m_directions = { false, false, false, false };  //
+  bool m_directions[4] = { false, false, false, false };  //
 };
