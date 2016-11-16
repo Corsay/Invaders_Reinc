@@ -6,6 +6,8 @@
 #include <QSurfaceFormat>
 #include "main_window.hpp"
 
+#include <QTranslator>
+
 using namespace std;
 
 int main(int argc, char ** argv)
@@ -19,6 +21,10 @@ int main(int argc, char ** argv)
     format.setStencilBufferSize(8);
     QSurfaceFormat::setDefaultFormat(format);
 
+    //QTranslator myTranslator;
+    //myTranslator.load("data/localization/" + QLocale::system().name());
+    //a.installTranslator(&myTranslator);
+
     MainWindow mw;
     mw.show();
     return a.exec();
@@ -29,4 +35,3 @@ int main(int argc, char ** argv)
   }
   return 0;
 }
-

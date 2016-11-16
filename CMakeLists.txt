@@ -13,6 +13,7 @@ find_package(Qt5OpenGL REQUIRED)
 
 FILE(GLOB ProjectHeaders "src/*.hpp")
 FILE(GLOB ProjectSubHeaders "src/gameclasses/*.hpp")
+FILE(GLOB ProjectDataStyles "data/styles/*")
 
 # Set up the main source folder.
 set(SOURCE_ROOT src)
@@ -23,7 +24,14 @@ aux_source_directory(${S_SOURCE_ROOT} SRC_LIST)
 aux_source_directory(${SOURCE_ROOT} SRC_LIST)
 qt5_wrap_cpp(QT_WRAPPED_SRC ${SRC_LIST})
 # Create executable by SRC_LIST.
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${QT_WRAPPED_SRC} ${ProjectHeaders} ${ProjectSubHeaders})
+add_executable(
+    ${PROJECT_NAME}
+    ${SRC_LIST}
+    ${QT_WRAPPED_SRC}
+    ${ProjectHeaders}
+    ${ProjectSubHeaders}
+    ${ProjectDataStyles}
+)
 
 # Qt modules
 qt5_use_modules(${PROJECT_NAME} Widgets OpenGL)
@@ -63,5 +71,10 @@ macro(copy_files GLOBPAT DESTINATION)
   endforeach(FILENAME)
 endmacro(copy_files)
 
-set(DATA_FILES_LIST data/images)
+set(DATA_FILES_LIST data/images/*)
 copy_files("${DATA_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+set(LOCALIZATION_FILES_LIST data/localization/*)
+copy_files("${LOCALIZATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+set(STYLE_FILES_LIST data/styles/*)
+copy_files("${STYLE_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+

@@ -162,5 +162,5 @@ private:
   // WINDOW
   QWidget * m_widgetCurrent = nullptr;      // for show and hide
   QSize m_size;
-  QPalette m_palette;
+  QString m_style;
 };

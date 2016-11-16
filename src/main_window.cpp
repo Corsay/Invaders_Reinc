@@ -2,6 +2,8 @@
 #include "main_window.hpp"
 #include "window_labels.hpp"
 
+#include <QFile>
+
 // TODO: game widget
 //#include "gl_widget.hpp"
 //typedef void (QWidget::*QWidgetVoidSlot)();
@@ -13,14 +15,14 @@ MainWindow::MainWindow()
   // window and widgets size
   m_size = QSize(800,600);
 
-  // palette
-  // qRgb(120, 120, 120)
-  // qRgb(240, 240, 240)
-  // qRgb(20, 20, 50)
-  m_palette = QPalette(QColor(qRgb(20, 200, 50)));
-  m_palette.setBrush(QPalette::Background,QImage("data/images/background.jpg") );
-  m_palette.setColor(QPalette::WindowText, QColor(qRgb(0, 200, 200))); // text color
-  m_palette.setColor(QPalette::ButtonText, QColor(qRgb(0, 0, 240))); // button text color
+  // QStyle
+  QFile styleFile("data/styles/default.qss");
+  if (styleFile.open(QFile::ReadOnly))
+  {
+    m_style = QLatin1String(styleFile.readAll());
+    std::cout << "style file opened" << std::endl;
+  }
+  else std::cout << "style file not opened" << std::endl;
 
   // QShortcuts
   m_shortcutGunMoveLeft = new QShortcut(this);
@@ -36,14 +38,11 @@ MainWindow::MainWindow()
   connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
   m_shortcutGamePause->setKey(Qt::Key_Escape);
 
-
   // window settings
-  QIcon * icon = new QIcon(WINDOW_ICON_FOLDER);
-  this->setWindowIcon(*icon);
+  this->setWindowIcon(QIcon(WINDOW_ICON_FOLDER));
   this->setMinimumSize(m_size);
   this->setWindowState(Qt::WindowState::WindowActive);
-  this->setPalette(m_palette);
-
+  this->setStyleSheet(m_style);
 
   // FOR MAIN MENU
   // buttons
@@ -61,13 +60,9 @@ MainWindow::MainWindow()
         if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
         this->close();
       });
-  m_pbMenuNewGame->setStyleSheet("background-color: rgb(100, 100, 255);");
-    m_pbMenuNewGame->setIcon(QIcon("data/images/buttonIcons/begin.ico"));
-  m_pbMenuContinueGame->setStyleSheet("background-color: rgb(100, 100, 235);");
-  m_pbMenuSaveGame->setStyleSheet("background-color: rgb(100, 100, 215);");
-  m_pbToSet->setStyleSheet("background-color: rgb(100, 100, 190);");
-  m_pbExit->setStyleSheet("background-color: rgb(120, 120, 120);");
-    m_pbExit->setIcon(QIcon("data/images/buttonIcons/end.ico"));
+  m_pbMenuNewGame->setIcon(QIcon("data/images/begin.ico"));
+  m_pbExit->setObjectName("ExitButton");
+  m_pbExit->setIcon(QIcon("data/images/end.ico"));
 
   // default button settings (game not started)
   ShowMenuItems();
@@ -92,7 +87,6 @@ MainWindow::MainWindow()
   m_widgetMenu = new QWidget(this);
   m_widgetMenu->setMinimumSize(m_size);
   m_widgetMenu->setLayout(m_layoutMenu);
-  m_widgetMenu->setPalette(m_palette);
 
   // set current widget
   setCentralWidget(m_widgetMenu);
@@ -107,10 +101,6 @@ MainWindow::MainWindow()
   connect(m_pbSaveSettings, SIGNAL(clicked(bool)), this, SLOT(SaveSettings()));
   m_pbLoadSettings = new QPushButton();
   connect(m_pbLoadSettings, SIGNAL(clicked(bool)), this, SLOT(LoadSettings()));
-
-  m_pbToMenu->setStyleSheet("background-color: rgb(100, 100, 180);");
-  m_pbSaveSettings->setStyleSheet("background-color: rgb(100, 100, 200);");
-  m_pbLoadSettings->setStyleSheet("background-color: rgb(100, 100, 200);");
 
   // QLabels
   m_lControlComment = new QLabel();
@@ -263,7 +253,6 @@ MainWindow::MainWindow()
   m_widgetSettings = new QWidget(this);
   m_widgetSettings->setMinimumSize(m_size);
   m_widgetSettings->setLayout(m_layoutSettings);
-  m_widgetSettings->setPalette(m_palette);
   m_widgetSettings->hide();
 
 
@@ -593,20 +582,22 @@ void MainWindow::ChangeWindowState(int state)
   {
     this->showFullScreen();
     m_cbWindowSize->setDisabled(true);
-    m_cbWindowSize->setStyleSheet("QComboBox { background-color : black; color : white; }");
+    m_cbWindowSize->setObjectName("NotActiveBox");
+    m_cbWindowSize->setStyleSheet(m_style);
   }
   else if (state == GameWindowStateTypes::MinimizedWindow)
   {
     setWindowState(Qt::WindowState::WindowActive);
     m_cbWindowSize->setDisabled(false);
-    m_cbWindowSize->setStyleSheet("");
-    m_cbWindowSize->setPalette(m_palette);
+    m_cbWindowSize->setObjectName("");
+    m_cbWindowSize->setStyleSheet(m_style);
   }
   else
   {
     setWindowState(Qt::WindowState::WindowMaximized);
     m_cbWindowSize->setDisabled(true);
-    m_cbWindowSize->setStyleSheet("QComboBox { background-color : black; color : white; }");
+    m_cbWindowSize->setObjectName("NotActiveBox");
+    m_cbWindowSize->setStyleSheet(m_style);
   }
   m_size.setWidth(this->width());
   m_size.setHeight(this->height());
@@ -620,7 +611,6 @@ void MainWindow::ChangeLanguage(int state)
     case GameLanguages::English:
     {
       // for english localization
-      // {TODO: localization files, load it, function to set new labels}
       std::cout << "Not Implemented" << std::endl;
       break;
     }
