@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QSlider>
+#include <QTranslator>
 
 //#include <QTimer>
 //#include <QOpenGLWidget>
@@ -106,7 +107,7 @@ private:
   QShortcut * m_shortcutGunShoot = nullptr;
   QShortcut * m_shortcutGamePause = nullptr;
   // MENU
-  bool m_gameStarted = false; 
+  bool m_gameStarted = false;
   QPushButton * m_pbMenuNewGame = nullptr;
   QPushButton * m_pbMenuContinueGame = nullptr;
   QPushButton * m_pbMenuSaveGame = nullptr;
@@ -160,6 +161,7 @@ private:
   //QTimer * m_timer = nullptr;
   //QOpenGLWidget * m_glWidget = nullptr;
   // WINDOW
+  QTranslator m_Translator;
   QWidget * m_widgetCurrent = nullptr;      // for show and hide
   QSize m_size;
   QString m_style;

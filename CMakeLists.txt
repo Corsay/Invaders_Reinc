@@ -14,6 +14,7 @@ find_package(Qt5OpenGL REQUIRED)
 FILE(GLOB ProjectHeaders "src/*.hpp")
 FILE(GLOB ProjectSubHeaders "src/gameclasses/*.hpp")
 FILE(GLOB ProjectDataStyles "data/styles/*")
+FILE(GLOB ProjectDataTranslations "data/translations/*.ts")
 
 # Set up the main source folder.
 set(SOURCE_ROOT src)
@@ -31,6 +32,7 @@ add_executable(
     ${ProjectHeaders}
     ${ProjectSubHeaders}
     ${ProjectDataStyles}
+    ${ProjectDataTranslations}
 )
 
 # Qt modules
@@ -73,8 +75,8 @@ endmacro(copy_files)
 
 set(DATA_FILES_LIST data/images/*)
 copy_files("${DATA_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
-set(LOCALIZATION_FILES_LIST data/localization/*)
-copy_files("${LOCALIZATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+set(TRANSLATION_FILES_LIST data/translations/*)
+copy_files("${TRANSLATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(STYLE_FILES_LIST data/styles/*)
 copy_files("${STYLE_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 

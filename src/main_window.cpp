@@ -56,10 +56,10 @@ MainWindow::MainWindow()
   connect(m_pbToSet, SIGNAL(clicked(bool)), this, SLOT(CheckoutToSettings()));
   m_pbExit = new QPushButton();
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
-      {
-        if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
-        this->close();
-      });
+    {
+      if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
+      this->close();
+    });
   m_pbMenuNewGame->setIcon(QIcon("data/images/begin.ico"));
   m_pbExit->setObjectName("ExitButton");
   m_pbExit->setIcon(QIcon("data/images/end.ico"));
@@ -177,8 +177,8 @@ MainWindow::MainWindow()
   connect(m_cbWindowSize, SIGNAL(activated(int)), this, SLOT(ChangeResolution(int)));
 
   m_cbLanguage = new QComboBox();
-  m_cbLanguage->addItem(SETTINGS_LB_EN, GameLanguages::English);
-  m_cbLanguage->addItem(SETTINGS_LB_RU, GameLanguages::Russian);
+  m_cbLanguage->addItem("English", GameLanguages::English);
+  m_cbLanguage->addItem("Russian", GameLanguages::Russian);
   m_cbLanguage->setCurrentIndex(GameLanguages::English);
   connect(m_cbLanguage, SIGNAL(activated(int)), this, SLOT(ChangeLanguage(int)));
 
@@ -280,6 +280,9 @@ MainWindow::MainWindow()
   // m_shortcutGunMoveRight->setKey(Qt::Key_Right);
   // m_shortcutGunShoot->setKey(Qt::Key_Up);
   // m_shortcutGamePause->setKey(Qt::Key_Escape);
+    // Translator
+  m_Translator.load("data/translations/en");
+  qApp->installTranslator(&m_Translator);
     // size
   Resize(m_size.width(),m_size.height());
       // menu layout
@@ -339,51 +342,65 @@ void MainWindow::Resize(size_t w, size_t h)
 void MainWindow::SetTextsForCurLang()
 {
   // WINDOW
-  setWindowTitle(WINDOW_TITLE);
+  this->setWindowTitle(QMainWindow::tr("Invaders Reincarnation"));
   // MENU
     // button
-  m_pbMenuNewGame->setText(MENU_BT_NEW_GAME);
-  m_pbMenuNewGame->setToolTip(MENU_BTTT_NEW_GAME);
-  m_pbMenuContinueGame->setText(MENU_BT_LOAD_GAME);
-  m_pbMenuContinueGame->setToolTip(MENU_BTTT_LOAD_GAME);
-  m_pbMenuSaveGame->setText(MENU_BT_SAVE_GAME);
-  m_pbMenuSaveGame->setToolTip(MENU_BTTT_SAVE_GAME);
-  m_pbToSet->setText(MENU_BT_TO_SETTINGS);
-  m_pbToSet->setToolTip(MENU_BTTT_TO_SETTINGS);
-  m_pbExit->setText(MENU_BT_EXIT);
-  m_pbExit->setToolTip(MENU_BTTT_EXIT);
+  m_pbMenuNewGame->setText(QPushButton::tr("New game"));
+  m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
+  if (m_gameStarted)
+  {
+    m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
+    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
+  }
+  else
+  {
+    m_pbMenuContinueGame->setText(QPushButton::tr("Load game"));
+    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Load game from the save file"));
+  }
+  m_pbMenuSaveGame->setText(QPushButton::tr("Save game"));
+  m_pbMenuSaveGame->setToolTip(QPushButton::tr("Save current game state to the file"));
+  m_pbToSet->setText(QPushButton::tr("Settings"));
+  m_pbToSet->setToolTip(QPushButton::tr("Move to the settings"));
+  m_pbExit->setText(QPushButton::tr("Exit"));
+  m_pbExit->setToolTip(QPushButton::tr("Close program"));
   // SETTINGS
     // button
-  m_pbToMenu->setText(SETTINGS_BT_TO_MENU);
-  m_pbToMenu->setToolTip(SETTINGS_BTTT_TO_MENU);
-  m_pbSaveSettings->setText(SETTINGS_BT_SAVE);
-  m_pbSaveSettings->setToolTip(SETTINGS_BTTT_SAVE);
-  m_pbLoadSettings->setText(SETTINGS_BT_LOAD);
-  m_pbLoadSettings->setToolTip(SETTINGS_BTTT_LOAD);
+  m_pbToMenu->setText(QPushButton::tr("Menu"));
+  m_pbToMenu->setToolTip(QPushButton::tr("Back to the main menu"));
+  m_pbSaveSettings->setText(QPushButton::tr("Save settings"));
+  m_pbSaveSettings->setToolTip(QPushButton::tr("Save settings to data/settings"));
+  m_pbLoadSettings->setText(QPushButton::tr("Load settings"));
+  m_pbLoadSettings->setToolTip(QPushButton::tr("Load settings from data/settings"));
     // label
-  m_lControlComment->setText(SETTINGS_LC_COMMENT);
-  m_lControlGunMoveLeft->setText(SETTINGS_LC_GUN_MOVE_LEFT);
-  m_lControlGunMoveRight->setText(SETTINGS_LC_GUN_MOVE_RIGHT);
-  m_lControlGunShoot->setText(SETTINGS_LC_GUN_SHOOT);
-  m_lControlGamePause->setText(SETTINGS_LC_GAME_PAUSE);
-  m_lGameParamComment->setText(SETTINGS_LGP_COMMENT);
-  m_lGPAliensCount->setText(SETTINGS_LGP_ALIENS_COUNT + QString::number(m_slGPAliensCount->value()));
-  m_lGPObstacleCount->setText(SETTINGS_LGP_OBSTACLES_COUNT + QString::number(m_slGPObstacleCount->value()));
-  m_lGPObstacleRedraw->setText(SETTINGS_LGP_OBSTACLE_REDRAW);
-  m_lGPGunStartLives->setText(SETTINGS_LGP_GUN_START_LIVES + QString::number(m_slGPGunStartLives->value()));
-  m_lGPGunAddLive->setText(SETTINGS_LGP_GUN_ADD_LIVE);
-  m_lWindowComment->setText(SETTINGS_LW_COMMENT);
-  m_lWindowSize->setText(SETTINGS_LW_SIZE);
-  m_lWindowState->setText(SETTINGS_LW_STATE);
-  m_lLanguage->setText(SETTINGS_LW_LANGUAGE);
+  m_lControlComment->setText(QLabel::tr("_________________Control buttons:_________________"));
+  m_lControlGunMoveLeft->setText(QLabel::tr("Gun move left button---"));
+  m_lControlGunMoveRight->setText(QLabel::tr("Gun move right button-"));
+  m_lControlGunShoot->setText(QLabel::tr("Button to gun shoot-----"));
+  m_lControlGamePause->setText(QLabel::tr("Game pause---------------"));
+  m_lGameParamComment->setText(QLabel::tr("____________________Game:_____________________"));
+  m_lGPAliensCount->setText(QLabel::tr("Count of aliens = ") + QString::number(m_slGPAliensCount->value()));
+  m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString::number(m_slGPObstacleCount->value()));
+  m_lGPObstacleRedraw->setText(QLabel::tr("Redraw obstacles only at first level"));
+  m_lGPGunStartLives->setText(QLabel::tr("Start gun lives count = ") + QString::number(m_slGPGunStartLives->value()));
+  m_lGPGunAddLive->setText(QLabel::tr("Add one life to gun at every level"));
+  m_lWindowComment->setText(QLabel::tr("______________________Main:_______________________"));
+  m_lWindowSize->setText(QLabel::tr("Window size"));
+  m_lWindowState->setText(QLabel::tr("Window state"));
+  m_lLanguage->setText(QLabel::tr("Language:"));
     // combo box
+      // Win state
   m_cbWindowState->clear();
-  m_cbWindowState->addItem(SETTINGS_WSB_FULLSCREEN, GameWindowStateTypes::FullScreen);
-  m_cbWindowState->addItem(SETTINGS_WSB_MINWINDOW, GameWindowStateTypes::MinimizedWindow);
-  m_cbWindowState->addItem(SETTINGS_WSB_MAXWINDOW, GameWindowStateTypes::MaximizedWindow);
+  m_cbWindowState->addItem(QComboBox::tr("Full screen"), GameWindowStateTypes::FullScreen);
+  m_cbWindowState->addItem(QComboBox::tr("Minimized window"), GameWindowStateTypes::MinimizedWindow);
+  m_cbWindowState->addItem(QComboBox::tr("Maximized window"), GameWindowStateTypes::MaximizedWindow);
   if (windowState() == Qt::WindowState::WindowMaximized) m_cbWindowState->setCurrentIndex(GameWindowStateTypes::MaximizedWindow);
   else if(windowState() == Qt::WindowState::WindowFullScreen) m_cbWindowState->setCurrentIndex(GameWindowStateTypes::FullScreen);
   else m_cbWindowState->setCurrentIndex(GameWindowStateTypes::MinimizedWindow);
+      // language
+
+    // DIALOGS
+  DIALOG_ON_SUBMIT_GAME_SAVE      = QObject::tr("Do you want to save the current state of the game before closing?");
+  DIALOG_ON_SUBMIT_SETTINGS_LEAVE = QObject::tr("Do you want to save the current settings of the game before back to the main menu?");
 }
 
 // SHORTCUTS
@@ -419,15 +436,15 @@ void MainWindow::ShowMenuItems()
   if (m_gameStarted)
   {
     m_pbMenuNewGame->hide();
-    m_pbMenuContinueGame->setText(MENU_BT_CONTINUE_GAME);
-    m_pbMenuContinueGame->setToolTip(MENU_BTTT_CONTINUE_GAME);
+    m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
+    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
     m_pbMenuSaveGame->show();
   }
   else
   {
     m_pbMenuNewGame->show();
-    m_pbMenuContinueGame->setText(MENU_BT_LOAD_GAME);
-    m_pbMenuContinueGame->setToolTip(MENU_BTTT_LOAD_GAME);
+    m_pbMenuContinueGame->setText(QPushButton::tr("Load game"));
+    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Load game from the save file"));
     m_pbMenuSaveGame->hide();
   }
 }
@@ -526,20 +543,20 @@ void MainWindow::ChangeShortcutGamePause(QKeySequence key)
 void MainWindow::ChangeAliensCount(int state)
 {
   ALIEN_COUNT = state;
-  m_lGPAliensCount->setText(SETTINGS_LGP_ALIENS_COUNT + QString::number(state));
+  m_lGPAliensCount->setText(QLabel::tr("Count of aliens = ") + QString::number(state));
   m_settingsChanged = true;
 }
 
 void MainWindow::ChangeObstacleCount(int state)
 {
   OBSTACLE_COUNT = state;
-  m_lGPObstacleCount->setText(SETTINGS_LGP_OBSTACLES_COUNT + QString::number(state));
+  m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString::number(state));
   m_settingsChanged = true;
 }
 void MainWindow::ChangeGunStartLives(int state)
 {
   GUN_LIVES_START = state;
-  m_lGPGunStartLives->setText(SETTINGS_LGP_GUN_START_LIVES + QString::number(state));
+  m_lGPGunStartLives->setText(QLabel::tr("Start gun lives count = ") + QString::number(state));
   m_settingsChanged = true;
 }
 
@@ -610,14 +627,16 @@ void MainWindow::ChangeLanguage(int state)
   {
     case GameLanguages::English:
     {
-      // for english localization
-      std::cout << "Not Implemented" << std::endl;
+      m_Translator.load("data/translations/en");
+      qApp->installTranslator(&m_Translator);
+      SetTextsForCurLang();
       break;
     }
     case GameLanguages::Russian:
     {
-      // для русской локализации
-      std::cout << "Not Implemented" << std::endl;
+      m_Translator.load("data/translations/ru");
+      qApp->installTranslator(&m_Translator);
+      SetTextsForCurLang();
       break;
     }
   }
