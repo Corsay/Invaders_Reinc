@@ -1,6 +1,7 @@
 #pragma once
 
 #include "movedgameentity.hpp"
+#include "bullet.hpp"
 
 class Gun2D final : public MovedGameEntity2D
 {
@@ -46,18 +47,41 @@ public:
     return *this;
   }
 
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::GunType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Gun2D());
+  }
+
+
   // Getters
   inline size_t const GetLives() const { return m_lives; }
   inline float const GetRate() const   { return m_gunRate; }
+
   // Setters
   inline void SetLives(size_t const newLives) { m_lives = newLives; }
   inline void SetRate(float const newGunRate) { m_gunRate = newGunRate; }
 
+
   // Capabilities
-  void Move() override
+  bool CheckIntersection(Bullet2D const & bul)
   {
-    throw std::runtime_error("Not released Gun2D::Move.");
-  }  
+    if(! (bul.GetBox() && this->GetBox()))
+      return false;
+    //если попала
+    bul.Inform(*this);
+    this->SetHealth(this->GetHealth() - bul.GetHealth());
+    if(this->GetHealth() == 0)
+    {
+      m_lives--;
+      if(m_lives > 0)
+        GunBoom();
+    }
+    return true;
+  }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Gun2D const & obj)
@@ -71,12 +95,16 @@ public:
        << "}";
     return os;
   }
+
 private:
+  void GunBoom(){/* имитация взрыва? */}
+
   inline void DefaultGunSetStartValue()
   {
     SetHealth(GUN_HEALTH_START);
     SetSpeed(GUN_SPEED_SHOOT_START);
   }
+
   size_t m_lives = GUN_LIVES_START;  // - default gun lives count
   float m_gunRate = 0;               // - game rate (from original game) (increment depends on the type of shot down alien)
 };

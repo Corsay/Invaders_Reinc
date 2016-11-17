@@ -37,11 +37,14 @@ public:
     return *this;
   }
 
-  // Capabilities
-  void Move() override
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
+  std::unique_ptr<GameEntity2D> Create() override
   {
-    throw std::runtime_error("Not released Alien2D::Move.");
+    return std::unique_ptr<GameEntity2D>(new Alien2D());
   }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Alien2D const & obj)
@@ -54,6 +57,7 @@ public:
        << "}";
     return os;
   }
+
 private:
   inline void DefaultAlienSetStartValue()
   {

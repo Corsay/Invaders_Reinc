@@ -1,9 +1,10 @@
 #pragma once
 
 #include "lifegameentity.hpp"
+#include "bullet.hpp"
 #include <vector>
 
-using BoxVector = std::vector<LifeGameEntity2D>;// Alias
+using BoxVector = std::vector<LifeGameEntity2D*>;// Alias
 using BoxMatrix = std::vector<BoxVector>;       // Alias
 
 class Obstacle2D final : public LifeGameEntity2D
@@ -21,7 +22,7 @@ public:
   ~Obstacle2D() = default;
 
   // Constructors with parameters.
-  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth)
+  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth = OBSTACLE_TOTAL_HEALTH)
     :LifeGameEntity2D(leftBottom, rightTop, totalHealth)
   {
     FillBoxMatrix(1, 5);
@@ -45,10 +46,48 @@ public:
     return *this;
   }
 
+
+  // for Factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::ObstacleType; }
+  std::unique_ptr<GameEntity2D> Create() override
+  {
+    return std::unique_ptr<GameEntity2D>(new Obstacle2D());
+  }
+
+
   // Getters
-  inline BoxMatrix const GetBoxMatrix() const            { return m_boxes; }
+  inline BoxMatrix const & GetBoxMatrix() const          { return m_boxes; }
+  inline BoxMatrix & GetBoxMatrix()                      { return m_boxes; }
   inline size_t const GetCountOfRows() const             { return m_boxes.size(); }
   inline size_t const GetCountOfColumn() const           { return m_boxes[0].size(); }
+
+
+  // Capabilities
+  bool CheckIntersection(Bullet2D const & bul)
+  {
+    if(! (bul.GetBox() && this->GetBox() ) )
+        return false;
+
+    for (size_t i = 0; i < m_boxes.size(); ++i)
+      for(size_t j = 0; j < m_boxes[0].size(); ++j)
+        if(m_boxes[i][j] != nullptr)
+          if(m_boxes[i][j]->GetBox() && bul.GetBox())
+          {
+            this->SetHealth(this->GetHealth() - bul.GetHealth());
+
+            if( m_boxes[i][j]->GetHealth() <= bul.GetHealth() )
+            {
+              delete m_boxes[i][j];
+              m_boxes[i][j] = nullptr;
+            }
+            else
+              m_boxes[i][j]->SetHealth(m_boxes[i][j]->GetHealth() - bul.GetHealth());
+
+            return true;
+          }
+    return false;
+  }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Obstacle2D & obj)
@@ -60,8 +99,8 @@ public:
        << "}";
     return os;
   }
-private:
 
+private:
   void FillBoxMatrix(size_t const countRow, size_t const countColumn)
   {
     float healthOfPart = GetHealth() / (countRow * countColumn);
@@ -75,7 +114,7 @@ private:
       {
         tempBoxVect.push_back
         (
-          LifeGameEntity2D{
+         new LifeGameEntity2D{
             Box2D
             {
               Point2D

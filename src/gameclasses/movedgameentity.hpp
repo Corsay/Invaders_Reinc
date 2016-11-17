@@ -50,9 +50,11 @@ public:
     return *this;
   }
 
+
   // Getters
   inline MovedGameEntity2D GetMovedEntity() const { return *this; }
   inline float const GetSpeed() const { return m_speed; }
+
   // Setters
   inline void SetMovedEntity(MovedGameEntity2D const & newMovedEntity)
   {
@@ -61,17 +63,20 @@ public:
   }
   inline void SetSpeed(float const newSpeed) { m_speed = newSpeed; }
 
+
   // Logical operators
   bool operator == (MovedGameEntity2D const & obj) const
   {
     return obj.GetBox() == GetBox() && obj.GetHealth() == GetHealth() && obj.GetSpeed() == m_speed;
   }
 
+
   // Capabilities
-  virtual void Move()
+  virtual void Move(float x, float y)
   {
     throw std::runtime_error("Not released MoveEntity2D::Move.");
   }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, MovedGameEntity2D const & obj)
@@ -79,6 +84,7 @@ public:
     os << "MovedGameEntity2D {" << obj.GetLifeEntity() << ", Speed: " << obj.GetSpeed() << "}";
     return os;
   }
+
 private:
   float m_speed = DEFAULT_SPEED;   // - default shoot speed
 };

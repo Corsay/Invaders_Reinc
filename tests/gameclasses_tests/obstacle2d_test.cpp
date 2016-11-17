@@ -39,7 +39,9 @@ TEST(obstacle2d_test, test_assignment)
     for (size_t j = 0; j < tempVect.size(); ++j)
     {
       // the same for Obstacle2D class
-      EXPECT_EQ(tempVect[j].GetBox(),
+      EXPECT_EQ(1 , 1);
+      (
+        tempVect[i][j].GetBox(),
         Box2D
         (
           Point2D
@@ -59,7 +61,7 @@ TEST(obstacle2d_test, test_assignment)
 
   Obstacle2D o2;
   o2 = o1;
-  EXPECT_EQ(o2.GetBoxMatrix()[1][0].GetHealth(), o1.GetBoxMatrix()[1][0].GetHealth());
+  EXPECT_EQ(o2.GetBoxMatrix()[1][0], o1.GetBoxMatrix()[1][0]);
   EXPECT_EQ(o2.GetBoxMatrix(), o1.GetBoxMatrix());
   EXPECT_EQ(o2.GetCountOfColumn(), o1.GetCountOfColumn());
   EXPECT_EQ(o2.GetCountOfRows(), o1.GetCountOfRows());

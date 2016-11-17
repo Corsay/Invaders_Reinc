@@ -33,7 +33,7 @@ TEST(alien2dmanager_test, test_assignment)
     for(auto itColumn = tempVect.begin(); itColumn != tempVect.end(); ++itColumn)
     {
       // output like this because << operator not released for Alien2D class
-      EXPECT_EQ((*itColumn).GetBox(),
+      EXPECT_EQ((*itColumn)->GetBox(),
         Box2D
         (
           Point2D

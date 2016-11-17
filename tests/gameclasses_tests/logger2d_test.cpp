@@ -7,10 +7,15 @@
 TEST(logger_test, test_logger_work)
 {
   //очищаем файлы от предыдущих тестов
-  std::ofstream fout("log.txt");
+  logger.Checkout();
+  logger.Off();
+  std::ofstream fout;
+  fout.open("log.txt");
   fout.close();
   fout.open("second_log.txt");
   fout.close();
+  logger.On();
+  logger.Checkout("log.txt");
 
   Space2D sp;
   Alien2D al1;
@@ -41,22 +46,18 @@ TEST(logger_test, test_logger_work)
   char c;
   if(fin1.is_open())
   {
-    c = fin1.get();
-    while(c != EOF)
+    while((c = fin1.get()) != EOF)
     {
       file1 += c;
-      c = fin1.get();
     }
   }
   if(fin2.is_open())
   {
-    c = fin2.get();
-    while(c != EOF)
+    while((c = fin2.get()) != EOF)
     {
       file2 += c;
-      c = fin2.get();
     }
   }
-  EXPECT_EQ(file1.size(), 401);
-  EXPECT_EQ(file2.size(), 599);
+  EXPECT_EQ(file1.size(), 232);
+  EXPECT_EQ(file2.size(), 267);
 }

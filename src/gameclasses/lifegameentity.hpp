@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include "gameentity.hpp"
+#include "factory.hpp"
 
 class LifeGameEntity2D : public GameEntity2D
 {
@@ -35,6 +36,7 @@ public:
     if (health <= 0) throw std::out_of_range("Health must be more then ZERO!");
   }
 
+
   // Getters
   inline LifeGameEntity2D GetLifeEntity() const { return *this; }
   inline float GetHealth() const { return m_health; }
@@ -44,7 +46,14 @@ public:
     SetEntity(newLifeEntity.GetEntity());
     m_health = newLifeEntity.GetHealth();
   }
-  inline void SetHealth(float const newHealth) { m_health = newHealth; }
+  inline void SetHealth(float const newHealth)
+  {
+    if(newHealth <= 0)
+      m_health = 0;
+    else
+      m_health = newHealth;
+  }
+
 
   // Logical operators
   bool operator == (LifeGameEntity2D const & obj) const
@@ -52,12 +61,14 @@ public:
     return obj.GetBox() == GetBox() && obj.GetHealth() == m_health;
   }
 
+
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, LifeGameEntity2D const & obj)
   {
     os << "LifeGameEntity2D {" << obj.GetEntity() << ", Health: " << obj.GetHealth() << "}";
     return os;
   }
+
 private:
   float m_health = DEFAULT_HEALTH; // default health
 };

@@ -1,38 +1,27 @@
 #include <iostream>
 #include "gameclasses/space.hpp"
 
+#include <QApplication>
+#include <QMainWindow>
+#include <QSurfaceFormat>
+#include "main_window.hpp"
+
 using namespace std;
 
-int main()
+int main(int argc, char ** argv)
 {
   try
   {
-    Space2D sp;
-    Alien2D al1;
-    logger << al1 << endl;
+    QApplication app(argc, argv);
 
-    logger.Checkout("second_log.txt");
-    logger.Checkout("second_log.txt");
-    logger.Checkout("second_log.txt");
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    QSurfaceFormat::setDefaultFormat(format);
 
-    Alien2D al2(Point2D{1.0f,1.0f}, Point2D{5.0f, 5.0f}, 50.0f, 2.0f);
-    logger << al2 << std::endl;
-
-    logger.Checkout();
-    logger.Checkout();
-
-    Alien2DManager alM(2, 3);
-    logger << alM.GetAlienMatrix();
-
-    Bullet2D bul;
-    logger << bul << std::endl;
-
-    logger.Checkout("log.txt");
-
-    logger.Off();
-    logger << "Some string" << std::endl;
-    logger.On();
-    logger << "the end" << std::endl;
+    MainWindow mw;
+    mw.show();
+    return app.exec();
   }
   catch (...)
   {
@@ -40,4 +29,3 @@ int main()
   }
   return 0;
 }
-

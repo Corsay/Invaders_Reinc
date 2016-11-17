@@ -54,6 +54,5 @@ TEST(gun2d_test, test_assignment)
 TEST(gun2d_test, test_throw)
 {
   Gun2D g1;
-  EXPECT_THROW(g1.Move(), std::runtime_error);
   EXPECT_THROW(Gun2D({1.2f, 2.4f}, {3.6f, 4.8f}, 20.0f, 15.0f, 0), std::out_of_range);
 }

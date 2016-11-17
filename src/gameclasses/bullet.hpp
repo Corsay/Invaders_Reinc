@@ -2,6 +2,8 @@
 
 #include "movedgameentity.hpp"
 
+using TOnUpdateHandler = std::function<void(GameEntity2D const &)>;
+
 class Bullet2D final : public MovedGameEntity2D
 {
 public:
@@ -25,6 +27,12 @@ public:
     :MovedGameEntity2D(leftBottom, rightTop, damage, speed)
   {}
 
+  // Setters
+  void SetUpdateHandler(TOnUpdateHandler const & handler)
+  {
+    m_updateHandler = handler;
+  }
+
   // copy constructor and assignment operator
   Bullet2D(Bullet2D const & obj)
     :MovedGameEntity2D(obj.GetMovedEntity())
@@ -37,11 +45,22 @@ public:
     return *this;
   }
 
-  // Capabilities
-  void Move() override
+
+  // For factory
+  inline EntitiesTypes GetEntityType() override { return EntitiesTypes::BulletType; }
+  std::unique_ptr<GameEntity2D> Create() override
   {
-    throw std::runtime_error("Not released Bullet2D::Move.");
+    return std::unique_ptr<GameEntity2D>(new Bullet2D());
   }
+
+
+  // Capabilities
+  void Inform(GameEntity2D const & ge) const
+  {
+    if (m_updateHandler != nullptr)
+      m_updateHandler(ge);
+  }
+
 
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, Bullet2D const & obj)
@@ -54,11 +73,14 @@ public:
        << "}";
     return os;
   }
+
 private:
   inline void DefaultBulletSetStartValue()
   {
     SetHealth(BULLET_DAMAGE_START);
     SetSpeed(BULLET_SPEED_START);
   }
+
+  TOnUpdateHandler m_updateHandler = nullptr;
 };
 
