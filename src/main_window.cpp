@@ -5,13 +5,13 @@
 #include <QFile>
 
 // TODO: game widget
+#include "game_widget.hpp"
 //#include "gl_widget.hpp"
 //typedef void (QWidget::*QWidgetVoidSlot)();
 
 // WINDOW
-MainWindow::MainWindow(QStackedWidget *w)
+MainWindow::MainWindow()
 {
-  m_mainStakedWidget = w;
   // window and widgets size
   m_size = QSize(800,600);
 
@@ -91,10 +91,6 @@ MainWindow::MainWindow(QStackedWidget *w)
   m_widgetMenu = new QWidget(m_widgetStacked);
   m_widgetMenu->setMinimumSize(m_size);
   m_widgetMenu->setLayout(m_layoutMenu);
-
-  // set current widget
-  //m_widgetCurrent = m_widgetMenu;
-
 
   // FOR SETTINGS
   // buttons
@@ -259,11 +255,8 @@ MainWindow::MainWindow(QStackedWidget *w)
   m_widgetSettings->hide();
 
 
-  //
-  m_widgetStacked->addWidget(m_widgetMenu);
-  m_widgetStacked->addWidget(m_widgetSettings);
-
   // GAME
+  m_windowGame = new GameWindow(m_widgetStacked);
   // {TODO:}
   // glwidget
   //m_glWidget = new GLWidget(this, qRgb(20, 20, 50));   // Виджет игры (окно, задний фон) (наш класс наследуемый от QOpenGLWidget и QOpenGLFunctions)
@@ -273,6 +266,13 @@ MainWindow::MainWindow(QStackedWidget *w)
   //connect(m_timer, &QTimer::timeout, m_glWidget, static_cast<QWidgetVoidSlot>(&QWidget::update));
   //m_timer->start();                                    // запуск таймера
   //setFocusPolicy(Qt::StrongFocus);
+
+
+  // fill stackedWidget
+  m_widgetStacked->addWidget(m_widgetMenu);
+  m_widgetStacked->addWidget(m_widgetSettings);
+  m_widgetStacked->addWidget(m_windowGame);
+  m_widgetStacked->setCurrentIndex(0);
 
   // load all user settings from file
   // {TODO:}
@@ -462,7 +462,7 @@ void MainWindow::NewGame()
   // flag set change menu
   m_gameStarted = true;
   ShowMenuItems();
-  m_mainStakedWidget->setCurrentIndex(1);
+  m_widgetStacked->setCurrentIndex(2);
 }
 
 void MainWindow::ContinueOrLoadGame()

@@ -37,7 +37,7 @@ private:
   QSize m_screenSize;
 
   std::vector<QOpenGLTexture*> m_starTexture;
-  QOpenGLTexture * m_backgroundPucture = nullptr;
+  QOpenGLTexture * m_backgroundPicture = nullptr;
   TexturedRect * m_texturedRect = nullptr;
 
   QVector2D m_position = QVector2D(200, 200);

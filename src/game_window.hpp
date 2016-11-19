@@ -12,10 +12,11 @@ class GameWindow : public QMainWindow
 
 public:
   GameWindow(QStackedWidget * w);
+
+  QStackedWidget * m_stackedWidget = nullptr;
+
 private:
   QTimer * m_timer = nullptr;
   QGridLayout * m_layout = nullptr;
   QOpenGLWidget * m_glWidget = nullptr;
-public:
-  QStackedWidget * m_stackedWidget = nullptr;
 };

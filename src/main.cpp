@@ -5,7 +5,6 @@
 #include <QMainWindow>
 #include <QSurfaceFormat>
 #include "main_window.hpp"
-#include "game_window.hpp"
 
 #include <pugixml.hpp>
 #include <json/json.h>
@@ -135,14 +134,8 @@ int main(int argc, char ** argv)
   {
     QApplication app(argc, argv);
 
-    QStackedWidget * w = new QStackedWidget;
-    MainWindow *wnd = new MainWindow(w);
-    GameWindow *gwnd = new GameWindow(w);
-    w->addWidget(wnd);
-    w->addWidget(gwnd);
-    w->setCurrentWidget(wnd);
-    w->show();
-
+    MainWindow mw;
+    mw.show();
 
     return app.exec();
   }

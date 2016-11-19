@@ -4,7 +4,6 @@ QMainWindow
   background-color: rgb(0,20,20); 
 } 
 
-
 QLabel 
 { 
   color: rgb(0, 200, 200); 

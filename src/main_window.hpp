@@ -17,6 +17,8 @@
 
 //#include <QTimer>
 //#include <QOpenGLWidget>
+#include "game_window.hpp"
+
 #include "gameclasses/space.hpp"
 
 enum DialogTypes
@@ -55,7 +57,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QStackedWidget* w);
+  MainWindow();
   ~MainWindow();
 
 protected:
@@ -159,11 +161,11 @@ private:
     // widget
   QWidget * m_widgetSettings = nullptr;
   // GAME
+  GameWindow * m_windowGame = nullptr;
   //QTimer * m_timer = nullptr;
   //QOpenGLWidget * m_glWidget = nullptr;
-  // WINDOW
+  // WINDOW  
   QStackedWidget * m_widgetStacked = nullptr;
-  QStackedWidget * m_mainStakedWidget = nullptr;
   QTranslator m_translator;
   QSize m_size;
   QString m_style;

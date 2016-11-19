@@ -55,7 +55,7 @@ void GameGLWidget::initializeGL()
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star3.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star4.png")));
 
-  m_backgroundPucture = new QOpenGLTexture(QImage("data/images/background.jpg"));
+  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.jpg"));
 
   m_time.start();
 }
@@ -96,7 +96,7 @@ void GameGLWidget::Render()
   static std::deque<int> starsY;
   static std::deque<int> starsT;
   static std::deque<int> starsP;
-  m_texturedRect->Render(m_backgroundPucture, QVector2D(m_screenSize.width()/2, m_screenSize.height()/2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
+  m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width()/2, m_screenSize.height()/2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
 
 
   static float t = 2000.0f;
