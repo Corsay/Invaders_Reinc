@@ -50,10 +50,10 @@ void GameGLWidget::initializeGL()
   m_texturedRect = new TexturedRect();
   m_texturedRect->Initialize(this);
 
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star1.png")));
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star2.png")));
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star3.png")));
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star4.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star11.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star22.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star33.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star44.png")));
 
   m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.jpg"));
 
@@ -62,7 +62,13 @@ void GameGLWidget::initializeGL()
 
 void GameGLWidget::paintGL()
 {
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
   Render();
+
+  glDisable(GL_BLEND);
+
   update();
 }
 
