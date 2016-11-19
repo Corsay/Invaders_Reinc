@@ -15,11 +15,7 @@
 #include <QTranslator>
 #include <QStackedWidget>
 
-//#include <QTimer>
-//#include <QOpenGLWidget>
 #include "game_window.hpp"
-
-#include "gameclasses/space.hpp"
 
 enum DialogTypes
 {
@@ -63,6 +59,11 @@ public:
 protected:
   // MENU
   void ShowMenuItems();
+  // settings save/load
+  void WriteJson();
+  void ReadJson();
+  void WriteXml();
+  void ReadXml();
   // WINDOW
   void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
@@ -85,6 +86,7 @@ private slots:
   void CheckoutToMenu();
   void LoadSettings();
   void SaveSettings();
+  void SetDefaultSettings();
   // control
   void ChangeShortcutGunMoveLeft(QKeySequence key);
   void ChangeShortcutGunMoveRight(QKeySequence key);
@@ -162,8 +164,6 @@ private:
   QWidget * m_widgetSettings = nullptr;
   // GAME
   GameWindow * m_windowGame = nullptr;
-  //QTimer * m_timer = nullptr;
-  //QOpenGLWidget * m_glWidget = nullptr;
   // WINDOW  
   QStackedWidget * m_widgetStacked = nullptr;
   QTranslator m_translator;

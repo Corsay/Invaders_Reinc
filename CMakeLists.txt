@@ -16,14 +16,6 @@ FILE(GLOB ProjectSubHeaders "src/gameclasses/*.hpp")
 FILE(GLOB ProjectDataStyles "data/styles/*")
 FILE(GLOB ProjectDataTranslations "data/translations/*.ts")
 
-# add json and xml
-add_subdirectory(3party/jsoncpp)
-include_directories(3party/jsoncpp/include)
-aux_source_directory(3party/jsoncpp/src/lib_json JSONCPP_SRC)
-add_subdirectory(3party/pugixml)
-include_directories(3party/pugixml/src)
-aux_source_directory(3party/pugixml/src PUGIXML_SRC)
-
 # Set up the main source folder.
 set(SOURCE_ROOT src)
 # To display subfolder and its content in QT Creator.
@@ -32,6 +24,15 @@ aux_source_directory(${S_SOURCE_ROOT} SRC_LIST)
 # Scan source folder to find all sources and put the result to SRC_LIST.
 aux_source_directory(${SOURCE_ROOT} SRC_LIST)
 qt5_wrap_cpp(QT_WRAPPED_SRC ${SRC_LIST})
+
+# add json and xml
+add_subdirectory(3party/jsoncpp)
+include_directories(3party/jsoncpp/include)
+aux_source_directory(3party/jsoncpp/src/lib_json JSONCPP_SRC)
+add_subdirectory(3party/pugixml)
+include_directories(3party/pugixml/src)
+aux_source_directory(3party/pugixml/src PUGIXML_SRC)
+
 # Create executable by SRC_LIST.
 add_executable(
     ${PROJECT_NAME}
@@ -67,7 +68,13 @@ aux_source_directory(${TESTS_SOURCE_ROOT} TEST_SRC_FILES)
 set(TEST_SRC_FILES ${SRC_LIST} ${TEST_SRC_FILES})
 list(REMOVE_ITEM TEST_SRC_FILES src/main.cpp)
 qt5_wrap_cpp(QT_WRAPPED_TEST_SRC ${TEST_SRC_FILES})
-add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES} ${QT_WRAPPED_TEST_SRC})
+add_executable(
+  ${PROJECT_TEST_NAME}
+  ${TEST_SRC_FILES}
+  ${QT_WRAPPED_TEST_SRC}
+  ${JSONCPP_SRC}
+  ${PUGIXML_SRC}
+)
 # Link gtest and gtest_main libraries.
 target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
 qt5_use_modules(${PROJECT_TEST_NAME} Widgets OpenGL)

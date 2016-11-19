@@ -104,7 +104,6 @@ void GameGLWidget::Render()
   static std::deque<int> starsP;
   m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width()/2, m_screenSize.height()/2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
 
-
   static float t = 2000.0f;
   //случайная звезда
   if(qrand()%5 == 0)

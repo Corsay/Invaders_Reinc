@@ -6,8 +6,10 @@
 
 typedef void (QWidget::*QWidgetVoidSlot)();
 
-GameWindow::GameWindow(QStackedWidget *w)
+GameWindow::GameWindow(QStackedWidget * w)
 {
+  this->setStyleSheet("border-image: url(data/images/background.jpg); background-color: rgb(0,20,20);");
+
   m_stackedWidget = w;
   m_glWidget = new GameGLWidget(this);
   m_timer = new QTimer(this);
