@@ -16,6 +16,14 @@ FILE(GLOB ProjectSubHeaders "src/gameclasses/*.hpp")
 FILE(GLOB ProjectDataStyles "data/styles/*")
 FILE(GLOB ProjectDataTranslations "data/translations/*.ts")
 
+# add json and xml
+add_subdirectory(3party/jsoncpp)
+include_directories(3party/jsoncpp/include)
+aux_source_directory(3party/jsoncpp/src/lib_json JSONCPP_SRC)
+add_subdirectory(3party/pugixml)
+include_directories(3party/pugixml/src)
+aux_source_directory(3party/pugixml/src PUGIXML_SRC)
+
 # Set up the main source folder.
 set(SOURCE_ROOT src)
 # To display subfolder and its content in QT Creator.
@@ -29,6 +37,8 @@ add_executable(
     ${PROJECT_NAME}
     ${SRC_LIST}
     ${QT_WRAPPED_SRC}
+    ${JSONCPP_SRC}
+    ${PUGIXML_SRC}
     ${ProjectHeaders}
     ${ProjectSubHeaders}
     ${ProjectDataStyles}
@@ -75,6 +85,8 @@ endmacro(copy_files)
 
 set(DATA_FILES_LIST data/images/*)
 copy_files("${DATA_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+set(DATA_STARS_FILES_LIST data/images/stars/*)
+copy_files("${DATA_STARS_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(TRANSLATION_FILES_LIST data/translations/*)
 copy_files("${TRANSLATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(STYLE_FILES_LIST data/styles/*)

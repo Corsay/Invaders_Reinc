@@ -8,8 +8,6 @@
 //#include "gl_widget.hpp"
 //typedef void (QWidget::*QWidgetVoidSlot)();
 
-//#include <fstream>
-
 // WINDOW
 MainWindow::MainWindow(QStackedWidget *w)
 {
