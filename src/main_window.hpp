@@ -13,6 +13,7 @@
 #include <QCheckBox>
 #include <QSlider>
 #include <QTranslator>
+#include <QStackedWidget>
 
 //#include <QTimer>
 //#include <QOpenGLWidget>
@@ -161,8 +162,8 @@ private:
   //QTimer * m_timer = nullptr;
   //QOpenGLWidget * m_glWidget = nullptr;
   // WINDOW
-  QTranslator m_Translator;
-  QWidget * m_widgetCurrent = nullptr;      // for show and hide
+  QStackedWidget * m_widgetStacked = nullptr;
+  QTranslator m_translator;
   QSize m_size;
   QString m_style;
 };

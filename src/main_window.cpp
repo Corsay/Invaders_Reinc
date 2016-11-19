@@ -8,7 +8,8 @@
 //#include "gl_widget.hpp"
 //typedef void (QWidget::*QWidgetVoidSlot)();
 
-#include <fstream>
+//#include <fstream>
+
 // WINDOW
 MainWindow::MainWindow()
 {
@@ -38,11 +39,15 @@ MainWindow::MainWindow()
   connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
   m_shortcutGamePause->setKey(Qt::Key_Escape);
 
+  // Stacked widget
+  m_widgetStacked = new QStackedWidget(this);
+
   // window settings
   this->setWindowIcon(QIcon(WINDOW_ICON_FOLDER));
   this->setMinimumSize(m_size);
   this->setWindowState(Qt::WindowState::WindowActive);
   this->setStyleSheet(m_style);
+  this->setCentralWidget(m_widgetStacked);
 
   // FOR MAIN MENU
   // buttons
@@ -84,13 +89,12 @@ MainWindow::MainWindow()
   m_layoutMenu->addWidget(bottomFiller, 7, 0, 1, 3);
 
   // widget
-  m_widgetMenu = new QWidget(this);
+  m_widgetMenu = new QWidget(m_widgetStacked);
   m_widgetMenu->setMinimumSize(m_size);
   m_widgetMenu->setLayout(m_layoutMenu);
 
   // set current widget
-  setCentralWidget(m_widgetMenu);
-  m_widgetCurrent = m_widgetMenu;
+  //m_widgetCurrent = m_widgetMenu;
 
 
   // FOR SETTINGS
@@ -250,11 +254,15 @@ MainWindow::MainWindow()
   m_layoutSettings->addWidget(bottomFiller, 13, 0, 1, 4);
 
   // widget
-  m_widgetSettings = new QWidget(this);
+  m_widgetSettings = new QWidget(m_widgetStacked);
   m_widgetSettings->setMinimumSize(m_size);
   m_widgetSettings->setLayout(m_layoutSettings);
   m_widgetSettings->hide();
 
+
+  //
+  m_widgetStacked->addWidget(m_widgetMenu);
+  m_widgetStacked->addWidget(m_widgetSettings);
 
   // GAME
   // {TODO:}
@@ -281,8 +289,8 @@ MainWindow::MainWindow()
   // m_shortcutGunShoot->setKey(Qt::Key_Up);
   // m_shortcutGamePause->setKey(Qt::Key_Escape);
     // Translator
-  m_Translator.load("data/translations/en");
-  qApp->installTranslator(&m_Translator);
+  m_translator.load("data/translations/en");
+  qApp->installTranslator(&m_translator);
     // size
   Resize(m_size.width(),m_size.height());
       // menu layout
@@ -425,7 +433,7 @@ void MainWindow::ShortcutPause()
   // set game pause
   std::cout << "Not full relased" << std::endl;
 
-  if (m_widgetCurrent != m_widgetMenu) CheckoutToMenu();
+  if (m_widgetStacked->currentIndex() != 0) CheckoutToMenu();
 }
 
 
@@ -485,9 +493,7 @@ void MainWindow::SaveGame()
 
 void MainWindow::CheckoutToSettings()
 {
-  m_widgetCurrent->hide();
-  m_widgetSettings->show();
-  m_widgetCurrent = m_widgetSettings;
+  m_widgetStacked->setCurrentIndex(1);
 }
 
 
@@ -495,9 +501,7 @@ void MainWindow::CheckoutToSettings()
 // settings button slots
 void MainWindow::CheckoutToMenu()
 {
-  m_widgetCurrent->hide();
-  m_widgetMenu->show();
-  m_widgetCurrent = m_widgetMenu;
+  m_widgetStacked->setCurrentIndex(0);
 
   if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
 }
@@ -627,15 +631,15 @@ void MainWindow::ChangeLanguage(int state)
   {
     case GameLanguages::English:
     {
-      m_Translator.load("data/translations/en");
-      qApp->installTranslator(&m_Translator);
+      m_translator.load("data/translations/en");
+      qApp->installTranslator(&m_translator);
       SetTextsForCurLang();
       break;
     }
     case GameLanguages::Russian:
     {
-      m_Translator.load("data/translations/ru");
-      qApp->installTranslator(&m_Translator);
+      m_translator.load("data/translations/ru");
+      qApp->installTranslator(&m_translator);
       SetTextsForCurLang();
       break;
     }
