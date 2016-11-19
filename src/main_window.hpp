@@ -55,7 +55,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  MainWindow();
+  MainWindow(QStackedWidget* w);
   ~MainWindow();
 
 protected:
@@ -163,6 +163,7 @@ private:
   //QOpenGLWidget * m_glWidget = nullptr;
   // WINDOW
   QStackedWidget * m_widgetStacked = nullptr;
+  QStackedWidget * m_mainStakedWidget = nullptr;
   QTranslator m_translator;
   QSize m_size;
   QString m_style;

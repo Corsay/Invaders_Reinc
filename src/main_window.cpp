@@ -11,8 +11,9 @@
 //#include <fstream>
 
 // WINDOW
-MainWindow::MainWindow()
+MainWindow::MainWindow(QStackedWidget *w)
 {
+  m_mainStakedWidget = w;
   // window and widgets size
   m_size = QSize(800,600);
 
@@ -63,7 +64,7 @@ MainWindow::MainWindow()
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
     {
       if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
-      this->close();
+      exit(0);
     });
   m_pbMenuNewGame->setIcon(QIcon("data/images/begin.ico"));
   m_pbExit->setObjectName("ExitButton");
@@ -463,8 +464,7 @@ void MainWindow::NewGame()
   // flag set change menu
   m_gameStarted = true;
   ShowMenuItems();
-
-  std::cout << "Not full relased" << std::endl;
+  m_mainStakedWidget->setCurrentIndex(1);
 }
 
 void MainWindow::ContinueOrLoadGame()

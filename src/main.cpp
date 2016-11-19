@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QSurfaceFormat>
 #include "main_window.hpp"
+#include "game_window.hpp"
 
 using namespace std;
 
@@ -14,13 +15,15 @@ int main(int argc, char ** argv)
   {
     QApplication app(argc, argv);
 
-    QSurfaceFormat format;
-    format.setDepthBufferSize(24);
-    format.setStencilBufferSize(8);
-    QSurfaceFormat::setDefaultFormat(format);
+    QStackedWidget * w = new QStackedWidget;
+    MainWindow *wnd = new MainWindow(w);
+    GameWindow *gwnd = new GameWindow(w);
+    w->addWidget(wnd);
+    w->addWidget(gwnd);
+    w->setCurrentWidget(wnd);
+    w->show();
 
-    MainWindow mw;
-    mw.show();
+
     return app.exec();
   }
   catch (...)
