@@ -268,7 +268,7 @@ MainWindow::MainWindow()
   // load all user settings from file
   // load default and then load from file
   SetDefaultSettings();
-  if (ReadXml()) int a = 5;//ReadJson();
+  if (ReadXml()) ReadJson();
 }
 
 // Деструктор
@@ -510,19 +510,26 @@ void MainWindow::CheckoutToMenu()
 void MainWindow::WriteJson()
 {
   Json::Value settings;
-  Json::Value resolutions(Json::arrayValue);
-  resolutions.append(Json::Value("800x600"));
-  resolutions.append(Json::Value("1024x768"));
-  resolutions.append(Json::Value("1280x1024"));
 
   auto & root = settings["settings"];
-  root["resolution"] = resolutions;
-  root["aliensCount"] = 100;
-  root["bulletsCount"] = 200;
 
-  root["entities"]["gun"]["health"] = 50;
-  root["entities"]["alien"]["health"] = 20;
-  root["entities"]["obstacle"]["health"] = 15;
+  auto & control = root["controlButtons"];
+  control["gunMoveLeft"]["key"] = m_shortcutGunMoveLeft->key().toString().toStdString().c_str();
+  control["gunMoveRight"]["key"] = m_shortcutGunMoveRight->key().toString().toStdString().c_str();
+  control["gunShoot"]["key"] = m_shortcutGunShoot->key().toString().toStdString().c_str();
+  control["gamePause"]["key"] = m_shortcutGamePause->key().toString().toStdString().c_str();
+
+  auto & game = root["game"];
+  game["Aliens"]["count"] = m_slGPAliensCount->value();
+  game["Obstacles"]["count"] = m_slGPObstacleCount->value();
+  game["Obstacles"]["flagRedraw"] = m_chbGPObstacleRedraw->isChecked();
+  game["Gun"]["lives"] = m_slGPGunStartLives->value();
+  game["Gun"]["flagAddLife"] = m_chbGPGunAddLive->isChecked();
+
+  auto & main = root["main"];
+  main["windowSize"]["index"] = m_cbWindowSize->currentIndex();
+  main["windowState"]["index"] = m_cbWindowState->currentIndex();
+  main["language"]["index"] = m_cbLanguage->currentIndex();
 
   // CONTROL BUTTONS:
   // gunMoveLeft
@@ -543,7 +550,7 @@ void MainWindow::WriteJson()
   // language
 
   std::ofstream settingsFile;
-  settingsFile.open("settings.json");
+  settingsFile.open("data/settings.json");
   if (settingsFile.is_open())
   {
     Json::StyledWriter styledWriter;
@@ -555,26 +562,94 @@ void MainWindow::WriteJson()
 int MainWindow::ReadJson()
 {
   Json::Value settings;
-  std::ifstream file("settings.json");
+  std::ifstream file("data/settings.json");
   if (file.is_open())
   {
     file >> settings;
     file.close();
   }
+  else return -1; // not loaded
 
-  Json::Value & resolutions = settings["settings"]["resolution"];
-  if (resolutions.isArray())
+  auto & root = settings["settings"];
+
+  Json::Value & control = root["controlButtons"];
+  if (!control.empty())
   {
-    for (Json::Value::ArrayIndex i = 0; i < resolutions.size(); i++)
-      std::cout << resolutions[i].asString() << std::endl;
+    if (!control["gunMoveLeft"]["key"].empty())
+    {
+      m_kseGunMoveLeft->setKeySequence(QKeySequence(
+        QString(control["gunMoveLeft"]["key"].asCString())
+      ));
+    }
+    if (!control["gunMoveRight"]["key"].empty())
+    {
+      m_kseGunMoveRight->setKeySequence(QKeySequence(
+        QString(control["gunMoveRight"]["key"].asCString())
+      ));
+    }
+    if (!control["gunShoot"]["key"].empty())
+    {
+      m_kseGunShoot->setKeySequence(QKeySequence(
+        QString(control["gunShoot"]["key"].asCString())
+      ));
+    }
+    if (!control["gamePause"]["key"].empty())
+    {
+      m_kseGamePause->setKeySequence(QKeySequence(
+        QString(control["gamePause"]["key"].asCString())
+      ));
+    }
   }
-  std::cout << settings["settings"]["aliensCount"].asInt() << std::endl;
-  std::cout << settings["settings"]["bulletsCount"].asInt() << std::endl;
 
-  Json::Value & entities = settings["settings"]["entities"];
-  std::cout << entities["gun"]["health"].asInt() << std::endl;
-  std::cout << entities["alien"]["health"].asInt() << std::endl;
-  std::cout << entities["obstacle"]["health"].asInt() << std::endl;
+  auto & game = root["game"];
+  if (!game.empty())
+  {
+    if (!game["Aliens"]["count"].empty())
+    {
+      m_slGPAliensCount->setValue(game["Aliens"]["count"].asInt());
+    }
+    if (!game["Obstacles"]["count"].empty())
+    {
+      m_slGPObstacleCount->setValue(game["Obstacles"]["count"].asInt());
+    }
+    if (!game["Obstacles"]["flagRedraw"].empty())
+    {
+      m_chbGPObstacleRedraw->setChecked(game["Obstacles"]["flagRedraw"].asBool());
+    }
+    if (!game["Gun"]["lives"].empty())
+    {
+      m_slGPGunStartLives->setValue(game["Gun"]["lives"].asInt());
+    }
+    if (!game["Gun"]["flagAddLife"].empty())
+    {
+      m_chbGPGunAddLive->setChecked(game["Gun"]["flagAddLife"].asBool());
+    }
+
+    ChangeObstacleRedrawState(m_chbGPObstacleRedraw->isChecked());
+    ChangeGunAddLiveState(m_chbGPGunAddLive->isChecked());
+  }
+
+  auto & main = root["main"];
+  if (!main.empty())
+  {
+    if (!main["windowSize"]["index"].empty())
+    {
+      m_cbWindowSize->setCurrentIndex(main["windowSize"]["index"].asInt());
+    }
+    if (!main["windowState"]["index"].empty())
+    {
+      m_cbWindowState->setCurrentIndex(main["windowState"]["index"].asInt());
+    }
+    if (!main["language"]["index"].empty())
+    {
+      m_cbLanguage->setCurrentIndex(main["language"]["index"].asInt());
+    }
+
+    SetSize(m_cbWindowSize->currentIndex());
+    ResizeQGridLayouts();
+    ChangeWindowState(m_cbWindowState->currentIndex());
+    ChangeLanguage(m_cbLanguage->currentIndex());
+  }
 
   return 0; //success load
 }
@@ -754,6 +829,7 @@ void MainWindow::LoadSettings()
   m_settingsChanged = false;
 
   if (!ReadXml()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
+  else if (!ReadJson()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
   else ShowDialog(DIALOG_ON_SETTINGS_LOAD_ERROR, DialogTypes::OnSettingsLoadError);
 }
 
@@ -762,6 +838,7 @@ void MainWindow::SaveSettings()
 {
   m_settingsChanged = false;
   WriteXml();
+  WriteJson();
 }
 
 // settings controls
