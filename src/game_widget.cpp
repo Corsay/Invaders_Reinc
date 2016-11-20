@@ -50,10 +50,9 @@ void GameGLWidget::initializeGL()
   m_texturedRect = new TexturedRect();
   m_texturedRect->Initialize(this);
 
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star11.png")));
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star22.png")));
-  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star33.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star44.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star55.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star66.png")));
 
   m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.jpg"));
 
@@ -97,32 +96,34 @@ void GameGLWidget::Render()
   if(m_time.elapsed() >= 20000){
       m_gameWindow->m_stackedWidget->setCurrentIndex(0);
   }
-  //m_texturedRect->Render(m_texture, QVector2D(m_screenSize.width() m_screenSize.height()), QSize(300, 300), m_screenSize);
   static std::deque<int> starsX;
   static std::deque<int> starsY;
   static std::deque<int> starsT;
   static std::deque<int> starsP;
-  m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width()/2, m_screenSize.height()/2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
+  m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width() / 2, m_screenSize.height() / 2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
 
   static float t = 2000.0f;
   //случайная звезда
   if(qrand()%5 == 0)
   {
-      starsX.push_back(qrand() % m_screenSize.width());
-      starsY.push_back(qrand() % m_screenSize.height());
-      starsT.push_back(m_time.elapsed());
-      starsP.push_back(qrand() % m_starTexture.size());
+    starsX.push_back(qrand() % m_screenSize.width());
+    starsY.push_back(qrand() % m_screenSize.height());
+    starsT.push_back(m_time.elapsed());
+    starsP.push_back(qrand() % m_starTexture.size());
   }
-  for(int i=0; i<starsX.size(); i++)
-    if(starsT[i] <= m_time.elapsed()-t)
+  for(int i = 0; i < starsX.size(); i++)
+  {
+    if(starsT[i] <= m_time.elapsed() - t)
     {
         starsX.pop_front();
         starsY.pop_front();
         starsT.pop_front();
         starsP.pop_front();
     }
-    else{
-      int s = 12 * sin( (starsT[i]-m_time.elapsed()) / t * M_PI);
-      m_texturedRect->Render(m_starTexture[starsP[i]], QVector2D(starsX[i], starsY[i]), QSize(s,s), m_screenSize);
+    else
+    {
+      int s = 12 * sin((starsT[i] - m_time.elapsed()) / t * M_PI);
+      m_texturedRect->Render(m_starTexture[starsP[i]], QVector2D(starsX[i], starsY[i]), QSize(s, s), m_screenSize);
     }
+  }
 }

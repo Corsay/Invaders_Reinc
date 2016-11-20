@@ -20,7 +20,9 @@
 enum DialogTypes
 {
   OnSubmitGameSave,
-  OnSubmitSettingsLeave
+  OnSubmitSettingsLeave,
+  OnSettingsLoaded,
+  OnSettingsLoadError
 };
 enum GameResolutionTypes
 {
@@ -61,14 +63,16 @@ protected:
   void ShowMenuItems();
   // settings save/load
   void WriteJson();
-  void ReadJson();
+  int ReadJson();
   void WriteXml();
-  void ReadXml();
+  int ReadXml();
   // WINDOW
   void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
   void Resize(size_t w, size_t h);
   void SetTextsForCurLang();
+  void SetSize(int state);
+  void ResizeQGridLayouts();
 
 private slots:
   // SHORTCUTS
@@ -102,8 +106,6 @@ private slots:
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
   void ChangeLanguage(int state);
-  // GAME
-  // {TODO}
 
 private:
   // SHORTCUTS
@@ -126,6 +128,7 @@ private:
   QPushButton * m_pbToMenu = nullptr;
   QPushButton * m_pbSaveSettings = nullptr;
   QPushButton * m_pbLoadSettings = nullptr;
+  QPushButton * m_pbSetDefault = nullptr;
     // label
   QLabel * m_lControlComment = nullptr;
   QLabel * m_lControlGunMoveLeft = nullptr;
