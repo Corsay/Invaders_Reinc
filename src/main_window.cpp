@@ -531,24 +531,6 @@ void MainWindow::WriteJson()
   main["windowState"]["index"] = m_cbWindowState->currentIndex();
   main["language"]["index"] = m_cbLanguage->currentIndex();
 
-  // CONTROL BUTTONS:
-  // gunMoveLeft
-  // gunMoveRight
-  // gunShoot
-  // gamePause
-  //
-  // GAME SETTINGS:
-  // countOfAliens
-  // countOfObstacles
-  // startGunLivesCount
-  // addLifeToGunEveryLevel
-  // redrawObstacleAtFirstLevel
-  //
-  // MAIN SETTINGS:
-  // windowSize
-  // windowState
-  // language
-
   std::ofstream settingsFile;
   settingsFile.open("data/settings.json");
   if (settingsFile.is_open())
