@@ -191,6 +191,8 @@ public:
     Point2D p = {(m_leftBottom.x() + m_rightTop.x()) / 2 , (m_leftBottom.y() + m_rightTop.y())/2 };
     return p;
   }
+  float GetWidth() const { return m_rightTop.x()- m_leftBottom.x(); }
+  float GetHeight() const { return m_rightTop.y()- m_leftBottom.y(); }
 
   // Check_intersection
   bool operator &&(Box2D const & obj) const

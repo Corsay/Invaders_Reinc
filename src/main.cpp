@@ -1,12 +1,8 @@
 #include <iostream>
-#include "gameclasses/space.hpp"
-
 #include <QApplication>
 #include <QMainWindow>
 #include <QSurfaceFormat>
 #include "main_window.hpp"
-
-using namespace std;
 
 int main(int argc, char ** argv)
 {
@@ -18,14 +14,15 @@ int main(int argc, char ** argv)
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     QSurfaceFormat::setDefaultFormat(format);
-
-    MainWindow mw;
+    QStackedWidget * w = new QStackedWidget;
+    GameWindow mw(w);
     mw.show();
+
     return app.exec();
   }
   catch (...)
   {
-    std:cerr << "Unknown error!";
+    std::cerr << "Unknown error!";
   }
   return 0;
 }

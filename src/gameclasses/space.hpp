@@ -84,8 +84,6 @@ public:
   {
     CheckAllIntersections();
     //еще какие-то действия
-    //смена изображения
-    RedrawSpace();
   }
 
   void NewLvlPrepare(size_t const lvl)
@@ -94,11 +92,16 @@ public:
     // configure space class fields for new lvl
   }
 
-  void RedrawSpace()
-  {
-    throw std::runtime_error("Not released Space2D::RedrawSpace.");
-    // redraw game field
-  }
+
+  Gun2D & GetGun() { return m_gun; }
+  AlienMatrix const & GetAlienMatrix() const { return m_alienManager.GetAlienMatrix(); }
+  AlienMatrix & GetAlienMatrix() { return m_alienManager.GetAlienMatrix(); }
+  ObstacleVector const & GetObstacleVector() const {return m_obstacleManager.GetObstacleVector(); }
+  ObstacleVector & GetObstacleVector() {return m_obstacleManager.GetObstacleVector(); }
+  BulletList & GetBulletFromGun() {return m_bulletManager.GetBulletsFromGunList(); }
+  BulletList const & GetBulletFromGun() const {return m_bulletManager.GetBulletsFromGunList(); }
+  BulletList & GetBulletFromAlien() {return m_bulletManager.GetBulletsFromAliensList(); }
+  BulletList const & GetBulletFromAlien() const {return m_bulletManager.GetBulletsFromAliensList(); }
 
 private:
   Gun2D m_gun;                         // one gun

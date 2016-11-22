@@ -13,15 +13,16 @@
 #include <QCheckBox>
 #include <QSlider>
 #include <QTranslator>
+#include <QStackedWidget>
 
-//#include <QTimer>
-//#include <QOpenGLWidget>
-#include "gameclasses/space.hpp"
+#include "game_window.hpp"
 
 enum DialogTypes
 {
   OnSubmitGameSave,
-  OnSubmitSettingsLeave
+  OnSubmitSettingsLeave,
+  OnSettingsLoaded,
+  OnSettingsLoadError
 };
 enum GameResolutionTypes
 {
@@ -60,11 +61,18 @@ public:
 protected:
   // MENU
   void ShowMenuItems();
+  // settings save/load
+  void WriteJson();
+  int ReadJson();
+  void WriteXml();
+  int ReadXml();
   // WINDOW
   void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
   void Resize(size_t w, size_t h);
   void SetTextsForCurLang();
+  void SetSize(int state);
+  void ResizeQGridLayouts();
 
 private slots:
   // SHORTCUTS
@@ -82,6 +90,7 @@ private slots:
   void CheckoutToMenu();
   void LoadSettings();
   void SaveSettings();
+  void SetDefaultSettings();
   // control
   void ChangeShortcutGunMoveLeft(QKeySequence key);
   void ChangeShortcutGunMoveRight(QKeySequence key);
@@ -97,8 +106,6 @@ private slots:
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
   void ChangeLanguage(int state);
-  // GAME
-  // {TODO}
 
 private:
   // SHORTCUTS
@@ -121,6 +128,7 @@ private:
   QPushButton * m_pbToMenu = nullptr;
   QPushButton * m_pbSaveSettings = nullptr;
   QPushButton * m_pbLoadSettings = nullptr;
+  QPushButton * m_pbSetDefault = nullptr;
     // label
   QLabel * m_lControlComment = nullptr;
   QLabel * m_lControlGunMoveLeft = nullptr;
@@ -158,11 +166,10 @@ private:
     // widget
   QWidget * m_widgetSettings = nullptr;
   // GAME
-  //QTimer * m_timer = nullptr;
-  //QOpenGLWidget * m_glWidget = nullptr;
-  // WINDOW
-  QTranslator m_Translator;
-  QWidget * m_widgetCurrent = nullptr;      // for show and hide
+  GameWindow * m_windowGame = nullptr;
+  // WINDOW  
+  QStackedWidget * m_widgetStacked = nullptr;
+  QTranslator m_translator;
   QSize m_size;
   QString m_style;
 };

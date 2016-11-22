@@ -72,13 +72,13 @@ private:
         (
           Point2D
           {
-            OBSTACLE_LEFT_LIMIT + (i + 1) * OBSTACLE_DISTANCE + i * OBSTACLE_WIDTH,
-            OBSTACLE_BOTTOM_LIMIT
+            OBSTACLE_BOX_LEFT + (i + 1) * OBSTACLE_DISTANCE + i * OBSTACLE_WIDTH,
+            OBSTACLE_BOX_BOTTOM
           },
           Point2D
           {
-            OBSTACLE_LEFT_LIMIT + (i + 1) * ( OBSTACLE_DISTANCE + OBSTACLE_WIDTH ),
-            OBSTACLE_BOTTOM_LIMIT + OBSTACLE_HEIGHT
+            OBSTACLE_BOX_LEFT + (i + 1) * ( OBSTACLE_DISTANCE + OBSTACLE_WIDTH ),
+            OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT
           }
         )
       );

@@ -24,11 +24,22 @@ aux_source_directory(${S_SOURCE_ROOT} SRC_LIST)
 # Scan source folder to find all sources and put the result to SRC_LIST.
 aux_source_directory(${SOURCE_ROOT} SRC_LIST)
 qt5_wrap_cpp(QT_WRAPPED_SRC ${SRC_LIST})
+
+# add json and xml
+add_subdirectory(3party/jsoncpp)
+include_directories(3party/jsoncpp/include)
+aux_source_directory(3party/jsoncpp/src/lib_json JSONCPP_SRC)
+add_subdirectory(3party/pugixml)
+include_directories(3party/pugixml/src)
+aux_source_directory(3party/pugixml/src PUGIXML_SRC)
+
 # Create executable by SRC_LIST.
 add_executable(
     ${PROJECT_NAME}
     ${SRC_LIST}
     ${QT_WRAPPED_SRC}
+    ${JSONCPP_SRC}
+    ${PUGIXML_SRC}
     ${ProjectHeaders}
     ${ProjectSubHeaders}
     ${ProjectDataStyles}
@@ -57,7 +68,13 @@ aux_source_directory(${TESTS_SOURCE_ROOT} TEST_SRC_FILES)
 set(TEST_SRC_FILES ${SRC_LIST} ${TEST_SRC_FILES})
 list(REMOVE_ITEM TEST_SRC_FILES src/main.cpp)
 qt5_wrap_cpp(QT_WRAPPED_TEST_SRC ${TEST_SRC_FILES})
-add_executable(${PROJECT_TEST_NAME} ${TEST_SRC_FILES} ${QT_WRAPPED_TEST_SRC})
+add_executable(
+  ${PROJECT_TEST_NAME}
+  ${TEST_SRC_FILES}
+  ${QT_WRAPPED_TEST_SRC}
+  ${JSONCPP_SRC}
+  ${PUGIXML_SRC}
+)
 # Link gtest and gtest_main libraries.
 target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
 qt5_use_modules(${PROJECT_TEST_NAME} Widgets OpenGL)
@@ -75,6 +92,8 @@ endmacro(copy_files)
 
 set(DATA_FILES_LIST data/images/*)
 copy_files("${DATA_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+set(DATA_STARS_FILES_LIST data/images/stars/*)
+copy_files("${DATA_STARS_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(TRANSLATION_FILES_LIST data/translations/*)
 copy_files("${TRANSLATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(STYLE_FILES_LIST data/styles/*)

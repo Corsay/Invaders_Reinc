@@ -101,6 +101,7 @@ private:
 
   inline void DefaultGunSetStartValue()
   {
+    this->SetBox( Box2D{ GUN_START_X, GUN_START_Y, GUN_START_X + GUN_WIDTH, GUN_START_Y +GUN_HEIGHT} ) ;
     SetHealth(GUN_HEALTH_START);
     SetSpeed(GUN_SPEED_SHOOT_START);
   }
