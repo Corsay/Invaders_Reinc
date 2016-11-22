@@ -18,8 +18,42 @@ public:
   // Constructors with parameters.
   Space2D(Point2D const & leftBottom, Point2D const & rightTop)
     :GameEntity2D(leftBottom, rightTop)
-  {}
+  {
+    float leftBottomX = rightTop.x() / 2 - GUN_WIDTH / 2,
+          leftBottomY = GAME_PADDING_BOTTOM,
+          rightTopX = leftBottomX + GUN_WIDTH,
+          rightTopY = leftBottomY + GUN_HEIGHT;
+    m_gun = Gun2D({leftBottomX, leftBottomY},{rightTopX, rightTopY});
 
+
+    //m_alienManager = new Alien2DManager();
+
+    //m_obstacleManager;
+
+    //m_bulletManager;
+  }
+
+  // Getters
+  Gun2D const & GetGun() { return m_gun; }
+  AlienMatrix const & GetAlienMatrix() const { return m_alienManager.GetAlienMatrix(); }
+  ObstacleVector const & GetObstacleVector() const {return m_obstacleManager.GetObstacleVector(); }
+  BulletList const & GetBulletFromGun() const {return m_bulletManager.GetBulletsFromGunList(); }
+  BulletList const & GetBulletFromAlien() const {return m_bulletManager.GetBulletsFromAliensList(); }
+
+  // Setters
+  void SetGunPozition(float const x, float const y)
+  {
+    float leftBottomX = x - GUN_WIDTH / 2,
+          leftBottomY = y - GUN_HEIGHT / 2,
+          rightTopX = leftBottomX + GUN_WIDTH,
+          rightTopY = leftBottomY + GUN_HEIGHT;
+    m_gun.SetBox({{leftBottomX, leftBottomY},{rightTopX, rightTopY}});
+  }
+
+  void BulletsMove(float const & top)
+  {
+    m_bulletManager.BulletsMove(top);
+  }
 
   // Capabilities
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
@@ -91,17 +125,6 @@ public:
     throw std::runtime_error("Not released Space2D::NewLvlPrepare.");
     // configure space class fields for new lvl
   }
-
-
-  Gun2D & GetGun() { return m_gun; }
-  AlienMatrix const & GetAlienMatrix() const { return m_alienManager.GetAlienMatrix(); }
-  AlienMatrix & GetAlienMatrix() { return m_alienManager.GetAlienMatrix(); }
-  ObstacleVector const & GetObstacleVector() const {return m_obstacleManager.GetObstacleVector(); }
-  ObstacleVector & GetObstacleVector() {return m_obstacleManager.GetObstacleVector(); }
-  BulletList & GetBulletFromGun() {return m_bulletManager.GetBulletsFromGunList(); }
-  BulletList const & GetBulletFromGun() const {return m_bulletManager.GetBulletsFromGunList(); }
-  BulletList & GetBulletFromAlien() {return m_bulletManager.GetBulletsFromAliensList(); }
-  BulletList const & GetBulletFromAlien() const {return m_bulletManager.GetBulletsFromAliensList(); }
 
 private:
   Gun2D m_gun;                         // one gun

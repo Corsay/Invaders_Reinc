@@ -1,8 +1,8 @@
 #pragma once
 
-#include "box2d.hpp"
+#include "geometry/box2d.hpp"
 #include "constants.hpp"
-#include "gameclasses/logger.hpp"
+#include "logger.hpp"
 #include <memory>
 
 enum EntitiesTypes{ GameEntityType, GunType, AlienType, BulletType, ObstacleType }; // enum

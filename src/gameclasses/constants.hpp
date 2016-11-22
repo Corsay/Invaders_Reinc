@@ -1,11 +1,11 @@
 #pragma once
-#include "gameclasses/logger.hpp"
+#include "logger.hpp"
 extern SimpleLogger & logger;
 std::string onlyFile(std::string);
 #define WHERE "File: " << onlyFile( __FILE__ ) << " Function: " << __FUNCTION__ << " Line:" << __LINE__
 
 // Game parameters management
-// static (fro change value)
+// static (need to send it as param to space2d)
 // ALIEN
 static size_t ALIEN_COUNT = 55;
 // GUN
@@ -14,6 +14,11 @@ static bool   GUN_LIVES_INC_EVERY_LEVEL = true;
 // OBSTACLE
 static size_t OBSTACLE_COUNT              = 4;
 static bool   OBSTACLE_REDRAW_EVERY_LEVEL = false;
+// GAME SPACE
+static float  GAME_PADDING_LEFT = 15;
+static float  GAME_PADDING_RIGHT = 15;
+static float  GAME_PADDING_TOP = 30;
+static float  GAME_PADDING_BOTTOM = 30;
 
 // const (setted value)
 // DEFAULT
@@ -44,14 +49,15 @@ const float GUN_START_Y           = 100.0f;
 const float GUN_WIDTH             = 70.0f;
 const float GUN_HEIGHT            = 50.0f;
 // OBSTACLE
-const float OBSTACLE_BOX_LEFT     = 80.0f;
-const float OBSTACLE_BOX_BOTTOM   = 170.0f;
-const float OBSTACLE_WIDTH        = 100.0f;
-const float OBSTACLE_HEIGHT       = 100.0f;
+const float OBSTACLE_BOX_LEFT     = GAME_PADDING_LEFT + 80.0f;      // +
+const float OBSTACLE_BOX_RIGHT    = GAME_PADDING_LEFT + 80.0f;      // +
+const float OBSTACLE_BOX_BOTTOM   = 170.0f;     // +
+const float OBSTACLE_WIDTH        = 100.0f;     // +
+const float OBSTACLE_HEIGHT       = 100.0f;     // +
 const float OBSTACLE_PART_WIDTH   = 100.0f;
 const float OBSTACLE_PART_HEIGHT  = 100.0f;
 const float OBSTACLE_TOTAL_HEALTH = 250.0f;
-const float OBSTACLE_DISTANCE     = 100.0f;
+const float OBSTACLE_DISTANCE     = 100.0f;     // +
 // BULLET
 const float BULLET_DAMAGE_START = 50.0f;
 const float BULLET_DAMAGE_INC   = 50.0f;

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "box2d.hpp"
+#include "gameclasses/geometry/box2d.hpp"
 #include <sstream>
 #include <unordered_set>
 

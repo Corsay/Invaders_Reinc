@@ -20,7 +20,8 @@ public:
   Gun2D(Point2D const & leftBottom, Point2D const & rightTop)
     :MovedGameEntity2D(leftBottom, rightTop)
   {
-    DefaultGunSetStartValue();
+    SetHealth(GUN_HEALTH_START);
+    SetSpeed(GUN_SPEED_SHOOT_START);
   }
 
   Gun2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
@@ -101,7 +102,7 @@ private:
 
   inline void DefaultGunSetStartValue()
   {
-    this->SetBox( Box2D{ GUN_START_X, GUN_START_Y, GUN_START_X + GUN_WIDTH, GUN_START_Y +GUN_HEIGHT} ) ;
+    this->SetBox( Box2D{ GUN_START_X, GUN_START_Y, GUN_START_X + GUN_WIDTH, GUN_START_Y + GUN_HEIGHT} ) ;
     SetHealth(GUN_HEALTH_START);
     SetSpeed(GUN_SPEED_SHOOT_START);
   }

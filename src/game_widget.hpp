@@ -3,13 +3,13 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QTime>
+#include <array>
+
 #include "textured_rect.hpp"
 #include "game_window.hpp"
 #include "gameclasses/space.hpp"
 
-#include <array>
-
-class MainWindow;
+class GameWindow;
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 QT_FORWARD_DECLARE_CLASS(QOpenGLShader)
@@ -19,14 +19,21 @@ class GameGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
   Q_OBJECT
 public:
-  GameGLWidget(GameWindow *mw);
+  GameGLWidget(GameWindow * mw);
   ~GameGLWidget();
+
+  void NewGame(float w, float h);
+  void NextLevel();
+
+  void SetKey(KeyTypes type, QKeySequence key);
 
 protected:
   void resizeGL(int w, int h) override;
   void paintGL() override;
   void initializeGL() override;
 
+  void UpdateGun(float elapsedSeconds);
+  void UpdateBullets(float elapsedSeconds);
   void Update(float elapsedSeconds);
 
   void StarRender();
@@ -35,6 +42,9 @@ protected:
   void ObstacleRender();
   void BulletRender();
   void Render();
+
+  void keyPressEvent(QKeyEvent * e) override;
+  void keyReleaseEvent(QKeyEvent * e) override;
 
 private:
   GameWindow * m_gameWindow;
@@ -56,7 +66,11 @@ private:
   TexturedRect * m_texturedRect = nullptr;
   Space2D * m_space = nullptr;
 
+  QKeySequence m_keyGunMoveLeft = Qt::Key_Left;
+  QKeySequence m_keyGunMoveRight = Qt::Key_Right;
+  QKeySequence m_keyGunShoot = Qt::Key_Up;
+  QKeySequence m_keyGamePause = Qt::Key_Escape;
 
-  QVector2D m_position = QVector2D(200, 200);
+  QVector2D m_position;
   bool m_directions[4] = { false, false, false, false };
 };

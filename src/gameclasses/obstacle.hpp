@@ -65,7 +65,7 @@ public:
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
-    if(! (bul.GetBox() && this->GetBox() ) )
+    if(! (bul.GetBox() && this->GetBox()) )
         return false;
 
     for (size_t i = 0; i < m_boxes.size(); ++i)

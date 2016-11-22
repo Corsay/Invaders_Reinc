@@ -12,7 +12,10 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 
 FILE(GLOB ProjectHeaders "src/*.hpp")
-FILE(GLOB ProjectSubHeaders "src/gameclasses/*.hpp")
+FILE(GLOB ProjectGameHeaders "src/gameclasses/*.hpp")
+FILE(GLOB ProjectGameSources "src/gameclasses/*.cpp")
+FILE(GLOB ProjectGeometryHeaders "src/gameclasses/geometry/*.hpp")
+FILE(GLOB ProjectGeometrySources "src/gameclasses/geometry/*.cpp")
 FILE(GLOB ProjectDataStyles "data/styles/*")
 FILE(GLOB ProjectDataTranslations "data/translations/*.ts")
 
@@ -41,7 +44,10 @@ add_executable(
     ${JSONCPP_SRC}
     ${PUGIXML_SRC}
     ${ProjectHeaders}
-    ${ProjectSubHeaders}
+    ${ProjectGameHeaders}
+    ${ProjectGameSources}
+    ${ProjectGeometryHeaders}
+    ${ProjectGeometrySources}
     ${ProjectDataStyles}
     ${ProjectDataTranslations}
 )
@@ -98,4 +104,3 @@ set(TRANSLATION_FILES_LIST data/translations/*)
 copy_files("${TRANSLATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(STYLE_FILES_LIST data/styles/*)
 copy_files("${STYLE_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
-

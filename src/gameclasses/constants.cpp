@@ -1,4 +1,4 @@
-#include "gameclasses/logger.hpp"
+#include "logger.hpp"
 #include "constants.hpp"
 
 std::string onlyFile(std::string longName)

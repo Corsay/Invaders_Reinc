@@ -14,7 +14,9 @@
 #include <QSlider>
 #include <QTranslator>
 #include <QStackedWidget>
+#include <QDialog>
 
+#include "window_constants.hpp"
 #include "game_window.hpp"
 
 enum DialogTypes
@@ -56,16 +58,15 @@ class MainWindow : public QMainWindow
 
 public:
   MainWindow();
-  ~MainWindow();
 
 protected:
   // MENU
   void ShowMenuItems();
   // settings save/load
   void WriteJson();
-  int ReadJson();
+  bool ReadJson();
   void WriteXml();
-  int ReadXml();
+  bool ReadXml();
   // WINDOW
   void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
@@ -76,9 +77,6 @@ protected:
 
 private slots:
   // SHORTCUTS
-  void ShortcutGunMoveLeft();
-  void ShortcutGunMoveRight();
-  void ShortcutGunShoot();
   void ShortcutPause();
   // MENU
   void NewGame();
@@ -109,9 +107,6 @@ private slots:
 
 private:
   // SHORTCUTS
-  QShortcut * m_shortcutGunMoveLeft = nullptr;
-  QShortcut * m_shortcutGunMoveRight = nullptr;
-  QShortcut * m_shortcutGunShoot = nullptr;
   QShortcut * m_shortcutGamePause = nullptr;
   // MENU
   bool m_gameStarted = false;

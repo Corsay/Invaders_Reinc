@@ -73,7 +73,7 @@ public:
     return false;
   }
 
-  void AliensMove(Box2D const & border)
+  void AliensMove(float const & top)
   {
     throw std::runtime_error("Not released Alien2DManager::AliensMove.");
   }

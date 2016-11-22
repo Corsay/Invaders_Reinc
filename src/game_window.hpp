@@ -6,6 +6,11 @@
 #include <QOpenGLWidget>
 #include <QStackedWidget>
 
+#include "window_constants.hpp"
+#include "game_widget.hpp"
+
+class GameGLWidget;
+
 class GameWindow : public QMainWindow
 {
   Q_OBJECT
@@ -13,10 +18,14 @@ class GameWindow : public QMainWindow
 public:
   GameWindow(QStackedWidget * w);
 
+  void NewGame();
+
+  void SetKey(KeyTypes type, QKeySequence key);
+
   QStackedWidget * m_stackedWidget = nullptr;
 
 private:
   QTimer * m_timer = nullptr;
   QGridLayout * m_layout = nullptr;
-  QOpenGLWidget * m_glWidget = nullptr;
+  GameGLWidget * m_glWidget = nullptr;
 };

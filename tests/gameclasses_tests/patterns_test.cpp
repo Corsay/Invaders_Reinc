@@ -20,7 +20,7 @@ TEST(patterns_test, test_abstract_factory)
   fac.Register(Alien2D().Create());
 
   auto g = static_unique_ptr_cast<Gun2D>(fac.Create(EntitiesTypes::GunType));
-  EXPECT_EQ(g->GetBox(), Box2D(Point2D(0.0f, 0.0f), Point2D(0.0f, 0.0f)));
+  EXPECT_EQ(g->GetBox(), Box2D(GUN_START_X, GUN_START_Y, GUN_START_X + GUN_WIDTH, GUN_START_Y + GUN_HEIGHT));
 
   auto a = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));
   auto aa = static_unique_ptr_cast<Alien2D>(fac.Create(EntitiesTypes::AlienType));

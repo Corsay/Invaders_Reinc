@@ -37,12 +37,21 @@ public:
 
 
   // Capabilities
-  void BulletsMove(Box2D const & border)
+  void BulletsMove(float const & top)
   {
-    for(auto it=m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
-      it->GetBox().VerticalShift(-(it->GetSpeed()));//если в верхнем левом углу (0; 0)
-    for(auto it=m_fromGun.begin(); it != m_fromGun.end(); ++it)
-      it->GetBox().VerticalShift(it->GetSpeed());//если в верхнем левом углу (0; 0)
+    for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
+    {
+      // need to delete bullet if true
+      if (it->GetBox().bottom() < 0) std::cout << "not full released" << std::endl;
+      else it->GetBox().VerticalShift(-(it->GetSpeed())); // if in left bottom (0; 0)
+    }
+
+    for(auto it = m_fromGun.begin(); it != m_fromGun.end(); ++it)
+    {
+      // need to delete bullet if true
+      if (it->GetBox().bottom() > top) std::cout << "not full released" << std::endl;
+      else it->GetBox().VerticalShift(it->GetSpeed());    // if in left bottom (0; 0)
+    }
   }
 
   bool NewBullet(Bullet2D const & bullet, EntitiesTypes Type)

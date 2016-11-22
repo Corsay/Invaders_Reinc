@@ -1,8 +1,7 @@
 #include "main_window.hpp"
 
 #include "game_widget.hpp"
-#include "window_labels.hpp"
-#include "constants.hpp"
+#include "gameclasses/constants.hpp"
 
 #include <QFile>
 
@@ -26,16 +25,6 @@ MainWindow::MainWindow()
     std::cout << "style file opened" << std::endl;
   }
   else std::cout << "style file not opened" << std::endl;
-
-  // QShortcuts
-  m_shortcutGunMoveLeft = new QShortcut(this);
-  connect(m_shortcutGunMoveLeft, SIGNAL(activated()), this, SLOT(ShortcutGunMoveLeft()));  
-  m_shortcutGunMoveRight = new QShortcut(this);
-  connect(m_shortcutGunMoveRight, SIGNAL(activated()), this, SLOT(ShortcutGunMoveRight())); 
-  m_shortcutGunShoot = new QShortcut(this);
-  connect(m_shortcutGunShoot, SIGNAL(activated()), this, SLOT(ShortcutGunShoot()));
-  m_shortcutGamePause = new QShortcut(this);
-  connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
 
   // Stacked widget
   m_widgetStacked = new QStackedWidget(this);
@@ -66,9 +55,6 @@ MainWindow::MainWindow()
   m_pbMenuNewGame->setIcon(QIcon("data/images/begin.ico"));
   m_pbExit->setObjectName("ExitButton");
   m_pbExit->setIcon(QIcon("data/images/end.ico"));
-
-  // default button settings (game not started)
-  ShowMenuItems();
 
   // fillers header and footer
   QWidget *topFiller = new QWidget;
@@ -264,17 +250,18 @@ MainWindow::MainWindow()
   m_widgetStacked->addWidget(m_windowGame);
   m_widgetStacked->setCurrentIndex(0);
 
+  // QShortcuts
+  m_shortcutGamePause = new QShortcut(m_widgetStacked);
+  connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
+
+  // default button settings (game not started)
+  ShowMenuItems();
 
   // load all user settings from file
   // load default and then load from file
   SetDefaultSettings();
-  if (ReadXml()) ReadJson();
-}
-
-// Деструктор
-MainWindow::~MainWindow()
-{
-
+  if (!ReadXml()) ReadJson();
+  m_settingsChanged = false;
 }
 
 // Смещение окна в центр экрана
@@ -288,6 +275,41 @@ void MainWindow::MoveWindowToCenter()
 // Предлагает сохранить игру -> вызывает SaveGame в случае подтверждения пользователем
 void MainWindow::ShowDialog(QString const & msg, DialogTypes type)
 {
+  /*switch (type)
+  {
+    case DialogTypes::OnSubmitSettingsLeave:
+    {
+
+      break;
+    }
+    case DialogTypes::OnSubmitGameSave:
+    {
+
+      break;
+    }
+    case DialogTypes::OnSettingsLoaded:
+    {
+      QDialog * about = new QDialog;
+      about->resize(250,100);
+      about->setWindowFlags(Qt::ToolTip);
+
+      QPushButton * pbDialog = new QPushButton(about);
+      pbDialog->setText(msg + ADDITION_DIALOG_TEXT);
+      pbDialog->resize(250,100);
+      connect(pbDialog, &QAbstractButton::clicked, [about]()
+        {
+          about->close();
+        });
+
+      about->show();
+      break;
+    }
+    case DialogTypes::OnSettingsLoadError:
+    {
+
+      break;
+    }
+  }*/
   std::cout << msg.toStdString() << std::endl;
 }
 
@@ -296,13 +318,17 @@ void MainWindow::Resize(size_t w, size_t h)
   m_size.setWidth(w);
   m_size.setHeight(h);
 
+  this->setMaximumSize(m_size-QSize(1,1));
   this->setMinimumSize(m_size);
   this->resize(m_size);
+  m_widgetStacked->resize(m_size);
+  m_widgetMenu->resize(m_size);
+  m_widgetSettings->resize(m_size);
+  m_windowGame->resize(m_size);
   MoveWindowToCenter();
 
   ResizeQGridLayouts();
 }
-
 
 void MainWindow::SetTextsForCurLang()
 {
@@ -310,8 +336,16 @@ void MainWindow::SetTextsForCurLang()
   this->setWindowTitle(QMainWindow::tr("Invaders Reincarnation"));
   // MENU
     // button
-  m_pbMenuNewGame->setText(QPushButton::tr("New game"));
-  m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
+  if (m_gameStarted)
+  {
+    m_pbMenuNewGame->setText(QPushButton::tr("End game"));
+    m_pbMenuNewGame->setToolTip(QPushButton::tr("End current game with save dialog"));
+  }
+  else
+  {
+    m_pbMenuNewGame->setText(QPushButton::tr("New game"));
+    m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
+  }
   if (m_gameStarted)
   {
     m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
@@ -414,26 +448,12 @@ void MainWindow::SetSize(int state)
 
 // SHORTCUTS
 // shortcuts  slots
-void MainWindow::ShortcutGunMoveLeft()
-{
-  std::cout << "Not Implemented" << std::endl;
-}
-
-void MainWindow::ShortcutGunMoveRight()
-{
-  std::cout << "Not full relased" << std::endl;
-}
-
-void MainWindow::ShortcutGunShoot()
-{
-  std::cout << "Not full relased" << std::endl;
-}
-
 void MainWindow::ShortcutPause()
 {
   // set game pause
   std::cout << "Not full relased" << std::endl;
 
+  //if (m_widgetStacked->currentIndex() == 2) m_windowGame.TimerPause();
   if (m_widgetStacked->currentIndex() != 0) CheckoutToMenu();
 }
 
@@ -444,27 +464,101 @@ void MainWindow::ShowMenuItems()
 {
   if (m_gameStarted)
   {
-    m_pbMenuNewGame->hide();
+    // Menu
+    m_pbMenuNewGame->setText(QPushButton::tr("End game"));
+    m_pbMenuNewGame->setToolTip(QPushButton::tr("End current game with save dialog"));
     m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
     m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
     m_pbMenuSaveGame->show();
+
+    // Settings block
+      // button
+    m_pbSaveSettings->hide();
+    m_pbLoadSettings->hide();
+    m_pbSetDefault->hide();
+      // boxes
+    m_slGPAliensCount->setDisabled(true);
+    m_slGPAliensCount->setObjectName("NotActiveBox");
+    m_slGPAliensCount->setStyleSheet(m_style);
+    m_slGPObstacleCount->setDisabled(true);
+    m_slGPObstacleCount->setObjectName("NotActiveBox");
+    m_slGPObstacleCount->setStyleSheet(m_style);
+    m_slGPGunStartLives->setDisabled(true);
+    m_slGPGunStartLives->setObjectName("NotActiveBox");
+    m_slGPGunStartLives->setStyleSheet(m_style);
+    m_chbGPObstacleRedraw->setDisabled(true);
+    m_chbGPObstacleRedraw->setObjectName("NotActiveBox");
+    m_chbGPObstacleRedraw->setStyleSheet(m_style);
+    m_chbGPGunAddLive->setDisabled(true);
+    m_chbGPGunAddLive->setObjectName("NotActiveBox");
+    m_chbGPGunAddLive->setStyleSheet(m_style);
+    m_cbWindowState->setDisabled(true);
+    m_cbWindowState->setObjectName("NotActiveBox");
+    m_cbWindowState->setStyleSheet(m_style);
+    m_cbWindowSize->setDisabled(true);
+    m_cbWindowSize->setObjectName("NotActiveBox");
+    m_cbWindowSize->setStyleSheet(m_style);
   }
   else
   {
-    m_pbMenuNewGame->show();
+    // Menu
+    m_pbMenuNewGame->setText(QPushButton::tr("New game"));
+    m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
     m_pbMenuContinueGame->setText(QPushButton::tr("Load game"));
     m_pbMenuContinueGame->setToolTip(QPushButton::tr("Load game from the save file"));
     m_pbMenuSaveGame->hide();
+
+    // Settings unlock
+      // button
+    m_pbSaveSettings->show();
+    m_pbLoadSettings->show();
+    m_pbSetDefault->show();
+      // boxes
+    m_slGPAliensCount->setDisabled(false);
+    m_slGPAliensCount->setObjectName("");
+    m_slGPAliensCount->setStyleSheet(m_style);
+    m_slGPObstacleCount->setDisabled(false);
+    m_slGPObstacleCount->setObjectName("");
+    m_slGPObstacleCount->setStyleSheet(m_style);
+    m_slGPGunStartLives->setDisabled(false);
+    m_slGPGunStartLives->setObjectName("");
+    m_slGPGunStartLives->setStyleSheet(m_style);
+    m_chbGPObstacleRedraw->setDisabled(false);
+    m_chbGPObstacleRedraw->setObjectName("");
+    m_chbGPObstacleRedraw->setStyleSheet(m_style);
+    m_chbGPGunAddLive->setDisabled(false);
+    m_chbGPGunAddLive->setObjectName("");
+    m_chbGPGunAddLive->setStyleSheet(m_style);
+    m_cbWindowState->setDisabled(false);
+    m_cbWindowState->setObjectName("");
+    m_cbWindowState->setStyleSheet(m_style);
+    m_cbWindowSize->setDisabled(false);
+    m_cbWindowSize->setObjectName("");
+    m_cbWindowSize->setStyleSheet(m_style);
   }
 }
 
 // menu button slots
 void MainWindow::NewGame()
 {
-  // flag set change menu
-  m_gameStarted = true;
-  ShowMenuItems();
-  m_widgetStacked->setCurrentIndex(2);
+  if (m_gameStarted)
+  {
+    // flag set change menu
+    m_gameStarted = false;
+    ShowMenuItems();
+
+    // ShowDialog подтверждение в трех вариантах: отмена, с сохранением состояния игры, без сохранения состояния игры
+    // delete m_space and set it to nullptr
+    // not full released
+  }
+  else
+  {
+    // flag set change menu
+    m_gameStarted = true;
+    ShowMenuItems();
+    m_windowGame->NewGame();
+    m_widgetStacked->setCurrentIndex(2);
+  }
 }
 
 void MainWindow::ContinueOrLoadGame()
@@ -472,15 +566,20 @@ void MainWindow::ContinueOrLoadGame()
   if (m_gameStarted) // Continue game
   {
     // go to the game widget
-    // activate timer
+    // reactivate timer
+
+    // m_windowGame->TimerContinue();
+    m_widgetStacked->setCurrentIndex(2);
 
     std::cout << "Not full relased" << std::endl;
   }
   else               // Load game
   {
-    // flag set change menu
-    m_gameStarted = true;
-    ShowMenuItems();
+    //
+    // m_windowGame->LoadGameState(Filename from dialog);
+
+    // if successfull load then call newgame
+    NewGame();
 
     std::cout << "Not full relased" << std::endl;
   }
@@ -488,6 +587,7 @@ void MainWindow::ContinueOrLoadGame()
 
 void MainWindow::SaveGame()
 {
+  // m_windowGame->SaveGameState(Filename from dialog);
   std::cout << "Not full relased" << std::endl;
 }
 
@@ -514,10 +614,10 @@ void MainWindow::WriteJson()
   auto & root = settings["settings"];
 
   auto & control = root["controlButtons"];
-  control["gunMoveLeft"]["key"] = m_shortcutGunMoveLeft->key().toString().toStdString();
-  control["gunMoveRight"]["key"] = m_shortcutGunMoveRight->key().toString().toStdString();
-  control["gunShoot"]["key"] = m_shortcutGunShoot->key().toString().toStdString();
-  control["gamePause"]["key"] = m_shortcutGamePause->key().toString().toStdString();
+  control["gunMoveLeft"]["key"] = m_kseGunMoveLeft->keySequence().toString().toStdString();
+  control["gunMoveRight"]["key"] = m_kseGunMoveRight->keySequence().toString().toStdString();
+  control["gunShoot"]["key"] = m_kseGunShoot->keySequence().toString().toStdString();
+  control["gamePause"]["key"] = m_kseGamePause->keySequence().toString().toStdString();
 
   auto & game = root["game"];
   game["Aliens"]["count"] = m_slGPAliensCount->value();
@@ -541,7 +641,7 @@ void MainWindow::WriteJson()
   }
 }
 
-int MainWindow::ReadJson()
+bool MainWindow::ReadJson()
 {
   Json::Value settings;
   std::ifstream file("data/settings.json");
@@ -550,7 +650,7 @@ int MainWindow::ReadJson()
     file >> settings;
     file.close();
   }
-  else return -1; // not loaded
+  else return false; // not loaded
 
   auto & root = settings["settings"];
 
@@ -633,7 +733,7 @@ int MainWindow::ReadJson()
     ChangeLanguage(m_cbLanguage->currentIndex());
   }
 
-  return 0; //success load
+  return true; //success load
 }
 
 void MainWindow::WriteXml()
@@ -646,10 +746,10 @@ void MainWindow::WriteXml()
   auto root = doc.append_child("settings");
 
   pugi::xml_node controlButtons = root.append_child("controlButtons");
-  controlButtons.append_child("gunMoveLeft").append_attribute("key").set_value(m_shortcutGunMoveLeft->key().toString().toStdString().c_str());
-  controlButtons.append_child("gunMoveRight").append_attribute("key").set_value(m_shortcutGunMoveRight->key().toString().toStdString().c_str());
-  controlButtons.append_child("gunShoot").append_attribute("key").set_value(m_shortcutGunShoot->key().toString().toStdString().c_str());
-  controlButtons.append_child("gamePause").append_attribute("key").set_value(m_shortcutGamePause->key().toString().toStdString().c_str());
+  controlButtons.append_child("gunMoveLeft").append_attribute("key").set_value(m_kseGunMoveLeft->keySequence().toString().toStdString().c_str());
+  controlButtons.append_child("gunMoveRight").append_attribute("key").set_value(m_kseGunMoveRight->keySequence().toString().toStdString().c_str());
+  controlButtons.append_child("gunShoot").append_attribute("key").set_value(m_kseGunShoot->keySequence().toString().toStdString().c_str());
+  controlButtons.append_child("gamePause").append_attribute("key").set_value(m_kseGamePause->keySequence().toString().toStdString().c_str());
 
   pugi::xml_node game = root.append_child("game");
   game.append_child("Aliens").append_attribute("count").set_value(m_slGPAliensCount->value());
@@ -666,7 +766,7 @@ void MainWindow::WriteXml()
   doc.save_file("data/settings.xml", PUGIXML_TEXT("  "));
 }
 
-int MainWindow::ReadXml()
+bool MainWindow::ReadXml()
 {
   pugi::xml_document doc;
   pugi::xml_parse_result result = doc.load_file("data/settings.xml", pugi::parse_default | pugi::parse_declaration);
@@ -769,22 +869,19 @@ int MainWindow::ReadXml()
       ChangeLanguage(m_cbLanguage->currentIndex());
     }
   }
-  else return -1; // not loaded
-  return 0; // success load
+  else return false; // not loaded
+  return true; // success load
 }
 
 // set default settings
 void MainWindow::SetDefaultSettings()
 {
     // shortcut
-  m_shortcutGunMoveLeft->setKey(Qt::Key_Left);
-  m_shortcutGunMoveRight->setKey(Qt::Key_Right);
-  m_shortcutGunShoot->setKey(Qt::Key_Up);
   m_shortcutGamePause->setKey(Qt::Key_Escape);
     // settings QObjects
-  m_kseGunMoveLeft->setKeySequence(m_shortcutGunMoveLeft->key());
-  m_kseGunMoveRight->setKeySequence(m_shortcutGunMoveRight->key());
-  m_kseGunShoot->setKeySequence(m_shortcutGunShoot->key());
+  m_kseGunMoveLeft->setKeySequence(Qt::Key_Left);
+  m_kseGunMoveRight->setKeySequence(Qt::Key_Right);
+  m_kseGunShoot->setKeySequence(Qt::Key_Up);
   m_kseGamePause->setKeySequence(m_shortcutGamePause->key());
   m_slGPAliensCount->setValue(55);
   m_slGPObstacleCount->setValue(4);
@@ -810,8 +907,8 @@ void MainWindow::LoadSettings()
 {
   m_settingsChanged = false;
 
-  if (!ReadXml()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
-  else if (!ReadJson()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
+  if (ReadXml()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
+  else if (ReadJson()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
   else ShowDialog(DIALOG_ON_SETTINGS_LOAD_ERROR, DialogTypes::OnSettingsLoadError);
 }
 
@@ -826,22 +923,23 @@ void MainWindow::SaveSettings()
 // settings controls
 void MainWindow::ChangeShortcutGunMoveLeft(QKeySequence key)
 {
-  m_shortcutGunMoveLeft->setKey(key);
+  m_windowGame->SetKey(KeyTypes::KeyMoveLeft, key);
 }
 
 void MainWindow::ChangeShortcutGunMoveRight(QKeySequence key)
 {
-  m_shortcutGunMoveRight->setKey(key);
+  m_windowGame->SetKey(KeyTypes::KeyMoveRight, key);
 }
 
 void MainWindow::ChangeShortcutGunShoot(QKeySequence key)
 {
-  m_shortcutGunShoot->setKey(key);
+  m_windowGame->SetKey(KeyTypes::KeyShoot, key);
 }
 
 void MainWindow::ChangeShortcutGamePause(QKeySequence key)
 {
   m_shortcutGamePause->setKey(key);
+  m_windowGame->SetKey(KeyTypes::KeyPause, key);
 }
 
 // settings game
@@ -858,6 +956,7 @@ void MainWindow::ChangeObstacleCount(int state)
   m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString::number(state));
   m_settingsChanged = true;
 }
+
 void MainWindow::ChangeGunStartLives(int state)
 {
   GUN_LIVES_START = state;
@@ -887,12 +986,18 @@ void MainWindow::ChangeResolution(int state)
 
 void MainWindow::ChangeWindowState(int state)
 {
+  this->setMaximumSize(QSize(QDesktopWidget().availableGeometry().right() + 1, QDesktopWidget().availableGeometry().bottom() + 1));
+  this->setMinimumSize(0, 0);
+
   if (state == GameWindowStateTypes::FullScreen)
   {
     this->showFullScreen();
     m_cbWindowSize->setDisabled(true);
     m_cbWindowSize->setObjectName("NotActiveBox");
     m_cbWindowSize->setStyleSheet(m_style);
+
+    m_size.setWidth(QDesktopWidget().availableGeometry().right() + 1);
+    m_size.setHeight(QDesktopWidget().availableGeometry().bottom() + 1);
   }
   else if (state == GameWindowStateTypes::MinimizedWindow)
   {
@@ -901,6 +1006,9 @@ void MainWindow::ChangeWindowState(int state)
     ChangeResolution(m_cbWindowSize->currentIndex());
     m_cbWindowSize->setObjectName("");
     m_cbWindowSize->setStyleSheet(m_style);
+
+    m_size.setWidth(this->width());
+    m_size.setHeight(this->height());
   }
   else
   {
@@ -908,9 +1016,15 @@ void MainWindow::ChangeWindowState(int state)
     m_cbWindowSize->setDisabled(true);
     m_cbWindowSize->setObjectName("NotActiveBox");
     m_cbWindowSize->setStyleSheet(m_style);
+
+    m_size.setWidth(QDesktopWidget().availableGeometry().right() + 1);
+    m_size.setHeight(QDesktopWidget().availableGeometry().bottom() + 1);
   }
-  m_size.setWidth(this->width());
-  m_size.setHeight(this->height());
+
+  m_widgetStacked->resize(m_size);
+  m_widgetMenu->resize(m_size);
+  m_widgetSettings->resize(m_size);
+  m_windowGame->resize(m_size);
   m_settingsChanged = true;
 }
 
