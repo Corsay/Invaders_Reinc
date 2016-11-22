@@ -18,19 +18,24 @@ public:
   // Constructors with parameters.
   Space2D(Point2D const & leftBottom, Point2D const & rightTop)
     :GameEntity2D(leftBottom, rightTop)
+  {}
+
+  Space2D(Point2D const & leftBottom, Point2D const & rightTop, int gunLives, int countOfAliens, int countOfObstacles)
+    :GameEntity2D(leftBottom, rightTop)
   {
     float leftBottomX = rightTop.x() / 2 - GUN_WIDTH / 2,
           leftBottomY = GAME_PADDING_BOTTOM,
           rightTopX = leftBottomX + GUN_WIDTH,
           rightTopY = leftBottomY + GUN_HEIGHT;
-    m_gun = Gun2D({leftBottomX, leftBottomY},{rightTopX, rightTopY});
+    m_gun = Gun2D({leftBottomX, leftBottomY}, {rightTopX, rightTopY}, GUN_HEALTH_START, GUN_SPEED_SHOOT_START, gunLives);
 
-
-    //m_alienManager = new Alien2DManager();
-
-    //m_obstacleManager;
-
-    //m_bulletManager;
+    // доделать отправку в alien2Dmanager размеры матрицы пришельцев рассчитав их из общего количества пришельцев countOfAliens
+    // 6 * 13 = 78
+    m_alienManager = Alien2DManager(6, 13);
+    // почему то не работает copy constructor
+    //m_obstacleManager = Obstacle2DManager(countOfObstacles);
+    m_obstacleManager.CreateObstacleVector(countOfObstacles);
+    m_bulletManager = Bullet2DManager();
   }
 
   // Getters
@@ -40,7 +45,7 @@ public:
   BulletList const & GetBulletFromGun() const {return m_bulletManager.GetBulletsFromGunList(); }
   BulletList const & GetBulletFromAlien() const {return m_bulletManager.GetBulletsFromAliensList(); }
 
-  // Setters
+  // Capabilities
   void SetGunPozition(float const x, float const y)
   {
     float leftBottomX = x - GUN_WIDTH / 2,
@@ -55,7 +60,6 @@ public:
     m_bulletManager.BulletsMove(top);
   }
 
-  // Capabilities
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
     Point2D start = m_gun.GetBox().GetCenter();

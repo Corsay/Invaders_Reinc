@@ -16,9 +16,9 @@ GameWindow::GameWindow(QStackedWidget * w)
   connect(m_timer, &QTimer::timeout, m_glWidget, static_cast<QWidgetVoidSlot>(&QWidget::update));
 }
 
-void GameWindow::NewGame()
+void GameWindow::NewGame(int gunLives, int countOfAliens, int countOfObstacles)
 {
-  m_glWidget->NewGame(width(), height());
+  m_glWidget->NewGame(width(), height(), gunLives, countOfAliens, countOfObstacles);
   m_timer->start();
 }
 

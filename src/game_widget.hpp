@@ -22,7 +22,7 @@ public:
   GameGLWidget(GameWindow * mw);
   ~GameGLWidget();
 
-  void NewGame(float w, float h);
+  void NewGame(float w, float h, int gunLives, int countOfAliens, int countOfObstacles);
   void NextLevel();
 
   void SetKey(KeyTypes type, QKeySequence key);

@@ -14,8 +14,12 @@ public:
   // Destructor.
   ~Bullet2DManager() = default;
 
-  // no copy constructor
-  Bullet2DManager(Bullet2DManager const & obj) = delete;
+  // copy constructor
+  Bullet2DManager(Bullet2DManager const & obj)
+  {
+    m_fromAlien = obj.GetBulletsFromAliensList();
+    m_fromGun = obj.GetBulletsFromGunList();
+  }
 
   // assignment operator (for next level reinit)
   Bullet2DManager & operator = (Bullet2DManager const & obj)

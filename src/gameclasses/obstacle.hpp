@@ -4,7 +4,7 @@
 #include "bullet.hpp"
 #include <vector>
 
-using BoxVector = std::vector<LifeGameEntity2D*>;// Alias
+using BoxVector = std::vector<LifeGameEntity2D *>;// Alias
 using BoxMatrix = std::vector<BoxVector>;       // Alias
 
 class Obstacle2D final : public LifeGameEntity2D
@@ -34,8 +34,12 @@ public:
     FillBoxMatrix(countRow, countColumn);
   }
 
-  // no copy constructor
-  Obstacle2D(Obstacle2D const & obj) = delete;
+  // copy constructor
+  Obstacle2D(Obstacle2D const & obj)
+  {
+    m_boxes = obj.GetBoxMatrix();
+    SetHealth(obj.GetHealth());
+  }
 
   // assignment operator
   Obstacle2D & operator = (Obstacle2D const & obj)

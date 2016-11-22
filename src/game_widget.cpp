@@ -57,11 +57,11 @@ void GameGLWidget::initializeGL()
   m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
 }
 
-void GameGLWidget::NewGame(float w, float h)
+void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, int countOfObstacles)
 {
   std::cout << w << " " << h << std::endl;
   // init space2D
-  m_space = new Space2D(Point2D(0, 0), Point2D(w, h));
+  m_space = new Space2D(Point2D(0, 0), Point2D(w, h), gunLives, countOfAliens, countOfObstacles);
   // gun start position
   m_position = QVector2D
     (

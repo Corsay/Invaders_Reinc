@@ -18,9 +18,9 @@ public:
   // Destructor.
   ~Obstacle2DManager()
   {
-      for(size_t i = 0; i!=m_obstacles.size(); ++i)
-        delete m_obstacles[i];
-      m_obstacles.clear();
+    for(size_t i = 0; i != m_obstacles.size(); ++i)
+      delete m_obstacles[i];
+    m_obstacles.clear();
   }
 
   // Constructors with parameters.
@@ -29,8 +29,12 @@ public:
     CreateObstacleVector(countObstacle);
   }
 
-  // no copy constructor
-  Obstacle2DManager(Obstacle2DManager const & obj) = delete;
+  // copy constructor
+  Obstacle2DManager(Obstacle2DManager const & obj)
+  {
+    m_obstacles = obj.GetObstacleVector();
+  }
+
 
   // assignment operator (for next level reinit)
   Obstacle2DManager & operator = (Obstacle2DManager const & obj)
@@ -44,7 +48,7 @@ public:
   // Getters
   inline ObstacleVector const & GetObstacleVector() const { return m_obstacles; }
   inline ObstacleVector & GetObstacleVector() { return m_obstacles; }
-  inline size_t const GetCountOObstacle() const    { return m_obstacles.size(); }
+  inline size_t const GetCountOObstacle() const { return m_obstacles.size(); }
 
 
   // Capabilities
@@ -59,7 +63,6 @@ public:
     return false;
   }
 
-private:
   void CreateObstacleVector(size_t const countObstacle)
   {
     m_obstacles.clear();
@@ -85,5 +88,6 @@ private:
     }
   }
 
+private:
   ObstacleVector m_obstacles;          // matrix of Obstacles
 };

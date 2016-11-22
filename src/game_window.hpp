@@ -18,7 +18,7 @@ class GameWindow : public QMainWindow
 public:
   GameWindow(QStackedWidget * w);
 
-  void NewGame();
+  void NewGame(int gunLives, int countOfAliens, int countOfObstacles);
 
   void SetKey(KeyTypes type, QKeySequence key);
 

@@ -3,7 +3,7 @@
 #include "alien.hpp"
 #include "bullet.hpp"
 #include <vector>
-using AlienVector = std::vector<Alien2D*>;     // Alias
+using AlienVector = std::vector<Alien2D *>;     // Alias
 using AlienMatrix = std::vector<AlienVector>; // Alias
 
 class Alien2DManager
@@ -26,8 +26,12 @@ public:
     logger << "Create Matrix of alien " << countRow << "*" << countColumn << std::endl;
   }
 
-  // no copy constructor
-  Alien2DManager(Alien2DManager const & obj) = delete;
+  // copy constructor
+  Alien2DManager(Alien2DManager const & obj)
+  {
+    m_aliens = obj.GetAlienMatrix();
+    m_liveAliensCount = obj.GetLiveAliensCount();
+  }
 
   // assignment operator (for next level reinit)
   Alien2DManager & operator = (Alien2DManager const & obj)

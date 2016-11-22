@@ -556,7 +556,7 @@ void MainWindow::NewGame()
     // flag set change menu
     m_gameStarted = true;
     ShowMenuItems();
-    m_windowGame->NewGame();
+    m_windowGame->NewGame(m_slGPGunStartLives->value(), m_slGPAliensCount->value(), m_slGPObstacleCount->value());
     m_widgetStacked->setCurrentIndex(2);
   }
 }
