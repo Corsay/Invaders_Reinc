@@ -514,10 +514,10 @@ void MainWindow::WriteJson()
   auto & root = settings["settings"];
 
   auto & control = root["controlButtons"];
-  control["gunMoveLeft"]["key"] = m_shortcutGunMoveLeft->key().toString().toStdString().c_str();
-  control["gunMoveRight"]["key"] = m_shortcutGunMoveRight->key().toString().toStdString().c_str();
-  control["gunShoot"]["key"] = m_shortcutGunShoot->key().toString().toStdString().c_str();
-  control["gamePause"]["key"] = m_shortcutGamePause->key().toString().toStdString().c_str();
+  control["gunMoveLeft"]["key"] = m_shortcutGunMoveLeft->key().toString().toStdString();
+  control["gunMoveRight"]["key"] = m_shortcutGunMoveRight->key().toString().toStdString();
+  control["gunShoot"]["key"] = m_shortcutGunShoot->key().toString().toStdString();
+  control["gamePause"]["key"] = m_shortcutGamePause->key().toString().toStdString();
 
   auto & game = root["game"];
   game["Aliens"]["count"] = m_slGPAliensCount->value();

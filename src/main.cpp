@@ -14,8 +14,8 @@ int main(int argc, char ** argv)
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     QSurfaceFormat::setDefaultFormat(format);
-
-    MainWindow mw;
+    QStackedWidget * w = new QStackedWidget;
+    GameWindow mw(w);
     mw.show();
 
     return app.exec();
