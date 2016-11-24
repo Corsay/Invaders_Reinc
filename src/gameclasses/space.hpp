@@ -31,7 +31,7 @@ public:
 
     // доделать отправку в alien2Dmanager размеры матрицы пришельцев рассчитав их из общего количества пришельцев countOfAliens
     // 6 * 13 = 78
-    m_alienManager = Alien2DManager(6, 13);
+    m_alienManager = Alien2DManager(5, countOfAliens/5);
     // почему то не работает copy constructor
     //m_obstacleManager = Obstacle2DManager(countOfObstacles);
     m_obstacleManager.CreateObstacleVector(countOfObstacles);
@@ -88,6 +88,10 @@ public:
     bullet.SetUpdateHandler( [&](GameEntity2D const & ge){ std::cout << "the bullet from the aliens hit in " << ge << std::endl; }  );
     m_bulletManager.NewBullet(bullet, AlienType);
   }
+  void AliensMove()
+  {
+    m_alienManager.AliensMove();
+  }
 
   void CheckAllIntersections()
   {
@@ -121,6 +125,7 @@ public:
   void GameStep()
   {
     CheckAllIntersections();
+    BulletsMove(1.0f);
     //еще какие-то действия
   }
 

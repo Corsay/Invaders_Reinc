@@ -46,14 +46,14 @@ public:
     for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
     {
       // need to delete bullet if true
-      if (it->GetBox().bottom() < 0) std::cout << "not full released" << std::endl;
+      if (it->GetBox().bottom() < 0);// std::cout << "not full released" << std::endl;
       else it->GetBox().VerticalShift(-(it->GetSpeed())); // if in left bottom (0; 0)
     }
 
     for(auto it = m_fromGun.begin(); it != m_fromGun.end(); ++it)
     {
       // need to delete bullet if true
-      if (it->GetBox().bottom() > top) std::cout << "not full released" << std::endl;
+      if (it->GetBox().bottom() > top);// std::cout << "not full released" << std::endl;
       else it->GetBox().VerticalShift(it->GetSpeed());    // if in left bottom (0; 0)
     }
   }

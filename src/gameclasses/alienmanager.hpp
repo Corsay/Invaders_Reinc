@@ -77,9 +77,39 @@ public:
     return false;
   }
 
-  void AliensMove(float const & top)
+  void AliensMove()
   {
-    throw std::runtime_error("Not released Alien2DManager::AliensMove.");
+    static short direction = 1;
+    static bool down = false, last_is_down = false;
+    if( !last_is_down && (m_aliens[0][0]->GetBox().left() < GAME_PADDING_LEFT ||
+          m_aliens[m_aliens.size() - 1][ m_aliens[0].size()-1]->GetBox().right()
+            > (LAST_WINDOW_HORIZONTAL_SIZE - GAME_PADDING_RIGHT ) ) )
+    down = true;
+
+    /*if(down)
+      std::cout << "down = 1  last_is_down = " << last_is_down << " direction = " << direction << std::endl;*/
+
+    for (size_t i = 0; i < m_aliens.size(); ++i)
+      for(size_t j = 0; j < m_aliens[0].size(); ++j)
+      {
+        if(!down)
+         m_aliens[i][j]->GetBox().HorizontalShift(direction * ALIENT_HORIZONTAL_STEP);
+        else
+         m_aliens[i][j]->GetBox().VerticalShift(-ALIENT_VERTICAL_STEP);
+      }
+
+    if(last_is_down)
+      last_is_down = false;
+
+    if(down)
+    {
+      last_is_down = true;
+      direction *= -1;
+    }
+
+
+    down = false;
+
   }
 
   Alien2D SelectShooter(Box2D const & gunBorder)

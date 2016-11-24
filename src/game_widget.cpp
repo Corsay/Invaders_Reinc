@@ -59,7 +59,15 @@ void GameGLWidget::initializeGL()
 
 void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, int countOfObstacles)
 {
-  std::cout << w << " " << h << std::endl;
+  float alien_w = (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) * 0.8 / ( countOfAliens/5 );
+  if( alien_w < AlIEN_WIDTH )
+    AlIEN_WIDTH = alien_w;
+
+  float alien_h = (h - GAME_PADDING_TOP - GAME_PADDING_BOTTOM) * 0.4 / 5;
+  if( alien_h < ALIEN_HEIGHT )
+    AlIEN_WIDTH = alien_h;
+  changeConstants(w,h);
+
   // init space2D
   m_space = new Space2D(Point2D(0, 0), Point2D(w, h), gunLives, countOfAliens, countOfObstacles);
   // gun start position
@@ -120,6 +128,7 @@ void GameGLWidget::resizeGL(int w, int h)
 {
   m_screenSize.setWidth(w);
   m_screenSize.setHeight(h);
+
 }
 
 // UPDATE FUNCTIONS
@@ -153,6 +162,20 @@ void GameGLWidget::UpdateGun(float elapsedSeconds)
   m_space->SetGunPozition(m_position.x(), m_position.y());
 }
 
+void GameGLWidget::UpdateAliens()
+{
+  if(qrand() % 20 ==0)
+   m_space->AlienShoot();
+  static int int_timer;
+  if(int_timer)
+    int_timer--;
+  else
+  {
+    m_space->AliensMove();
+    int_timer = 30;
+  }
+}
+
 void GameGLWidget::UpdateBullets(float elapsedSeconds)
 {
   m_space->BulletsMove(height());
@@ -162,6 +185,7 @@ void GameGLWidget::Update(float elapsedSeconds)
 {
   UpdateGun(elapsedSeconds);
   UpdateBullets(elapsedSeconds);
+  UpdateAliens();
 }
 
 // KEY EVENTS
@@ -232,7 +256,7 @@ void GameGLWidget::StarRender()
 
   static float t = 1000.0f;
   //случайная звезда
-  if(qrand() % 1 == 0)
+  if(qrand() % 5 == 0)
   {
     starsX.push_back(qrand() % m_screenSize.width());
     starsY.push_back(qrand() % m_screenSize.height());
@@ -278,21 +302,22 @@ void GameGLWidget::AlienRender()
   {
     for(size_t j = 0; j < alMat[0].size(); ++j)
     {
-      m_texturedRect->Render
-      (
-        m_alienTexture,
-        QVector2D
+      if( alMat[i][j] != nullptr )
+        m_texturedRect->Render
         (
-          alMat[i][j]->GetBox().GetCenter().x(),
-          alMat[i][j]->GetBox().GetCenter().y()
-        ),
-        QSize
-        (
-          alMat[i][j]->GetBox().GetWidth(),
-          alMat[i][j]->GetBox().GetHeight()
-        ),
-        m_screenSize
-      );
+          m_alienTexture,
+          QVector2D
+          (
+            alMat[i][j]->GetBox().GetCenter().x(),
+            alMat[i][j]->GetBox().GetCenter().y()
+          ),
+          QSize
+          (
+            alMat[i][j]->GetBox().GetWidth(),
+            alMat[i][j]->GetBox().GetHeight()
+          ),
+          m_screenSize
+        );
     }
   }
 }

@@ -122,8 +122,8 @@ MainWindow::MainWindow()
   connect(m_kseGamePause, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGamePause(QKeySequence)));
     // Game parameters
   m_slGPAliensCount = new QSlider(Qt::Horizontal);
-  m_slGPAliensCount->setRange(25, 200);
-  m_slGPAliensCount->setPageStep(1);
+  m_slGPAliensCount->setRange(20, 75);
+  m_slGPAliensCount->setSingleStep(5);
   connect(m_slGPAliensCount, SIGNAL(valueChanged(int)), this, SLOT(ChangeAliensCount(int)));
 
   m_slGPObstacleCount = new QSlider(Qt::Horizontal);
@@ -328,6 +328,7 @@ void MainWindow::Resize(size_t w, size_t h)
   MoveWindowToCenter();
 
   ResizeQGridLayouts();
+  changeConstants(w, h);
 }
 
 void MainWindow::SetTextsForCurLang()

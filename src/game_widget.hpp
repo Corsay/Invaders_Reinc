@@ -34,6 +34,7 @@ protected:
 
   void UpdateGun(float elapsedSeconds);
   void UpdateBullets(float elapsedSeconds);
+  void UpdateAliens();
   void Update(float elapsedSeconds);
 
   void StarRender();
