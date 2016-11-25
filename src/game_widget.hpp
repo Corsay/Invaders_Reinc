@@ -37,11 +37,11 @@ protected:
   void UpdateAliens();
   void Update(float elapsedSeconds);
 
-  void StarRender();
-  void GunRender();
-  void AlienRender();
-  void ObstacleRender();
-  void BulletRender();
+  void RenderStar();
+  void RenderGun();
+  void RenderAlien();
+  void RenderObstacle();
+  void RenderBullet();
   void Render();
 
   void keyPressEvent(QKeyEvent * e) override;

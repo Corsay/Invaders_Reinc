@@ -19,6 +19,7 @@ namespace
   int constexpr kRightDirection = 1;
   int constexpr kUpDirection = 2;
   int constexpr kDownDirection = 3;
+  bool canShoot = true;
 } // namespace
 
 GameGLWidget::GameGLWidget(GameWindow * mw)
@@ -128,7 +129,6 @@ void GameGLWidget::resizeGL(int w, int h)
 {
   m_screenSize.setWidth(w);
   m_screenSize.setHeight(h);
-
 }
 
 // UPDATE FUNCTIONS
@@ -164,8 +164,8 @@ void GameGLWidget::UpdateGun(float elapsedSeconds)
 
 void GameGLWidget::UpdateAliens()
 {
-  if(qrand() % 20 ==0)
-   m_space->AlienShoot();
+  if(qrand() % 75 == 0)                // ALIEN SHOOT delay
+    m_space->AlienShoot();
   static int int_timer;
   if(int_timer)
     int_timer--;
@@ -183,9 +183,14 @@ void GameGLWidget::UpdateBullets(float elapsedSeconds)
 
 void GameGLWidget::Update(float elapsedSeconds)
 {
+  // gun shoot delay
+  if(qrand() % 50 == 0) canShoot = true;
+  // updates
   UpdateGun(elapsedSeconds);
   UpdateBullets(elapsedSeconds);
   UpdateAliens();
+  // check
+  //m_space->CheckAllIntersections();
 }
 
 // KEY EVENTS
@@ -227,7 +232,11 @@ void GameGLWidget::keyPressEvent(QKeyEvent * e)
 
   else if (QKeySequence(e->key()) == m_keyGunShoot)
   {
-    m_space->GunShoot();
+    if (canShoot)
+    {
+      canShoot = false;
+      m_space->GunShoot();
+    }
   }
 
   else if (QKeySequence(e->key()) == m_keyGamePause)
@@ -246,7 +255,7 @@ void GameGLWidget::keyReleaseEvent(QKeyEvent * e)
 }
 
 // RENDER GAME OBJECTS
-void GameGLWidget::StarRender()
+void GameGLWidget::RenderStar()
 {
   static std::deque<int> starsX;
   static std::deque<int> starsY;
@@ -280,7 +289,7 @@ void GameGLWidget::StarRender()
   }
 }
 
-void GameGLWidget::GunRender()
+void GameGLWidget::RenderGun()
 {
   m_texturedRect->Render
   (
@@ -295,14 +304,15 @@ void GameGLWidget::GunRender()
   );
 }
 
-void GameGLWidget::AlienRender()
+void GameGLWidget::RenderAlien()
 {
   AlienMatrix const & alMat = m_space->GetAlienMatrix();
   for (size_t i = 0; i < alMat.size(); ++i)
   {
     for(size_t j = 0; j < alMat[0].size(); ++j)
     {
-      if( alMat[i][j] != nullptr )
+      if (alMat[i][j] != nullptr)
+      {
         m_texturedRect->Render
         (
           m_alienTexture,
@@ -318,18 +328,19 @@ void GameGLWidget::AlienRender()
           ),
           m_screenSize
         );
+      }
     }
   }
 }
 
-void GameGLWidget::ObstacleRender()
+void GameGLWidget::RenderObstacle()
 {
   ObstacleVector const & ObVec = m_space->GetObstacleVector();
   for (size_t k = 0; k < ObVec.size(); ++k)
   {
-    for(size_t i = 0; i < ObVec[k]->GetBoxMatrix().size(); ++i)
+    /*for(size_t i = 0; i < ObVec[k]->GetBoxMatrix().size(); ++i)
     {
-      for(size_t j = 0; j < ObVec[k]->GetBoxMatrix()[0].size(); ++j)
+      for(size_t j = 0; j < ObVec[k]->GetBoxMatrix().size(); ++j)
       {
         m_texturedRect->Render
         (
@@ -347,11 +358,33 @@ void GameGLWidget::ObstacleRender()
           m_screenSize
         );
       }
+    }*/
+    BoxMatrix obsMatr = ObVec[k]->GetBoxMatrix();
+    for(size_t i = 0; i < obsMatr.size(); ++i)
+    {
+      for(size_t j = 0; j < obsMatr[i].size(); ++j)
+      {
+        m_texturedRect->Render
+        (
+          m_partObstacleTexture,
+          QVector2D
+          (
+            obsMatr[i][j]->GetBox().GetCenter().x(),
+            obsMatr[i][j]->GetBox().GetCenter().y()
+          ),
+          QSize
+          (
+            obsMatr[i][j]->GetBox().GetWidth(),
+            obsMatr[i][j]->GetBox().GetHeight()
+          ),
+          m_screenSize
+        );
+      }
     }
   }
 }
 
-void GameGLWidget::BulletRender(){
+void GameGLWidget::RenderBullet(){
   BulletList const & bulListGun = m_space->GetBulletFromGun();
   BulletList const & bulListAlien = m_space->GetBulletFromAlien();
   for(auto it = bulListGun.begin(); it != bulListGun.end(); ++it)
@@ -394,9 +427,9 @@ void GameGLWidget::BulletRender(){
 
 void GameGLWidget::Render()
 {
-  this->StarRender();
-  this->GunRender();
-  this->AlienRender();
-  this->ObstacleRender();
-  this->BulletRender();
+  this->RenderStar();
+  this->RenderGun();
+  this->RenderAlien();
+  this->RenderObstacle();
+  this->RenderBullet();
 }

@@ -69,17 +69,20 @@ public:
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
-    if(! (bul.GetBox() && this->GetBox()) )
-        return false;
+    if (!(bul.GetBox() && this->GetBox()))
+      return false;
 
     for (size_t i = 0; i < m_boxes.size(); ++i)
+    {
       for(size_t j = 0; j < m_boxes[0].size(); ++j)
+      {
         if(m_boxes[i][j] != nullptr)
+        {
           if(m_boxes[i][j]->GetBox() && bul.GetBox())
           {
             this->SetHealth(this->GetHealth() - bul.GetHealth());
 
-            if( m_boxes[i][j]->GetHealth() <= bul.GetHealth() )
+            if (m_boxes[i][j]->GetHealth() <= bul.GetHealth())
             {
               delete m_boxes[i][j];
               m_boxes[i][j] = nullptr;
@@ -89,6 +92,9 @@ public:
 
             return true;
           }
+        }
+      }
+    }
     return false;
   }
 

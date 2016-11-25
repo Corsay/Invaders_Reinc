@@ -22,7 +22,7 @@ int main(int argc, char ** argv)
   }
   catch (...)
   {
-    std::cerr << "Unknown error!";
+    logger << "Unknown error!";
   }
   return 0;
 }

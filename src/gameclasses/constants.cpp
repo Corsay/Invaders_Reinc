@@ -59,8 +59,8 @@ float OBSTACLE_BOX_RIGHT    = GAME_PADDING_LEFT + 80.0f;      // +
 float OBSTACLE_BOX_BOTTOM   = 170.0f;     // +
 float OBSTACLE_WIDTH        = 80.0f;     // +
 float OBSTACLE_HEIGHT       = 50.0f;     // +
-float OBSTACLE_PART_WIDTH   = 100.0f;
-float OBSTACLE_PART_HEIGHT  = 100.0f;
+float OBSTACLE_PART_WIDTH   = 8.0f;
+float OBSTACLE_PART_HEIGHT  = 5.0f;
 float OBSTACLE_TOTAL_HEALTH = 250.0f;
 float OBSTACLE_DISTANCE     = 100.0f;     // +
 // BULLET

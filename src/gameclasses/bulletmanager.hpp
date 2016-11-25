@@ -43,19 +43,37 @@ public:
   // Capabilities
   void BulletsMove(float const & top)
   {
+    std::list<std::list<Bullet2D>::iterator> itList;
+
+    // move aliens bullets
     for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
     {
       // need to delete bullet if true
-      if (it->GetBox().bottom() < 0);// std::cout << "not full released" << std::endl;
+      if (it->GetBox().top() < 0) itList.push_back(it);
       else it->GetBox().VerticalShift(-(it->GetSpeed())); // if in left bottom (0; 0)
     }
 
+    // erase itList
+    for(auto it = itList.begin(); it != itList.end(); ++it)
+    {
+      m_fromAlien.erase(*it);
+    }
+    itList.clear();
+
+    // move gun bullets
     for(auto it = m_fromGun.begin(); it != m_fromGun.end(); ++it)
     {
       // need to delete bullet if true
-      if (it->GetBox().bottom() > top);// std::cout << "not full released" << std::endl;
+      if (it->GetBox().bottom() > top) itList.push_back(it);
       else it->GetBox().VerticalShift(it->GetSpeed());    // if in left bottom (0; 0)
     }
+
+    // erase itList
+    for(auto it = itList.begin(); it != itList.end(); ++it)
+    {
+      m_fromGun.erase(*it);
+    }
+    itList.clear();
   }
 
   bool NewBullet(Bullet2D const & bullet, EntitiesTypes Type)

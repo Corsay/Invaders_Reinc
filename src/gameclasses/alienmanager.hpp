@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "alien.hpp"
 #include "bullet.hpp"
 #include <vector>
@@ -45,11 +46,10 @@ public:
 
   // Getters
   inline AlienMatrix const & GetAlienMatrix() const { return m_aliens; }
-  inline AlienMatrix & GetAlienMatrix() { return m_aliens; }
+  inline AlienMatrix & GetAlienMatrix()           { return m_aliens; }
   inline size_t const GetLiveAliensCount() const  { return m_liveAliensCount; }
   inline size_t const GetCountOfRows() const      { return m_aliens.size(); }
   inline size_t const GetCountOfColumn() const    { return m_aliens[0].size(); }
-
 
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
@@ -81,13 +81,10 @@ public:
   {
     static short direction = 1;
     static bool down = false, last_is_down = false;
-    if( !last_is_down && (m_aliens[0][0]->GetBox().left() < GAME_PADDING_LEFT ||
-          m_aliens[m_aliens.size() - 1][ m_aliens[0].size()-1]->GetBox().right()
+    if (!last_is_down && (m_aliens[0][0]->GetBox().left() < GAME_PADDING_LEFT ||
+        m_aliens[m_aliens.size() - 1][m_aliens[0].size() - 1]->GetBox().right()
             > (LAST_WINDOW_HORIZONTAL_SIZE - GAME_PADDING_RIGHT ) ) )
     down = true;
-
-    /*if(down)
-      std::cout << "down = 1  last_is_down = " << last_is_down << " direction = " << direction << std::endl;*/
 
     for (size_t i = 0; i < m_aliens.size(); ++i)
       for(size_t j = 0; j < m_aliens[0].size(); ++j)
@@ -107,15 +104,23 @@ public:
       direction *= -1;
     }
 
-
     down = false;
-
   }
 
   Alien2D SelectShooter(Box2D const & gunBorder)
   {
+    // KRITICAL ZONE
+    size_t column = GetCountOfColumn() - 1;
+    column = rand() % column;
+
+    size_t row = 0;
+    while (m_aliens[row][column] == nullptr && row != GetCountOfRows())
+    {
+      row++;
+    }
+
     // chosing by game AI(Artificial intelligence) who will be shoot
-    return *m_aliens[0][0];  // default
+    return *m_aliens[row][column];  // default
   }
 
 private:

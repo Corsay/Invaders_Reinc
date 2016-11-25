@@ -30,7 +30,7 @@ public:
     m_gun = Gun2D({leftBottomX, leftBottomY}, {rightTopX, rightTopY}, GUN_HEALTH_START, GUN_SPEED_SHOOT_START, gunLives);
 
     // доделать отправку в alien2Dmanager размеры матрицы пришельцев рассчитав их из общего количества пришельцев countOfAliens
-    // 6 * 13 = 78
+    // 5 * 13 = 65
     m_alienManager = Alien2DManager(5, countOfAliens/5);
     // почему то не работает copy constructor
     //m_obstacleManager = Obstacle2DManager(countOfObstacles);
@@ -78,7 +78,7 @@ public:
   {
     Alien2D alien = m_alienManager.SelectShooter(m_gun.GetBox());
     Point2D start = alien.GetBox().GetCenter();
-    start.SetY(alien.GetBox().top());
+    start.SetY(alien.GetBox().bottom());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
@@ -88,6 +88,7 @@ public:
     bullet.SetUpdateHandler( [&](GameEntity2D const & ge){ std::cout << "the bullet from the aliens hit in " << ge << std::endl; }  );
     m_bulletManager.NewBullet(bullet, AlienType);
   }
+
   void AliensMove()
   {
     m_alienManager.AliensMove();
@@ -99,17 +100,38 @@ public:
     BulletList & BulletFromGun = m_bulletManager.GetBulletsFromGunList();
     BulletList & BulletFromAlien = m_bulletManager.GetBulletsFromAliensList();
 
+    // iterator for delete
+    std::list<std::list<Bullet2D>::iterator> itList;
+
     for(auto it = BulletFromGun.begin(); it != BulletFromGun.end(); ++it)
-      if( m_alienManager.CheckIntersection(*it) )
-        BulletFromGun.erase(it);
-      else if( m_obstacleManager.CheckIntersection(*it) )
-        BulletFromGun.erase(it);
+    {
+      if (m_alienManager.CheckIntersection(*it))
+        itList.push_back(it);
+      else if (m_obstacleManager.CheckIntersection(*it))
+        itList.push_back(it);
+    }
+
+    // erase itList
+    for(auto it = itList.begin(); it != itList.end(); ++it)
+    {
+      BulletFromGun.erase(*it);
+    }
+    itList.clear();
 
     for(auto it = BulletFromAlien.begin(); it != BulletFromAlien.end(); ++it)
-      if( m_obstacleManager.CheckIntersection(*it) )
-        BulletFromGun.erase(it);
+    {
+      if (m_obstacleManager.CheckIntersection(*it))
+        itList.push_back(it);
       else if(m_gun.CheckIntersection(*it))
-        BulletFromGun.erase(it);
+        itList.push_back(it);
+    }
+
+    // erase itList
+    for(auto it = itList.begin(); it != itList.end(); ++it)
+    {
+      BulletFromAlien.erase(*it);
+    }
+    itList.clear();
   }
 
   unsigned int CheckGameState()

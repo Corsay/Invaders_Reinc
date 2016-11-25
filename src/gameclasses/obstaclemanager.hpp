@@ -55,11 +55,13 @@ public:
   bool CheckIntersection(Bullet2D const & bul)
   {
     for(auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
+    {
       if((*it)->CheckIntersection(bul))
       {
         bul.Inform(*(*it));
         return true;
       }
+    }
     return false;
   }
 
