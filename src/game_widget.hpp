@@ -42,6 +42,7 @@ protected:
   void RenderAlien();
   void RenderObstacle();
   void RenderBullet();
+  void RenderInformationString();
   void Render();
 
   void keyPressEvent(QKeyEvent * e) override;

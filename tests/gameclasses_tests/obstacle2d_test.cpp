@@ -19,7 +19,7 @@ TEST(obstacle2d_test, test_construction)
   EXPECT_EQ(o2.GetCountOfRows(), 1);
   EXPECT_EQ(o2.GetCountOfColumn(), 5);
 
-  Obstacle2D o3 = {Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f), 500, 2, 4};
+  Obstacle2D o3 = {Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f), 500};
   EXPECT_EQ(o3.GetBox(), Box2D(Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f)));
   EXPECT_EQ(o3.GetHealth(), 500);
   EXPECT_EQ(o3.GetCountOfRows(), 2);
@@ -29,7 +29,7 @@ TEST(obstacle2d_test, test_construction)
 TEST(obstacle2d_test, test_assignment)
 {
   Obstacle2D o1;
-  o1 = {Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f), 500, 2, 4};
+  o1 = {Point2D(50.0f, 50.0f), Point2D(110.0f, 110.0f), 500};
 
   BoxMatrix bMatrix = o1.GetBoxMatrix();
   for (size_t i = 0; i < bMatrix.size(); ++i)

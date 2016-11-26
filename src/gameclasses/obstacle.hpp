@@ -14,7 +14,7 @@ public:
   Obstacle2D()
   {
     SetEntity(GameEntity2D{Box2D(Point2D(OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM), Point2D(OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT))});
-    FillBoxMatrix(1, 5);
+    FillBoxMatrix(Point2D{OBSTACLE_BOX_LEFT, OBSTACLE_BOX_BOTTOM}, Point2D{OBSTACLE_BOX_LEFT + OBSTACLE_WIDTH, OBSTACLE_BOX_BOTTOM + OBSTACLE_HEIGHT}, OBSTACLE_TOTAL_HEALTH);
     SetHealth(OBSTACLE_TOTAL_HEALTH);
   }
 
@@ -25,13 +25,7 @@ public:
   Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth = OBSTACLE_TOTAL_HEALTH)
     :LifeGameEntity2D(leftBottom, rightTop, totalHealth)
   {
-    FillBoxMatrix(1, 5);
-  }
-
-  Obstacle2D(Point2D const & leftBottom, Point2D const & rightTop, float totalHealth, size_t const countRow, size_t const countColumn)
-    :LifeGameEntity2D(leftBottom, rightTop, totalHealth)
-  {
-    FillBoxMatrix(countRow, countColumn);
+    FillBoxMatrix(leftBottom, rightTop, totalHealth);
   }
 
   // copy constructor
@@ -69,15 +63,12 @@ public:
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
-    if (!(bul.GetBox() && this->GetBox()))
+    if (! (bul.GetBox() && this->GetBox()) )
       return false;
 
     for (size_t i = 0; i < m_boxes.size(); ++i)
-    {
       for(size_t j = 0; j < m_boxes[0].size(); ++j)
-      {
         if(m_boxes[i][j] != nullptr)
-        {
           if(m_boxes[i][j]->GetBox() && bul.GetBox())
           {
             this->SetHealth(this->GetHealth() - bul.GetHealth());
@@ -85,16 +76,17 @@ public:
             if (m_boxes[i][j]->GetHealth() <= bul.GetHealth())
             {
               delete m_boxes[i][j];
-              m_boxes[i][j] = nullptr;
+              //m_boxes[i][j] = nullptr;
+              /*
+               * почему-то возникает ошибка при попытке присвоить nullptr
+               * я не знаю в чем дело
+               * */
             }
             else
               m_boxes[i][j]->SetHealth(m_boxes[i][j]->GetHealth() - bul.GetHealth());
 
             return true;
           }
-        }
-      }
-    }
     return false;
   }
 
@@ -111,9 +103,11 @@ public:
   }
 
 private:
-  void FillBoxMatrix(size_t const countRow, size_t const countColumn)
+  void FillBoxMatrix(Point2D const & ld, Point2D const & rt, float totalHealth)
   {
-    float healthOfPart = GetHealth() / (countRow * countColumn);
+    float countRow = OBSTACLE_COUNT_VERTICAL_PART, countColumn = OBSTACLE_COUNT_HORIZONTAL_PART;
+    float partWidth = ( rt.x()-ld.x() ) / countColumn, partHeight = ( rt.y() - ld.y() ) /  countRow;
+    float healthOfPart = totalHealth / (countRow * countColumn);
 
     m_boxes.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
@@ -129,13 +123,13 @@ private:
             {
               Point2D
               {
-                OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH,
-                OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH
+                ld.x() + j * partWidth,
+                ld.y() + i * partHeight
               },
               Point2D
               {
-                OBSTACLE_BOX_LEFT + j * OBSTACLE_PART_WIDTH + OBSTACLE_PART_WIDTH,
-                OBSTACLE_BOX_BOTTOM + i * OBSTACLE_PART_WIDTH + OBSTACLE_PART_HEIGHT,
+                ld.x() + ( j + 1 ) * partWidth + 1,
+                ld.y() + ( i + 1 ) * partHeight + 1
               }
             },
             healthOfPart

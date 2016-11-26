@@ -5,6 +5,8 @@ extern SimpleLogger & logger;
 std::string onlyFile(std::string);
 void changeConstants(float w, float h);
 
+using namespace std;
+
 #define WHERE "File: " << onlyFile( __FILE__ ) << " Function: " << __FUNCTION__ << " Line:" << __LINE__
 
 // Game parameters management
@@ -62,6 +64,8 @@ extern float OBSTACLE_PART_WIDTH   ;
 extern float OBSTACLE_PART_HEIGHT  ;
 extern float OBSTACLE_TOTAL_HEALTH ;
 extern float OBSTACLE_DISTANCE     ;     // +
+extern int OBSTACLE_COUNT_VERTICAL_PART;
+extern int OBSTACLE_COUNT_HORIZONTAL_PART;
 // BULLET
 extern float BULLET_DAMAGE_START;
 extern float BULLET_DAMAGE_INC  ;

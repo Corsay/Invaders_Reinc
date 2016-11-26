@@ -67,6 +67,9 @@ void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, in
   float alien_h = (h - GAME_PADDING_TOP - GAME_PADDING_BOTTOM) * 0.4 / 5;
   if( alien_h < ALIEN_HEIGHT )
     AlIEN_WIDTH = alien_h;
+
+  OBSTACLE_DISTANCE = ( (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) - (OBSTACLE_WIDTH * countOfObstacles ) ) / ( countOfObstacles + 1) ;
+  OBSTACLE_BOX_LEFT = GAME_PADDING_LEFT;
   changeConstants(w,h);
 
   // init space2D
@@ -184,13 +187,13 @@ void GameGLWidget::UpdateBullets(float elapsedSeconds)
 void GameGLWidget::Update(float elapsedSeconds)
 {
   // gun shoot delay
-  if(qrand() % 50 == 0) canShoot = true;
+  if(qrand() % 10 == 0)
+    canShoot = true;
   // updates
   UpdateGun(elapsedSeconds);
   UpdateBullets(elapsedSeconds);
   UpdateAliens();
-  // check
-  //m_space->CheckAllIntersections();
+  m_space->CheckAllIntersections();
 }
 
 // KEY EVENTS
@@ -338,27 +341,6 @@ void GameGLWidget::RenderObstacle()
   ObstacleVector const & ObVec = m_space->GetObstacleVector();
   for (size_t k = 0; k < ObVec.size(); ++k)
   {
-    /*for(size_t i = 0; i < ObVec[k]->GetBoxMatrix().size(); ++i)
-    {
-      for(size_t j = 0; j < ObVec[k]->GetBoxMatrix().size(); ++j)
-      {
-        m_texturedRect->Render
-        (
-          m_partObstacleTexture,
-          QVector2D
-          (
-            ObVec[k]->GetBox().GetCenter().x(),
-            ObVec[k]->GetBox().GetCenter().y()
-          ),
-          QSize
-          (
-            ObVec[k]->GetBox().GetWidth(),
-            ObVec[k]->GetBox().GetHeight()
-          ),
-          m_screenSize
-        );
-      }
-    }*/
     BoxMatrix obsMatr = ObVec[k]->GetBoxMatrix();
     for(size_t i = 0; i < obsMatr.size(); ++i)
     {
@@ -425,6 +407,11 @@ void GameGLWidget::RenderBullet(){
   }
 }
 
+void GameGLWidget::RenderInformationString()
+{
+
+}
+
 void GameGLWidget::Render()
 {
   this->RenderStar();
@@ -432,4 +419,5 @@ void GameGLWidget::Render()
   this->RenderAlien();
   this->RenderObstacle();
   this->RenderBullet();
+  this->RenderInformationString();
 }

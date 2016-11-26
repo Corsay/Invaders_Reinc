@@ -56,16 +56,20 @@ public:
   {
     int i, j;
     // get shooted alien position
-    i = (bul.GetBox().top() - m_aliens[0][0]->GetBox().top() + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
-    j = (bul.GetBox().left() - m_aliens[0][0]->GetBox().left() + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
+    i = (bul.GetBox().top() - m_alien00_top + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
+    j = (bul.GetBox().left() - m_alien00_left + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
     if (i < m_aliens.size() && j < m_aliens[0].size())
       if (m_aliens[i][j] != nullptr)
         if (m_aliens[i][j]->GetBox() && bul.GetBox())
         {
-          bul.Inform(*m_aliens[i][j]);
+          //bul.Inform(*m_aliens[i][j]);
           if( m_aliens[i][j]->GetHealth() <= bul.GetHealth())
           {
             delete m_aliens[i][j];
+            //m_aliens[i][j] = nullptr;
+            /*
+             * почему-то выдает ошибку
+             * */
             --m_liveAliensCount;
           }
           else  // ec heals
@@ -81,10 +85,15 @@ public:
   {
     static short direction = 1;
     static bool down = false, last_is_down = false;
-    if (!last_is_down && (m_aliens[0][0]->GetBox().left() < GAME_PADDING_LEFT ||
-        m_aliens[m_aliens.size() - 1][m_aliens[0].size() - 1]->GetBox().right()
+    if (!last_is_down && (m_alien00_left < GAME_PADDING_LEFT ||
+        m_alien00_left + this->GetCountOfColumn() * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) - ALIEN_HORIZONTAL_DISTANCE
             > (LAST_WINDOW_HORIZONTAL_SIZE - GAME_PADDING_RIGHT ) ) )
     down = true;
+
+    if(!down)
+     m_alien00_left += direction * ALIENT_HORIZONTAL_STEP;
+    else
+     m_alien00_top -= ALIENT_VERTICAL_STEP;
 
     for (size_t i = 0; i < m_aliens.size(); ++i)
       for(size_t j = 0; j < m_aliens[0].size(); ++j)
@@ -156,8 +165,10 @@ private:
       }
       m_aliens.push_back(tempVect);
     }
+    m_alien00_top = m_aliens[0][0]->GetBox().top();
+    m_alien00_left = m_aliens[0][0]->GetBox().left();
   }
-
+  float m_alien00_top, m_alien00_left;
   AlienMatrix m_aliens;          // matrix of Aliens
   size_t m_liveAliensCount = 55; // count of live aliens
 };

@@ -49,7 +49,7 @@ public:
     for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
     {
       // need to delete bullet if true
-      if (it->GetBox().top() < 0) itList.push_back(it);
+      if (it->GetBox().bottom() < GAME_PADDING_BOTTOM ) itList.push_back(it);
       else it->GetBox().VerticalShift(-(it->GetSpeed())); // if in left bottom (0; 0)
     }
 
