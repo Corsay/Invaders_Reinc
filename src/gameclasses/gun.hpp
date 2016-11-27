@@ -59,7 +59,7 @@ public:
 
   // Getters
   inline size_t const GetLives() const { return m_lives; }
-  inline float const GetRate() const   { return m_gunRate; }
+  inline int const GetRate() const   { return m_gunRate; }
 
   // Setters
   inline void SetLives(size_t const newLives) { m_lives = newLives; }
@@ -108,5 +108,5 @@ private:
   }
 
   size_t m_lives = GUN_LIVES_START;  // - default gun lives count
-  float m_gunRate = 0;               // - game rate (from original game) (increment depends on the type of shot down alien)
+  int m_gunRate = 0;               // - game rate (from original game) (increment depends on the type of shot down alien)
 };

@@ -106,7 +106,10 @@ public:
     for(auto it = BulletFromGun.begin(); it != BulletFromGun.end(); ++it)
     {
       if (m_alienManager.CheckIntersection(*it))
+      {
         itList.push_back(it);
+        m_gun.SetRate(m_gun.GetRate() + 50);
+      }
       else if (m_obstacleManager.CheckIntersection(*it))
         itList.push_back(it);
     }

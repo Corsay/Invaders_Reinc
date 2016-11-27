@@ -22,7 +22,7 @@ bool   OBSTACLE_REDRAW_EVERY_LEVEL = false;
 float  GAME_PADDING_LEFT = 15;
 float  GAME_PADDING_RIGHT = 15;
 float  GAME_PADDING_TOP = 30;
-float  GAME_PADDING_BOTTOM = 30;
+float  GAME_PADDING_BOTTOM = 50;
 
 // const (setted value)
 // DEFAULT

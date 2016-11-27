@@ -12,6 +12,7 @@
 #include <cstdlib>
 
 #include <iostream>
+#include <sstream>
 
 namespace
 {
@@ -56,6 +57,7 @@ void GameGLWidget::initializeGL()
   m_partObstacleTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
   m_bulletFromGunTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
   m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
+  m_heartTexture = new QOpenGLTexture(QImage("data/images/heart.jpg"));
 }
 
 void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, int countOfObstacles)
@@ -117,6 +119,17 @@ void GameGLWidget::paintGL()
      painter.setPen(Qt::white);
      painter.drawText(20, 40, framesPerSecond + " fps");
    }
+
+
+   QString rate;
+   rate.setNum( m_space->GetGun().GetRate() );
+   painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE-120 , LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM/2, "You rezult: " + rate);
+
+   painter.setPen(Qt::red);
+   painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM + 5);
+
+
+
    painter.end();
 
    if (!(m_frames % 100))
@@ -409,6 +422,14 @@ void GameGLWidget::RenderBullet(){
 
 void GameGLWidget::RenderInformationString()
 {
+  for(int i = 0; i < m_space->GetGun().GetLives(); i++)
+    m_texturedRect->Render(
+                m_heartTexture,
+                QVector2D(50 + GAME_PADDING_BOTTOM * ( i + 0.5 ), GAME_PADDING_BOTTOM/2),
+                QSize(GAME_PADDING_BOTTOM, GAME_PADDING_BOTTOM),
+                m_screenSize
+                );
+
 
 }
 

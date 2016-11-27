@@ -64,6 +64,7 @@ private:
   QOpenGLTexture * m_partObstacleTexture = nullptr;
   QOpenGLTexture * m_bulletFromGunTexture = nullptr;
   QOpenGLTexture * m_bulletFromAlienTexture = nullptr;
+  QOpenGLTexture * m_heartTexture = nullptr;
 
   TexturedRect * m_texturedRect = nullptr;
   Space2D * m_space = nullptr;
