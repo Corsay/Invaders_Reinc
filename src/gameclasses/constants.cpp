@@ -26,8 +26,8 @@ float  GAME_PADDING_BOTTOM = 50;
 
 // const (setted value)
 // DEFAULT
-float DEFAULT_HEALTH = 50.0f; // median alien = 50,  gun = 50,  bullet(damage health) = 50, box_part = 50
-float DEFAULT_SPEED = 0.5f;   // (much of aliens) alien = 0.5, gun = 2.0, bullet(fly speed) = 5.0
+float DEFAULT_HEALTH = 50.0f;
+float DEFAULT_SPEED = 0.5f;
 // ALIEN
 float ALIEN_HEALTH_START      = 50.0f;
 float ALIEN_HEALTH_INC        = 50.0f;
@@ -35,8 +35,8 @@ float ALIEN_SPEED_SHOOT_START = 1.2f;
 float ALIEN_SPEED_SHOOT_INC   = 0.5f;
 float AlIEN_WIDTH             = 50.0f;
 float ALIEN_HEIGHT            = 40.0f;
-float ALIEN_BOX_LEFT            = 100.0f;  // left border of aliensMatrix
-float ALIEN_BOX_TOP             = 400.0f;   // top border
+float ALIEN_BOX_LEFT            = 100.0f;
+float ALIEN_BOX_TOP             = 400.0f;
 float ALIEN_HORIZONTAL_DISTANCE = 5.0f;
 float ALIEN_VERTICAL_DISTANCE   = 0.0f;
 float ALIENT_HORIZONTAL_STEP    = 10.0f;
@@ -54,15 +54,15 @@ float GUN_START_Y           = 100.0f;
 float GUN_WIDTH             = 70.0f;
 float GUN_HEIGHT            = 50.0f;
 // OBSTACLE
-float OBSTACLE_BOX_LEFT     = GAME_PADDING_LEFT + 1.0f;      // +
-float OBSTACLE_BOX_RIGHT    = GAME_PADDING_LEFT + 80.0f;      // +
-float OBSTACLE_BOX_BOTTOM   = 170.0f;     // +
-float OBSTACLE_WIDTH        = 80.0f;     // +
-float OBSTACLE_HEIGHT       = 50.0f;     // +
+float OBSTACLE_BOX_LEFT     = GAME_PADDING_LEFT + 1.0f;
+float OBSTACLE_BOX_RIGHT    = GAME_PADDING_LEFT + 80.0f;
+float OBSTACLE_BOX_BOTTOM   = 170.0f;
+float OBSTACLE_WIDTH        = 80.0f;
+float OBSTACLE_HEIGHT       = 50.0f;
 float OBSTACLE_PART_WIDTH   = 8.0f;
 float OBSTACLE_PART_HEIGHT  = 5.0f;
 float OBSTACLE_TOTAL_HEALTH = 250.0f;
-float OBSTACLE_DISTANCE     = 20.0f;     // +
+float OBSTACLE_DISTANCE     = 20.0f;
 int OBSTACLE_COUNT_VERTICAL_PART   = 4;
 int OBSTACLE_COUNT_HORIZONTAL_PART = 5;
 // BULLET
@@ -80,14 +80,11 @@ void changeConstants(float w, float h)
 {
   float wk = w / LAST_WINDOW_HORIZONTAL_SIZE;
   float hk = h / LAST_WINDOW_VERTICAL_SIZE;
-  //std::cout << "wk = " << wk << "   hk = " << hk << std::endl;
-  //std::cout << "before " << LAST_WINDOW_HORIZONTAL_SIZE << "*" << LAST_WINDOW_VERTICAL_SIZE << std::endl;
 
   GAME_PADDING_LEFT *= wk;
   GAME_PADDING_RIGHT *= wk;
   GAME_PADDING_TOP *= hk;
   GAME_PADDING_BOTTOM *= hk;
-
 
   DEFAULT_SPEED *= wk;
 
@@ -116,7 +113,6 @@ void changeConstants(float w, float h)
   OBSTACLE_PART_WIDTH   *= wk;
   OBSTACLE_PART_HEIGHT  *= hk;
   OBSTACLE_DISTANCE     *= wk;
-
 
   BULLET_WIDTH        *= wk;
   BULLET_HEIGHT       *= hk;

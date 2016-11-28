@@ -47,7 +47,7 @@ void GameGLWidget::initializeGL()
   m_texturedRect = new TexturedRect();
   m_texturedRect->Initialize(this);
 
-  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.jpg"));
+  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background2.jpg"));
 
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star44.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star55.png")));
@@ -144,7 +144,9 @@ void GameGLWidget::paintGL()
     rate.setNum(m_space->GetGun().GetRate());
     painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 120 , LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
 
-    painter.setPen(Qt::red);
+    QPen pen = QPen(Qt::red);
+    pen.setWidth(3);
+    painter.setPen(pen);
     painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM + 5);
 
     painter.end();
