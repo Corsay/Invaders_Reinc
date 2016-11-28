@@ -52,9 +52,9 @@ MainWindow::MainWindow()
       if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
       exit(0);
     });
-  m_pbMenuNewGame->setIcon(QIcon("data/images/begin.ico"));
+  m_pbMenuNewGame->setIcon(QIcon("data/images/icons/begin.ico"));
   m_pbExit->setObjectName("ExitButton");
-  m_pbExit->setIcon(QIcon("data/images/end.ico"));
+  m_pbExit->setIcon(QIcon("data/images/icons/end.ico"));
 
   // fillers header and footer
   QWidget *topFiller = new QWidget;
@@ -451,10 +451,6 @@ void MainWindow::SetSize(int state)
 // shortcuts  slots
 void MainWindow::ShortcutPause()
 {
-  // set game pause
-  std::cout << "Not full relased" << std::endl;
-
-  //if (m_widgetStacked->currentIndex() == 2) m_windowGame.TimerPause();
   if (m_widgetStacked->currentIndex() != 0) CheckoutToMenu();
 }
 
@@ -557,7 +553,7 @@ void MainWindow::NewGame()
     // flag set change menu
     m_gameStarted = true;
     ShowMenuItems();
-    m_windowGame->NewGame(m_slGPGunStartLives->value(), m_slGPAliensCount->value(), m_slGPObstacleCount->value());
+    m_windowGame->NewGame();
     m_widgetStacked->setCurrentIndex(2);
   }
 }
@@ -566,13 +562,7 @@ void MainWindow::ContinueOrLoadGame()
 {
   if (m_gameStarted) // Continue game
   {
-    // go to the game widget
-    // reactivate timer
-
-    // m_windowGame->TimerContinue();
     m_widgetStacked->setCurrentIndex(2);
-
-    std::cout << "Not full relased" << std::endl;
   }
   else               // Load game
   {

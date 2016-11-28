@@ -22,8 +22,8 @@ public:
   GameGLWidget(GameWindow * mw);
   ~GameGLWidget();
 
-  void NewGame(float w, float h, int gunLives, int countOfAliens, int countOfObstacles);
-  void NextLevel();
+  void NewGame(float w, float h);
+  void NextLevel(int level);
 
   void SetKey(KeyTypes type, QKeySequence key);
 
@@ -55,10 +55,12 @@ private:
   QTime m_time;
   QSize m_screenSize;
 
-  std::vector<QOpenGLTexture*> m_starTexture;
+  std::vector<QOpenGLTexture *> m_starTexture;
 
   QOpenGLTexture * m_gunTexture = nullptr;
-  QOpenGLTexture * m_alienTexture = nullptr;
+  QOpenGLTexture * m_alienPirateTexture = nullptr;
+  QOpenGLTexture * m_alienRaiderTexture = nullptr;
+  QOpenGLTexture * m_alienBombardierTexture = nullptr;
   QOpenGLTexture * m_obstacleTexture = nullptr;
   QOpenGLTexture * m_backgroundPicture = nullptr;
   QOpenGLTexture * m_partObstacleTexture = nullptr;
@@ -75,5 +77,6 @@ private:
   QKeySequence m_keyGamePause = Qt::Key_Escape;
 
   QVector2D m_position;
+  int m_level = 1;
   bool m_directions[4] = { false, false, false, false };
 };

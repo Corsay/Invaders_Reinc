@@ -52,24 +52,25 @@ public:
   inline size_t const GetCountOfColumn() const    { return m_aliens[0].size(); }
 
   // Capabilities
-  bool CheckIntersection(Bullet2D const & bul)
+  bool CheckIntersection(Bullet2D const & bul, int * rate)
   {
     int i, j;
     // get shooted alien position
     i = (bul.GetBox().top() - m_alien00_top + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
     j = (bul.GetBox().left() - m_alien00_left + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
-    if (i < m_aliens.size() && j < m_aliens[0].size())
+    if (i < m_aliens.size() && j < m_aliens[i].size())
+    {
       if (m_aliens[i][j] != nullptr)
+      {
         if (m_aliens[i][j]->GetBox() && bul.GetBox())
         {
-          //bul.Inform(*m_aliens[i][j]);
-          if( m_aliens[i][j]->GetHealth() <= bul.GetHealth())
+          bul.Inform(*m_aliens[i][j]);
+          if(m_aliens[i][j]->GetHealth() <= bul.GetHealth())
           {
+            *rate = m_aliens[i][j]->GetType();
+
             delete m_aliens[i][j];
-            //m_aliens[i][j] = nullptr;
-            /*
-             * почему-то выдает ошибку
-             * */
+            m_aliens[i][j] = nullptr;
             --m_liveAliensCount;
           }
           else  // ec heals
@@ -78,6 +79,8 @@ public:
           }
           return true;
         }
+      }
+    }
     return false;
   }
 
@@ -86,23 +89,28 @@ public:
     static short direction = 1;
     static bool down = false, last_is_down = false;
     if (!last_is_down && (m_alien00_left < GAME_PADDING_LEFT ||
-        m_alien00_left + this->GetCountOfColumn() * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) - ALIEN_HORIZONTAL_DISTANCE
-            > (LAST_WINDOW_HORIZONTAL_SIZE - GAME_PADDING_RIGHT ) ) )
+      m_alien00_left + this->GetCountOfColumn() * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) - ALIEN_HORIZONTAL_DISTANCE
+      > (LAST_WINDOW_HORIZONTAL_SIZE - GAME_PADDING_RIGHT)))
     down = true;
 
     if(!down)
-     m_alien00_left += direction * ALIENT_HORIZONTAL_STEP;
+      m_alien00_left += direction * ALIENT_HORIZONTAL_STEP;
     else
-     m_alien00_top -= ALIENT_VERTICAL_STEP;
+      m_alien00_top -= ALIENT_VERTICAL_STEP;
 
     for (size_t i = 0; i < m_aliens.size(); ++i)
-      for(size_t j = 0; j < m_aliens[0].size(); ++j)
+    {
+      for(size_t j = 0; j < m_aliens[i].size(); ++j)
       {
-        if(!down)
-         m_aliens[i][j]->GetBox().HorizontalShift(direction * ALIENT_HORIZONTAL_STEP);
-        else
-         m_aliens[i][j]->GetBox().VerticalShift(-ALIENT_VERTICAL_STEP);
+        if (m_aliens[i][j] != nullptr)
+        {
+          if(!down)
+            m_aliens[i][j]->GetBox().HorizontalShift(direction * ALIENT_HORIZONTAL_STEP);
+          else
+            m_aliens[i][j]->GetBox().VerticalShift(-ALIENT_VERTICAL_STEP);
+        }
       }
+    }
 
     if(last_is_down)
       last_is_down = false;
@@ -116,31 +124,40 @@ public:
     down = false;
   }
 
+  // chosing who will be shoot
   Alien2D SelectShooter(Box2D const & gunBorder)
   {
-    // KRITICAL ZONE
     size_t column = GetCountOfColumn() - 1;
-    column = rand() % column;
-
     size_t row = 0;
-    while (m_aliens[row][column] == nullptr && row != GetCountOfRows())
+    do
     {
-      row++;
-    }
+      column = rand() % (GetCountOfColumn() - 1);
+      row = 0;
 
-    // chosing by game AI(Artificial intelligence) who will be shoot
+      while (m_aliens[row][column] == nullptr && row != GetCountOfRows())
+      {
+        row++;
+      }
+    }
+    while(m_aliens[row][column] == nullptr);
+
     return *m_aliens[row][column];  // default
   }
 
 private:
   void CreateAlienMatrix(size_t const countRow, size_t const countColumn)
   {
+    int curType;
     m_liveAliensCount = countRow * countColumn;
 
     m_aliens.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
     {
-      std::vector<Alien2D*> tempVect;
+      if (i < 2) curType = AlienType::Pirate;
+      else if (i < 4) curType = AlienType::Raider;
+      else if (i < 5) curType = AlienType::Bombardier;
+
+      std::vector<Alien2D *> tempVect;
       tempVect.reserve(countColumn);
       for(size_t j = 0; j < countColumn; ++j)
       {
@@ -159,15 +176,19 @@ private:
               ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE) + ALIEN_HEIGHT,
             },
             ALIEN_HEALTH_START,
-            ALIEN_SPEED_SHOOT_START
+            ALIEN_SPEED_SHOOT_START,
+            curType
           )
         );
       }
       m_aliens.push_back(tempVect);
     }
+    m_alienBottom = m_aliens[0][0]->GetBox().bottom();
     m_alien00_top = m_aliens[0][0]->GetBox().top();
     m_alien00_left = m_aliens[0][0]->GetBox().left();
   }
+
+  float m_alienBottom;
   float m_alien00_top, m_alien00_left;
   AlienMatrix m_aliens;          // matrix of Aliens
   size_t m_liveAliensCount = 55; // count of live aliens

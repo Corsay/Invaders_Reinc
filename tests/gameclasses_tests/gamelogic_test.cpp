@@ -10,10 +10,11 @@ TEST(gamelogic_test, alien_intersection)
   Bullet2D b3( Point2D{95.0f, 515.0f}, Point2D{105.0f, 525.0f});
   Bullet2D b4( Point2D{121.0f, 62.0f}, Point2D{133.0f, 74.0f});
 
-  EXPECT_FALSE(al.CheckIntersection(b1));
-  EXPECT_TRUE(al.CheckIntersection(b2));
-  EXPECT_TRUE(al.CheckIntersection(b3));
-  EXPECT_FALSE(al.CheckIntersection(b4));
+  int i = 5;
+  EXPECT_FALSE(al.CheckIntersection(b1, &i));
+  EXPECT_TRUE(al.CheckIntersection(b2, &i));
+  EXPECT_TRUE(al.CheckIntersection(b3, &i));
+  EXPECT_FALSE(al.CheckIntersection(b4, &i));
 }
 
 TEST(gamelogic_test, gun_intersection)

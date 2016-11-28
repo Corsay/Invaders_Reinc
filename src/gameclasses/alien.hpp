@@ -2,6 +2,13 @@
 
 #include "movedgameentity.hpp"
 
+enum AlienType
+{
+  Pirate = 10,
+  Raider = 30,
+  Bombardier = 50
+};
+
 class Alien2D final : public MovedGameEntity2D
 {
 public:
@@ -25,6 +32,10 @@ public:
     :MovedGameEntity2D(leftBottom, rightTop, health, speedShoot)
   {}
 
+  Alien2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot, int type)
+    :MovedGameEntity2D(leftBottom, rightTop, health, speedShoot), m_type(type)
+  {}
+
   // copy constructor and assignment operator
   Alien2D(Alien2D const & obj)
     :MovedGameEntity2D(obj.GetMovedEntity())
@@ -37,6 +48,8 @@ public:
     return *this;
   }
 
+  // getters
+  int const GetType() const { return this->m_type; }
 
   // For factory
   inline EntitiesTypes GetEntityType() override { return EntitiesTypes::AlienType; }
@@ -64,4 +77,6 @@ private:
     SetHealth(ALIEN_HEALTH_START);
     SetSpeed(ALIEN_SPEED_SHOOT_START);
   }
+
+  int m_type = Pirate;
 };

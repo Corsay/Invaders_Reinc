@@ -47,22 +47,36 @@ void GameGLWidget::initializeGL()
   m_texturedRect = new TexturedRect();
   m_texturedRect->Initialize(this);
 
+  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.jpg"));
+
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star44.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star55.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star66.png")));
 
-  m_gunTexture = new QOpenGLTexture(QImage("data/images/gun.jpg"));
-  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.jpg"));
-  m_alienTexture = new QOpenGLTexture(QImage("data/images/alien.png"));
+  m_gunTexture = new QOpenGLTexture(QImage("data/images/gunArmored.png"));
+
+  m_alienPirateTexture = new QOpenGLTexture(QImage("data/images/aliens/alienPirate.png"));
+  m_alienRaiderTexture = new QOpenGLTexture(QImage("data/images/aliens/alienRaider.png"));
+  m_alienBombardierTexture = new QOpenGLTexture(QImage("data/images/aliens/alienBombardier.png"));
+
   m_partObstacleTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
   m_bulletFromGunTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
   m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
-  m_heartTexture = new QOpenGLTexture(QImage("data/images/heart.jpg"));
+
+  m_heartTexture = new QOpenGLTexture(QImage("data/images/heart.png"));
+
+  // check textures
+  if (m_backgroundPicture == nullptr || m_gunTexture == nullptr || m_alienPirateTexture == nullptr ||
+      m_alienRaiderTexture == nullptr || m_alienBombardierTexture == nullptr || m_partObstacleTexture == nullptr ||
+      m_bulletFromGunTexture == nullptr || m_bulletFromAlienTexture == nullptr || m_heartTexture == nullptr)
+  {
+    // stop game... textures not found
+  }
 }
 
-void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, int countOfObstacles)
+void GameGLWidget::NewGame(float w, float h)
 {
-  float alien_w = (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) * 0.8 / ( countOfAliens/5 );
+  float alien_w = (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) * 0.8 / (ALIEN_COUNT/5 );
   if( alien_w < AlIEN_WIDTH )
     AlIEN_WIDTH = alien_w;
 
@@ -70,12 +84,12 @@ void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, in
   if( alien_h < ALIEN_HEIGHT )
     AlIEN_WIDTH = alien_h;
 
-  OBSTACLE_DISTANCE = ( (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) - (OBSTACLE_WIDTH * countOfObstacles ) ) / ( countOfObstacles + 1) ;
+  OBSTACLE_DISTANCE = ( (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) - (OBSTACLE_WIDTH * OBSTACLE_COUNT) ) / (OBSTACLE_COUNT + 1) ;
   OBSTACLE_BOX_LEFT = GAME_PADDING_LEFT;
   changeConstants(w,h);
 
   // init space2D
-  m_space = new Space2D(Point2D(0, 0), Point2D(w, h), gunLives, countOfAliens, countOfObstacles);
+  m_space = new Space2D(Point2D(0, 0), Point2D(w, h));
   // gun start position
   m_position = QVector2D
     (
@@ -85,60 +99,84 @@ void GameGLWidget::NewGame(float w, float h, int gunLives, int countOfAliens, in
   m_time.start();
 }
 
-void GameGLWidget::NextLevel()
+void GameGLWidget::NextLevel(int level)
 {
-  std::cout << "Not released" << std::endl;
+  if (GUN_LIVES_INC_EVERY_LEVEL) m_space->GetGun().SetLives(m_space->GetGun().GetLives() + 1);
+  m_space->NewLvlPrepare(level);
+
+  m_time.restart();
 }
 
 void GameGLWidget::paintGL()
 {
-  int const elapsed = m_time.elapsed();
-  Update(elapsed / 1000.0f);
+  int GameState = m_space->CheckGameState();
+  if (!GameState)
+  {
+    int const elapsed = m_time.elapsed();
+    Update(elapsed / 1000.0f);
 
-  QPainter painter;
-  painter.begin(this);
-  painter.beginNativePainting();
+    QPainter painter;
+    painter.begin(this);
+    painter.beginNativePainting();
 
-  glFrontFace(GL_CW);
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glFrontFace(GL_CW);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  Render();
+    Render();
 
-  glDisable(GL_CULL_FACE);
-  glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
 
-  painter.endNativePainting();
+    painter.endNativePainting();
 
-  if (elapsed != 0)
-   {
-     QString framesPerSecond;
-     framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
-     painter.setPen(Qt::white);
-     painter.drawText(20, 40, framesPerSecond + " fps");
-   }
+    if (elapsed != 0)
+    {
+      QString framesPerSecond;
+      framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
+      painter.setPen(Qt::white);
+      painter.drawText(20, 40, framesPerSecond + " fps");
+    }
 
+    QString rate;
+    rate.setNum(m_space->GetGun().GetRate());
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 120 , LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
 
-   QString rate;
-   rate.setNum( m_space->GetGun().GetRate() );
-   painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE-120 , LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM/2, "You rezult: " + rate);
+    painter.setPen(Qt::red);
+    painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM + 5);
 
-   painter.setPen(Qt::red);
-   painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM + 5);
+    painter.end();
 
+    if (!(m_frames % 100))
+    {
+      m_time.start();
+      m_frames = 0;
+    }
+    ++m_frames;
+    update();
+  }
+  else if (GameState == 1)  // next level
+  {
+    NextLevel(++m_level);
+    paintGL();
+  }
+  else if (GameState == 2)  // game over gun died
+  {
+    QPainter painter;
+    painter.begin(this);
 
+    painter.setPen(Qt::white);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2 - 25, "Game over.");
 
-   painter.end();
+    QString rate;
+    rate.setNum(m_space->GetGun().GetRate());
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
 
-   if (!(m_frames % 100))
-   {
-     m_time.start();
-     m_frames = 0;
-   }
-   ++m_frames;
-   update();
+    painter.end();
+    // game_started в false
+  }
 }
 
 void GameGLWidget::resizeGL(int w, int h)
@@ -200,7 +238,7 @@ void GameGLWidget::UpdateBullets(float elapsedSeconds)
 void GameGLWidget::Update(float elapsedSeconds)
 {
   // gun shoot delay
-  if(qrand() % 10 == 0)
+  if(!(m_frames % 20))
     canShoot = true;
   // updates
   UpdateGun(elapsedSeconds);
@@ -280,7 +318,7 @@ void GameGLWidget::RenderStar()
   m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width() / 2, m_screenSize.height() / 2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
 
   static float t = 1000.0f;
-  //случайная звезда
+  // random star
   if(qrand() % 5 == 0)
   {
     starsX.push_back(qrand() % m_screenSize.width());
@@ -325,13 +363,18 @@ void GameGLWidget::RenderAlien()
   AlienMatrix const & alMat = m_space->GetAlienMatrix();
   for (size_t i = 0; i < alMat.size(); ++i)
   {
-    for(size_t j = 0; j < alMat[0].size(); ++j)
+    for(size_t j = 0; j < alMat[i].size(); ++j)
     {
       if (alMat[i][j] != nullptr)
       {
+        QOpenGLTexture * alienTexture = nullptr;
+        if (alMat[i][j]->GetType() == AlienType::Pirate) alienTexture = m_alienPirateTexture;
+        else if (alMat[i][j]->GetType() == AlienType::Raider) alienTexture = m_alienRaiderTexture;
+        else alienTexture = m_alienBombardierTexture;
+
         m_texturedRect->Render
         (
-          m_alienTexture,
+          alienTexture,
           QVector2D
           (
             alMat[i][j]->GetBox().GetCenter().x(),
@@ -359,27 +402,31 @@ void GameGLWidget::RenderObstacle()
     {
       for(size_t j = 0; j < obsMatr[i].size(); ++j)
       {
-        m_texturedRect->Render
-        (
-          m_partObstacleTexture,
-          QVector2D
+        if (obsMatr[i][j] != nullptr)
+        {
+          m_texturedRect->Render
           (
-            obsMatr[i][j]->GetBox().GetCenter().x(),
-            obsMatr[i][j]->GetBox().GetCenter().y()
-          ),
-          QSize
-          (
-            obsMatr[i][j]->GetBox().GetWidth(),
-            obsMatr[i][j]->GetBox().GetHeight()
-          ),
-          m_screenSize
-        );
+            m_partObstacleTexture,
+            QVector2D
+            (
+              obsMatr[i][j]->GetBox().GetCenter().x(),
+              obsMatr[i][j]->GetBox().GetCenter().y()
+            ),
+            QSize
+            (
+              obsMatr[i][j]->GetBox().GetWidth(),
+              obsMatr[i][j]->GetBox().GetHeight()
+            ),
+            m_screenSize
+          );
+        }
       }
     }
   }
 }
 
-void GameGLWidget::RenderBullet(){
+void GameGLWidget::RenderBullet()
+{
   BulletList const & bulListGun = m_space->GetBulletFromGun();
   BulletList const & bulListAlien = m_space->GetBulletFromAlien();
   for(auto it = bulListGun.begin(); it != bulListGun.end(); ++it)
@@ -423,14 +470,15 @@ void GameGLWidget::RenderBullet(){
 void GameGLWidget::RenderInformationString()
 {
   for(int i = 0; i < m_space->GetGun().GetLives(); i++)
-    m_texturedRect->Render(
-                m_heartTexture,
-                QVector2D(50 + GAME_PADDING_BOTTOM * ( i + 0.5 ), GAME_PADDING_BOTTOM/2),
-                QSize(GAME_PADDING_BOTTOM, GAME_PADDING_BOTTOM),
-                m_screenSize
-                );
-
-
+  {
+    m_texturedRect->Render
+    (
+      m_heartTexture,
+      QVector2D(50 + GAME_PADDING_BOTTOM * ( i + 0.5 ), GAME_PADDING_BOTTOM/2),
+      QSize(GAME_PADDING_BOTTOM * 0.5, GAME_PADDING_BOTTOM * 0.5),
+      m_screenSize
+    );
+  }
 }
 
 void GameGLWidget::Render()

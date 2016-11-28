@@ -4,7 +4,7 @@
 #include <QKeySequence>
 
 // window
-static QString WINDOW_ICON_FOLDER = "data/images/alien.png";
+static QString WINDOW_ICON_FOLDER = "data/images/aliens/alienRaider.png";
 
 // dialogs
 static QString DIALOG_ON_SUBMIT_GAME_SAVE      = "Do you want to save the current state of the game before closing?";

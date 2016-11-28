@@ -67,8 +67,11 @@ public:
       return false;
 
     for (size_t i = 0; i < m_boxes.size(); ++i)
-      for(size_t j = 0; j < m_boxes[0].size(); ++j)
+    {
+      for(size_t j = 0; j < m_boxes[i].size(); ++j)
+      {
         if(m_boxes[i][j] != nullptr)
+        {
           if(m_boxes[i][j]->GetBox() && bul.GetBox())
           {
             this->SetHealth(this->GetHealth() - bul.GetHealth());
@@ -76,17 +79,16 @@ public:
             if (m_boxes[i][j]->GetHealth() <= bul.GetHealth())
             {
               delete m_boxes[i][j];
-              //m_boxes[i][j] = nullptr;
-              /*
-               * почему-то возникает ошибка при попытке присвоить nullptr
-               * я не знаю в чем дело
-               * */
+              m_boxes[i][j] = nullptr;
             }
             else
               m_boxes[i][j]->SetHealth(m_boxes[i][j]->GetHealth() - bul.GetHealth());
 
             return true;
           }
+        }
+      }
+    }
     return false;
   }
 

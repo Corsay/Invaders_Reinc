@@ -71,14 +71,14 @@ public:
   {
     if(! (bul.GetBox() && this->GetBox()))
       return false;
-    //если попала
+
+    // if intersect
     bul.Inform(*this);
     this->SetHealth(this->GetHealth() - bul.GetHealth());
-    if(this->GetHealth() == 0)
+    if(this->GetHealth() <= 0)
     {
       m_lives--;
-      if(m_lives > 0)
-        GunBoom();
+      if (m_lives > 0) this->SetHealth(GUN_HEALTH_START);
     }
     return true;
   }
@@ -98,7 +98,6 @@ public:
   }
 
 private:
-  void GunBoom(){/* имитация взрыва? */}
 
   inline void DefaultGunSetStartValue()
   {

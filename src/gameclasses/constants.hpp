@@ -55,15 +55,15 @@ extern float GUN_START_Y           ;
 extern float GUN_WIDTH             ;
 extern float GUN_HEIGHT            ;
 // OBSTACLE
-extern float OBSTACLE_BOX_LEFT     ;      // +
-extern float OBSTACLE_BOX_RIGHT    ;      // +
-extern float OBSTACLE_BOX_BOTTOM   ;     // +
-extern float OBSTACLE_WIDTH        ;    // +
-extern float OBSTACLE_HEIGHT       ;    // +
+extern float OBSTACLE_BOX_LEFT     ;
+extern float OBSTACLE_BOX_RIGHT    ;
+extern float OBSTACLE_BOX_BOTTOM   ;
+extern float OBSTACLE_WIDTH        ;
+extern float OBSTACLE_HEIGHT       ;
 extern float OBSTACLE_PART_WIDTH   ;
 extern float OBSTACLE_PART_HEIGHT  ;
 extern float OBSTACLE_TOTAL_HEALTH ;
-extern float OBSTACLE_DISTANCE     ;     // +
+extern float OBSTACLE_DISTANCE     ;
 extern int OBSTACLE_COUNT_VERTICAL_PART;
 extern int OBSTACLE_COUNT_HORIZONTAL_PART;
 // BULLET
