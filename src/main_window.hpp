@@ -69,7 +69,7 @@ protected:
   bool ReadXml();
   // WINDOW
   void MoveWindowToCenter();
-  void ShowDialog(QString const & msg, DialogTypes type);
+  QString ShowDialog(QString const & msg, DialogTypes type);
   void Resize(size_t w, size_t h);
   void SetTextsForCurLang();
   void SetSize(int state);

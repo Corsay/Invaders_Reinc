@@ -50,7 +50,7 @@ MainWindow::MainWindow()
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
     {
       if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
-      exit(0);
+      else exit(0);
     });
   m_pbMenuNewGame->setIcon(QIcon("data/images/icons/begin.ico"));
   m_pbExit->setObjectName("ExitButton");
@@ -264,7 +264,6 @@ MainWindow::MainWindow()
   m_settingsChanged = false;
 }
 
-// Смещение окна в центр экрана
 void MainWindow::MoveWindowToCenter()
 {
   QRect frect = frameGeometry();
@@ -273,22 +272,127 @@ void MainWindow::MoveWindowToCenter()
 }
 
 // Предлагает сохранить игру -> вызывает SaveGame в случае подтверждения пользователем
-void MainWindow::ShowDialog(QString const & msg, DialogTypes type)
+QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
 {
-  /*switch (type)
+  QString rez = "FilePath";
+  switch (type)
   {
-    case DialogTypes::OnSubmitSettingsLeave:
+    case DialogTypes::OnSubmitSettingsLeave:                                       // CHANGE SETTINGS BEFORE LEAVE FROM SETTINGS WIDGET
     {
+      this->setDisabled(true);
+      QDialog * about = new QDialog;
+      about->resize(250,100);
+      about->setWindowFlags(Qt::ToolTip);
 
+      QGridLayout * glLayout = new QGridLayout(about);
+
+      QLabel * lMsg = new QLabel();
+      lMsg->setText(msg + DIALOG_TEXT_SETTINGS_SAVE);
+      QPushButton * pbDialogYes = new QPushButton();
+      pbDialogYes->setText(DIALOG_BUTTON_YES);
+      pbDialogYes->resize(150,33);
+      connect(pbDialogYes, &QAbstractButton::clicked, [this, about]()
+        {
+          this->setDisabled(false);
+          this->m_settingsChanged = false;
+          this->m_widgetStacked->setCurrentIndex(0);
+          about->close();
+          this->SaveSettings();
+        });
+      QPushButton * pbDialogNo = new QPushButton();
+      pbDialogNo->setText(DIALOG_BUTTON_NO);
+      pbDialogNo->resize(150,33);
+      connect(pbDialogNo, &QAbstractButton::clicked, [this, about]()
+        {
+          this->setDisabled(false);
+          this->m_settingsChanged = false;
+          this->m_widgetStacked->setCurrentIndex(0);
+          about->close();
+        });
+      QPushButton * pbDialogAbort = new QPushButton();
+      pbDialogAbort->setText(DIALOG_BUTTON_ABORT);
+      pbDialogAbort->resize(150,33);
+      connect(pbDialogAbort, &QAbstractButton::clicked, [this, about]()
+        {
+          this->setDisabled(false);
+          about->close();
+        });
+
+      glLayout->addWidget(lMsg, 0, 0, 1, 3);
+      glLayout->addWidget(pbDialogYes, 1, 0, 1, 1);
+      glLayout->addWidget(pbDialogNo, 1, 1, 1, 1);
+      glLayout->addWidget(pbDialogAbort, 1, 2, 1, 1);
+
+      about->show();
       break;
     }
-    case DialogTypes::OnSubmitGameSave:
+    case DialogTypes::OnSubmitGameSave:                                       // SAVE GAME DIALOG (two variants(with close program and just over current game))
     {
+      this->setDisabled(true);
+      QDialog * about = new QDialog;
+      about->resize(250,100);
+      about->setWindowFlags(Qt::ToolTip);
 
+      QGridLayout * glLayout = new QGridLayout(about);
+
+      QLabel * lMsg = new QLabel();
+      if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) lMsg->setText(msg + DIALOG_TEXT_GAME_SAVE_CLOSE);   // if exit
+      else lMsg->setText(msg + DIALOG_TEXT_GAME_SAVE);                                      // if end current game
+      QPushButton * pbDialogYes = new QPushButton();
+      pbDialogYes->setText(DIALOG_BUTTON_YES);
+      pbDialogYes->resize(150,33);
+      connect(pbDialogYes, &QAbstractButton::clicked, [this, about, msg]()
+        {
+          this->setDisabled(false);
+          this->SaveGame();
+          about->close();
+          if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) this->close();   // if exit
+          else                                                     // if end current game
+          {
+            m_gameStarted = false;
+            ShowMenuItems();
+
+            // delete m_space and set it to nullptr
+            std::cout << "Not full released" << std::endl;
+          }
+        });
+      QPushButton * pbDialogNo = new QPushButton();
+      pbDialogNo->setText(DIALOG_BUTTON_NO);
+      pbDialogNo->resize(150,33);
+      connect(pbDialogNo, &QAbstractButton::clicked, [this, about, msg]()
+        {
+          this->setDisabled(false);
+          about->close();
+          if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) this->close();   // if exit
+          else                                                     // if end current game
+          {
+            m_gameStarted = false;
+            ShowMenuItems();
+
+            // delete m_space and set it to nullptr
+            std::cout << "Not full released" << std::endl;
+          }
+        });
+      QPushButton * pbDialogAbort = new QPushButton();
+      pbDialogAbort->setText(DIALOG_BUTTON_ABORT);
+      pbDialogAbort->resize(150,33);
+      connect(pbDialogAbort, &QAbstractButton::clicked, [this, about]()
+        {
+          this->setDisabled(false);
+          about->close();
+        });
+
+      glLayout->addWidget(lMsg, 0, 0, 1, 3);
+      glLayout->addWidget(pbDialogYes, 1, 0, 1, 1);
+      glLayout->addWidget(pbDialogNo, 1, 1, 1, 1);
+      glLayout->addWidget(pbDialogAbort, 1, 2, 1, 1);
+
+      about->show();
       break;
     }
-    case DialogTypes::OnSettingsLoaded:
+    case DialogTypes::OnSettingsLoaded:                                         // SUCCESFULL LOADED SETTINGS
     {
+      this->setDisabled(true);
       QDialog * about = new QDialog;
       about->resize(250,100);
       about->setWindowFlags(Qt::ToolTip);
@@ -296,21 +400,36 @@ void MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       QPushButton * pbDialog = new QPushButton(about);
       pbDialog->setText(msg + ADDITION_DIALOG_TEXT);
       pbDialog->resize(250,100);
-      connect(pbDialog, &QAbstractButton::clicked, [about]()
+      connect(pbDialog, &QAbstractButton::clicked, [this, about]()
         {
+          this->setDisabled(false);
           about->close();
         });
 
       about->show();
       break;
     }
-    case DialogTypes::OnSettingsLoadError:
+    case DialogTypes::OnSettingsLoadError:                                      // FAILED LOADING SETTINGS
     {
+      this->setDisabled(true);
+      QDialog * about = new QDialog;
+      about->resize(250,100);
+      about->setWindowFlags(Qt::ToolTip);
 
+      QPushButton * pbDialog = new QPushButton(about);
+      pbDialog->setText(msg + ADDITION_DIALOG_TEXT);
+      pbDialog->resize(250,100);
+      connect(pbDialog, &QAbstractButton::clicked, [this, about]()
+        {
+          this->setDisabled(false);
+          about->close();
+        });
+
+      about->show();
       break;
     }
-  }*/
-  std::cout << msg.toStdString() << std::endl;
+  }
+  return rez;
 }
 
 void MainWindow::Resize(size_t w, size_t h)
@@ -398,10 +517,18 @@ void MainWindow::SetTextsForCurLang()
   m_cbLanguage->setItemText(GameLanguages::English, QComboBox::tr("English"));
   m_cbLanguage->setItemText(GameLanguages::Russian, QComboBox::tr("Russian"));
     // DIALOGS
-  DIALOG_ON_SUBMIT_GAME_SAVE      = QObject::tr("Do you want to save the current state of the game before closing?");
-  DIALOG_ON_SUBMIT_SETTINGS_LEAVE = QObject::tr("Do you want to save the current settings of the game before back to the main menu?");
-  DIALOG_ON_SETTINGS_LOADED       = QObject::tr("Succesfull load settings.");
-  DIALOG_ON_SETTINGS_LOAD_ERROR   = QObject::tr("Error then try to load settings.");
+  DIALOG_GAME_SAVE_WHEN_BREAK      = QObject::tr("Do you want to save current state of the game before ending?");
+  DIALOG_ON_SUBMIT_GAME_SAVE       = QObject::tr("Do you want to save current state of the game before closing?");
+  DIALOG_ON_SUBMIT_SETTINGS_LEAVE  = QObject::tr("Do you want to save current settings of the game before back to the main menu?");
+  DIALOG_ON_SETTINGS_LOADED        = QObject::tr("Succesfull load settings.");
+  DIALOG_ON_SETTINGS_LOAD_ERROR    = QObject::tr("Error then try to load settings.");
+  ADDITION_DIALOG_TEXT             = QObject::tr("\n\n Click to back to settings.");
+  DIALOG_TEXT_SETTINGS_SAVE        = QObject::tr("\n Click:\n Yes - to save settings and go to the main menu;\n No - to go to the main menu without saving;\n Abort - to abort action. ");
+  DIALOG_TEXT_GAME_SAVE            = QObject::tr("\n Click:\n Yes - to save game state and end current game;\n No - to end game without saving;\n Abort - to abort action. ");
+  DIALOG_TEXT_GAME_SAVE_CLOSE      = QObject::tr("\n Click:\n Yes - to save game state and close program;\n No - to close program without saving;\n Abort - to abort action. ");
+  DIALOG_BUTTON_YES                = QObject::tr("Yes");
+  DIALOG_BUTTON_NO                 = QObject::tr("No");
+  DIALOG_BUTTON_ABORT              = QObject::tr("Abort");
 }
 
 void MainWindow::ResizeQGridLayouts()
@@ -540,13 +667,7 @@ void MainWindow::NewGame()
 {
   if (m_gameStarted)
   {
-    // flag set change menu
-    m_gameStarted = false;
-    ShowMenuItems();
-
-    // ShowDialog подтверждение в трех вариантах: отмена, с сохранением состояния игры, без сохранения состояния игры
-    // delete m_space and set it to nullptr
-    // not full released
+    ShowDialog(DIALOG_GAME_SAVE_WHEN_BREAK, DialogTypes::OnSubmitGameSave);
   }
   else
   {
@@ -572,14 +693,14 @@ void MainWindow::ContinueOrLoadGame()
     // if successfull load then call newgame
     NewGame();
 
-    std::cout << "Not full relased" << std::endl;
+    std::cout << "Not full released" << std::endl;
   }
 }
 
 void MainWindow::SaveGame()
 {
   // m_windowGame->SaveGameState(Filename from dialog);
-  std::cout << "Not full relased" << std::endl;
+  std::cout << "Not full released" << std::endl;
 }
 
 void MainWindow::CheckoutToSettings()
@@ -592,9 +713,8 @@ void MainWindow::CheckoutToSettings()
 // settings button slots
 void MainWindow::CheckoutToMenu()
 {
-  m_widgetStacked->setCurrentIndex(0);
-
   if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
+  else m_widgetStacked->setCurrentIndex(0);
 }
 
 // save/load settings
@@ -896,19 +1016,18 @@ void MainWindow::SetDefaultSettings()
 // load settings from file
 void MainWindow::LoadSettings()
 {
-  m_settingsChanged = false;
-
   if (ReadXml()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
   else if (ReadJson()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
   else ShowDialog(DIALOG_ON_SETTINGS_LOAD_ERROR, DialogTypes::OnSettingsLoadError);
+  m_settingsChanged = false;
 }
 
 // save settings to file
 void MainWindow::SaveSettings()
 {
-  m_settingsChanged = false;
   WriteXml();
   WriteJson();
+  m_settingsChanged = false;
 }
 
 // settings controls
