@@ -148,6 +148,7 @@ public:
 
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
+    if (GUN_LIVES_INC_EVERY_LEVEL && m_gun.GetLives() < 10) m_gun.SetLives(m_gun.GetLives() + 1);
     if (OBSTACLE_REDRAW_EVERY_LEVEL) m_obstacleManager.CreateObstacleVector(OBSTACLE_COUNT);
   }
 

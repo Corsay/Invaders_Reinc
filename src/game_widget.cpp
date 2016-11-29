@@ -47,7 +47,7 @@ void GameGLWidget::initializeGL()
   m_texturedRect = new TexturedRect();
   m_texturedRect->Initialize(this);
 
-  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background2.jpg"));
+  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background3.png"));
 
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star44.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star55.png")));
@@ -59,7 +59,8 @@ void GameGLWidget::initializeGL()
   m_alienRaiderTexture = new QOpenGLTexture(QImage("data/images/aliens/alienRaider.png"));
   m_alienBombardierTexture = new QOpenGLTexture(QImage("data/images/aliens/alienBombardier.png"));
 
-  m_partObstacleTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
+  m_partObstacleTexture = new QOpenGLTexture(QImage("data/images/obstaclePart.png"));
+
   m_bulletFromGunTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
   m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
 
@@ -74,19 +75,35 @@ void GameGLWidget::initializeGL()
   }
 }
 
-void GameGLWidget::NewGame(float w, float h)
+void GameGLWidget::ChangeSizeConstants(float w, float h)
 {
-  float alien_w = (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) * 0.8 / (ALIEN_COUNT/5 );
-  if( alien_w < AlIEN_WIDTH )
-    AlIEN_WIDTH = alien_w;
+  float alien_w = (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) * 0.8 / (ALIEN_COUNT / 5);
+  if (alien_w < ALIEN_WIDTH)
+    ALIEN_WIDTH = alien_w;
 
   float alien_h = (h - GAME_PADDING_TOP - GAME_PADDING_BOTTOM) * 0.4 / 5;
-  if( alien_h < ALIEN_HEIGHT )
-    AlIEN_WIDTH = alien_h;
+  if (alien_h < ALIEN_HEIGHT)
+    ALIEN_WIDTH = alien_h;
 
-  OBSTACLE_DISTANCE = ( (w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) - (OBSTACLE_WIDTH * OBSTACLE_COUNT) ) / (OBSTACLE_COUNT + 1) ;
+  OBSTACLE_DISTANCE = ((w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) - (OBSTACLE_WIDTH * OBSTACLE_COUNT)) / (OBSTACLE_COUNT + 1) ;
   OBSTACLE_BOX_LEFT = GAME_PADDING_LEFT;
-  changeConstants(w,h);
+}
+
+void GameGLWidget::OffBonuses()
+{
+  BONUS_LAZER = false;
+  BONUS_FAST_SHOOT = false;
+  BONUS_GOD = false;
+}
+
+void GameGLWidget::NewGame(float w, float h)
+{
+  // Set false ALL BONUSES
+  OffBonuses();
+
+  // change size onstants
+  ChangeSizeConstants(w, h);
+  ChangeConstants(w,h);
 
   // init space2D
   m_space = new Space2D(Point2D(0, 0), Point2D(w, h));
@@ -101,9 +118,14 @@ void GameGLWidget::NewGame(float w, float h)
 
 void GameGLWidget::NextLevel(int level)
 {
-  if (GUN_LIVES_INC_EVERY_LEVEL) m_space->GetGun().SetLives(m_space->GetGun().GetLives() + 1);
-  m_space->NewLvlPrepare(level);
+  // Set False ALL BONUSES
+  OffBonuses();
 
+  // because we can change count of aliens and obstacles we need to correct its sizes
+  ChangeSizeConstants(width(), height());
+
+  // new level
+  m_space->NewLvlPrepare(level);
   m_time.restart();
 }
 
@@ -147,7 +169,7 @@ void GameGLWidget::paintGL()
     QPen pen = QPen(Qt::red);
     pen.setWidth(3);
     painter.setPen(pen);
-    painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE-GAME_PADDING_BOTTOM + 5);
+    painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5);
 
     painter.end();
 
@@ -177,7 +199,7 @@ void GameGLWidget::paintGL()
     painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
 
     painter.end();
-    // game_started в false
+    GAME_STARTED = false;
   }
 }
 
@@ -237,10 +259,19 @@ void GameGLWidget::UpdateBullets(float elapsedSeconds)
   m_space->BulletsMove(height());
 }
 
+void GameGLWidget::UpdateBonus(float elapsedSeconds)
+{
+  if (BONUS_LAZER) GUN_SHOOT_SPEED = 1;
+  else if (BONUS_FAST_SHOOT) GUN_SHOOT_SPEED = 40;
+  else GUN_SHOOT_SPEED = 55;
+}
+
 void GameGLWidget::Update(float elapsedSeconds)
 {
-  // gun shoot delay
-  if(!(m_frames % 20))
+  // gun shoot delay   
+  UpdateBonus(elapsedSeconds);
+  // gun shoot
+  if (!(m_frames % GUN_SHOOT_SPEED))
     canShoot = true;
   // updates
   UpdateGun(elapsedSeconds);
@@ -248,6 +279,16 @@ void GameGLWidget::Update(float elapsedSeconds)
   UpdateAliens();
   m_space->CheckAllIntersections();
 }
+
+
+// delete current m_space
+void GameGLWidget::DeleteSpace()
+{
+  if (m_space != nullptr)
+    delete m_space;
+  m_space = nullptr;
+}
+
 
 // KEY EVENTS
 // Set new key bind
@@ -370,8 +411,8 @@ void GameGLWidget::RenderAlien()
       if (alMat[i][j] != nullptr)
       {
         QOpenGLTexture * alienTexture = nullptr;
-        if (alMat[i][j]->GetType() == AlienType::Pirate) alienTexture = m_alienPirateTexture;
-        else if (alMat[i][j]->GetType() == AlienType::Raider) alienTexture = m_alienRaiderTexture;
+        if (alMat[i][j]->GetType() == AlienTypes::Pirate) alienTexture = m_alienPirateTexture;
+        else if (alMat[i][j]->GetType() == AlienTypes::Raider) alienTexture = m_alienRaiderTexture;
         else alienTexture = m_alienBombardierTexture;
 
         m_texturedRect->Render

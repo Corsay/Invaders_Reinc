@@ -3,7 +3,7 @@
 extern SimpleLogger & logger;
 
 std::string onlyFile(std::string);
-void changeConstants(float w, float h);
+void ChangeConstants(float w, float h);
 
 using namespace std;
 
@@ -16,6 +16,7 @@ extern size_t ALIEN_COUNT;
 // GUN
 extern size_t GUN_LIVES_START;
 extern bool   GUN_LIVES_INC_EVERY_LEVEL;
+extern size_t GUN_SHOOT_SPEED;
 // OBSTACLE
 extern size_t OBSTACLE_COUNT;
 extern bool   OBSTACLE_REDRAW_EVERY_LEVEL;
@@ -24,6 +25,12 @@ extern float  GAME_PADDING_LEFT;
 extern float  GAME_PADDING_RIGHT;
 extern float  GAME_PADDING_TOP;
 extern float  GAME_PADDING_BOTTOM;
+// GAME
+extern bool   GAME_STARTED;
+// BONUSES
+extern bool   BONUS_LAZER;
+extern bool   BONUS_FAST_SHOOT;
+extern bool   BONUS_GOD;
 
 // const (setted value)
 // DEFAULT
@@ -31,10 +38,8 @@ extern float DEFAULT_HEALTH; // median alien = 50,  gun = 50,  bullet(damage hea
 extern float DEFAULT_SPEED;   // (much of aliens) alien = 0.5, gun = 2.0, bullet(fly speed) = 5.0
 // ALIEN
 extern float ALIEN_HEALTH_START;
-extern float ALIEN_HEALTH_INC;
 extern float ALIEN_SPEED_SHOOT_START;
-extern float ALIEN_SPEED_SHOOT_INC;
-extern float AlIEN_WIDTH;
+extern float ALIEN_WIDTH;
 extern float ALIEN_HEIGHT;
 extern float ALIEN_BOX_LEFT;  // left border of aliensMatrix
 extern float ALIEN_BOX_TOP;   // top border
@@ -44,35 +49,25 @@ extern float ALIENT_HORIZONTAL_STEP;
 extern float ALIENT_VERTICAL_STEP;
 // GUN
 extern float GUN_HEALTH_START;
-extern float GUN_HEALTH_INC;
-extern float GUN_SPEED_SHOOT_START ;
-extern float GUN_SPEED_SHOOT_INC   ;
-extern float GUN_LEFT_LIMIT        ;
-extern float GUN_RIGHT_LIMIT       ;
-extern float GUN_STEP              ;
-extern float GUN_START_X           ;
-extern float GUN_START_Y           ;
-extern float GUN_WIDTH             ;
-extern float GUN_HEIGHT            ;
+extern float GUN_SPEED_SHOOT_START;
+extern float GUN_START_X;
+extern float GUN_START_Y;
+extern float GUN_WIDTH;
+extern float GUN_HEIGHT;
 // OBSTACLE
-extern float OBSTACLE_BOX_LEFT     ;
-extern float OBSTACLE_BOX_RIGHT    ;
-extern float OBSTACLE_BOX_BOTTOM   ;
-extern float OBSTACLE_WIDTH        ;
-extern float OBSTACLE_HEIGHT       ;
-extern float OBSTACLE_PART_WIDTH   ;
-extern float OBSTACLE_PART_HEIGHT  ;
-extern float OBSTACLE_TOTAL_HEALTH ;
-extern float OBSTACLE_DISTANCE     ;
+extern float OBSTACLE_BOX_LEFT;
+extern float OBSTACLE_BOX_BOTTOM;
+extern float OBSTACLE_WIDTH;
+extern float OBSTACLE_HEIGHT;
+extern float OBSTACLE_TOTAL_HEALTH;
+extern float OBSTACLE_DISTANCE;
 extern int OBSTACLE_COUNT_VERTICAL_PART;
 extern int OBSTACLE_COUNT_HORIZONTAL_PART;
 // BULLET
 extern float BULLET_DAMAGE_START;
-extern float BULLET_DAMAGE_INC  ;
-extern float BULLET_SPEED_START ;
-extern float BULLET_SPEED_INC   ;
-extern float BULLET_WIDTH       ;
-extern float BULLET_HEIGHT      ;
+extern float BULLET_SPEED_START;
+extern float BULLET_WIDTH;
+extern float BULLET_HEIGHT;
 
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;

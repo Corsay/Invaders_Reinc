@@ -20,6 +20,8 @@ public:
 
   void NewGame();
 
+  void DeleteSpace();
+
   void SetKey(KeyTypes type, QKeySequence key);
 
   QStackedWidget * m_stackedWidget = nullptr;

@@ -10,6 +10,23 @@ QLabel
 } 
 
 
+QDialog
+{
+  background-color: rgb(100, 100, 100);
+}
+
+QDialog QPushButton
+{
+  background-color: rgb(100, 100, 255);
+}
+
+QDialog QLabel
+{
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
+
+
 QPushButton 
 { 
   background-color: rgb(100, 100, 255); 

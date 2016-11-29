@@ -2,7 +2,7 @@
 
 #include "movedgameentity.hpp"
 
-enum AlienType
+enum AlienTypes
 {
   Pirate = 10,
   Raider = 30,
@@ -78,5 +78,5 @@ private:
     SetSpeed(ALIEN_SPEED_SHOOT_START);
   }
 
-  int m_type = Pirate;
+  int m_type = AlienTypes::Pirate;
 };

@@ -6,8 +6,9 @@ TEST(gamelogic_test, alien_intersection)
 {
   Alien2DManager al(1, 2);
   Bullet2D b1( Point2D{155.0f, 90.0f}, Point2D{165.0f, 100.0f});
-  Bullet2D b2( Point2D{165.0f, 500.0f}, Point2D{175.0f, 510.0f});
-  Bullet2D b3( Point2D{95.0f, 515.0f}, Point2D{105.0f, 525.0f});
+  Bullet2D b2( Point2D{ALIEN_BOX_LEFT, ALIEN_BOX_TOP}, Point2D{ALIEN_BOX_LEFT + ALIEN_WIDTH, ALIEN_BOX_TOP + ALIEN_HEIGHT});
+  Bullet2D b3( Point2D{ALIEN_BOX_LEFT + ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE, ALIEN_BOX_TOP},
+               Point2D{ALIEN_BOX_LEFT + ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH, ALIEN_BOX_TOP + ALIEN_HEIGHT});
   Bullet2D b4( Point2D{121.0f, 62.0f}, Point2D{133.0f, 74.0f});
 
   int i = 5;

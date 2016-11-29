@@ -22,6 +22,11 @@ void GameWindow::NewGame()
   m_timer->start();
 }
 
+void GameWindow::DeleteSpace()
+{
+  m_glWidget->DeleteSpace();
+}
+
 void GameWindow::SetKey(KeyTypes type, QKeySequence key)
 {
   m_glWidget->SetKey(type, key);

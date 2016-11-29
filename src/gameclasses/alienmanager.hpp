@@ -5,7 +5,7 @@
 #include "bullet.hpp"
 #include <vector>
 using AlienVector = std::vector<Alien2D *>;     // Alias
-using AlienMatrix = std::vector<AlienVector>; // Alias
+using AlienMatrix = std::vector<AlienVector>;   // Alias
 
 class Alien2DManager
 {
@@ -57,7 +57,7 @@ public:
     int i, j;
     // get shooted alien position
     i = (bul.GetBox().top() - m_alien00_top + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
-    j = (bul.GetBox().left() - m_alien00_left + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + AlIEN_WIDTH);
+    j = (bul.GetBox().left() - m_alien00_left + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
     if (i < m_aliens.size() && j < m_aliens[i].size())
     {
       if (m_aliens[i][j] != nullptr)
@@ -89,7 +89,7 @@ public:
     static short direction = 1;
     static bool down = false, last_is_down = false;
     if (!last_is_down && (m_alien00_left < GAME_PADDING_LEFT ||
-      m_alien00_left + this->GetCountOfColumn() * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) - ALIEN_HORIZONTAL_DISTANCE
+      m_alien00_left + this->GetCountOfColumn() * (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) - ALIEN_HORIZONTAL_DISTANCE
       > (LAST_WINDOW_HORIZONTAL_SIZE - GAME_PADDING_RIGHT)))
     down = true;
 
@@ -153,9 +153,9 @@ private:
     m_aliens.reserve(countRow);
     for (size_t i = 0; i < countRow; ++i)
     {
-      if (i < 2) curType = AlienType::Pirate;
-      else if (i < 4) curType = AlienType::Raider;
-      else if (i < 5) curType = AlienType::Bombardier;
+      if (i < 2) curType = AlienTypes::Pirate;
+      else if (i < 4) curType = AlienTypes::Raider;
+      else if (i < 5) curType = AlienTypes::Bombardier;
 
       std::vector<Alien2D *> tempVect;
       tempVect.reserve(countColumn);
@@ -167,12 +167,12 @@ private:
           (
             Point2D
             {
-              ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE),
+              ALIEN_BOX_LEFT + j * (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE),
               ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE)
             },
             Point2D
             {
-              ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + AlIEN_WIDTH,
+              ALIEN_BOX_LEFT + j * (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + ALIEN_WIDTH,
               ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE) + ALIEN_HEIGHT,
             },
             ALIEN_HEALTH_START,

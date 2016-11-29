@@ -22,8 +22,12 @@ public:
   GameGLWidget(GameWindow * mw);
   ~GameGLWidget();
 
+  void ChangeSizeConstants(float w, float h);
+  void OffBonuses();
   void NewGame(float w, float h);
   void NextLevel(int level);
+
+  void DeleteSpace();
 
   void SetKey(KeyTypes type, QKeySequence key);
 
@@ -33,8 +37,9 @@ protected:
   void initializeGL() override;
 
   void UpdateGun(float elapsedSeconds);
-  void UpdateBullets(float elapsedSeconds);
   void UpdateAliens();
+  void UpdateBullets(float elapsedSeconds);
+  void UpdateBonus(float elapsedSeconds);
   void Update(float elapsedSeconds);
 
   void RenderStar();

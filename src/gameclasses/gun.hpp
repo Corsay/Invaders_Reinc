@@ -72,6 +72,8 @@ public:
     if(! (bul.GetBox() && this->GetBox()))
       return false;
 
+    if (BONUS_GOD) return true;  // if god mode bonus
+
     // if intersect
     bul.Inform(*this);
     this->SetHealth(this->GetHealth() - bul.GetHealth());

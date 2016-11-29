@@ -49,7 +49,7 @@ MainWindow::MainWindow()
   m_pbExit = new QPushButton();
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
     {
-      if (m_gameStarted) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
+      if (GAME_STARTED) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
       else exit(0);
     });
   m_pbMenuNewGame->setIcon(QIcon("data/images/icons/begin.ico"));
@@ -122,7 +122,8 @@ MainWindow::MainWindow()
   connect(m_kseGamePause, SIGNAL(keySequenceChanged(QKeySequence)), this, SLOT(ChangeShortcutGamePause(QKeySequence)));
     // Game parameters
   m_slGPAliensCount = new QSlider(Qt::Horizontal);
-  m_slGPAliensCount->setRange(20, 75);
+  m_slGPAliensCount->setRange(20, 70);
+  m_slGPAliensCount->setPageStep(5);
   m_slGPAliensCount->setSingleStep(5);
   connect(m_slGPAliensCount, SIGNAL(valueChanged(int)), this, SLOT(ChangeAliensCount(int)));
 
@@ -281,6 +282,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
     {
       this->setDisabled(true);
       QDialog * about = new QDialog;
+      about->setStyleSheet(m_style);
       about->resize(250,100);
       about->setWindowFlags(Qt::ToolTip);
 
@@ -330,6 +332,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
     {
       this->setDisabled(true);
       QDialog * about = new QDialog;
+      about->setStyleSheet(m_style);
       about->resize(250,100);
       about->setWindowFlags(Qt::ToolTip);
 
@@ -345,16 +348,16 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
         {
           this->setDisabled(false);
           this->SaveGame();
-          about->close();
           if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) this->close();   // if exit
           else                                                     // if end current game
           {
-            m_gameStarted = false;
+            GAME_STARTED = false;
             ShowMenuItems();
 
             // delete m_space and set it to nullptr
-            std::cout << "Not full released" << std::endl;
+            m_windowGame->DeleteSpace();
           }
+          about->close();
         });
       QPushButton * pbDialogNo = new QPushButton();
       pbDialogNo->setText(DIALOG_BUTTON_NO);
@@ -362,16 +365,16 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       connect(pbDialogNo, &QAbstractButton::clicked, [this, about, msg]()
         {
           this->setDisabled(false);
-          about->close();
           if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) this->close();   // if exit
           else                                                     // if end current game
           {
-            m_gameStarted = false;
+            GAME_STARTED = false;
             ShowMenuItems();
 
             // delete m_space and set it to nullptr
-            std::cout << "Not full released" << std::endl;
+            m_windowGame->DeleteSpace();
           }
+          about->close();
         });
       QPushButton * pbDialogAbort = new QPushButton();
       pbDialogAbort->setText(DIALOG_BUTTON_ABORT);
@@ -394,6 +397,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
     {
       this->setDisabled(true);
       QDialog * about = new QDialog;
+      about->setStyleSheet(m_style);
       about->resize(250,100);
       about->setWindowFlags(Qt::ToolTip);
 
@@ -413,6 +417,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
     {
       this->setDisabled(true);
       QDialog * about = new QDialog;
+      about->setStyleSheet(m_style);
       about->resize(250,100);
       about->setWindowFlags(Qt::ToolTip);
 
@@ -447,7 +452,7 @@ void MainWindow::Resize(size_t w, size_t h)
   MoveWindowToCenter();
 
   ResizeQGridLayouts();
-  changeConstants(w, h);
+  ChangeConstants(w, h);
 }
 
 void MainWindow::SetTextsForCurLang()
@@ -456,7 +461,7 @@ void MainWindow::SetTextsForCurLang()
   this->setWindowTitle(QMainWindow::tr("Invaders Reincarnation"));
   // MENU
     // button
-  if (m_gameStarted)
+  if (GAME_STARTED)
   {
     m_pbMenuNewGame->setText(QPushButton::tr("End game"));
     m_pbMenuNewGame->setToolTip(QPushButton::tr("End current game with save dialog"));
@@ -466,7 +471,7 @@ void MainWindow::SetTextsForCurLang()
     m_pbMenuNewGame->setText(QPushButton::tr("New game"));
     m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
   }
-  if (m_gameStarted)
+  if (GAME_STARTED)
   {
     m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
     m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
@@ -574,11 +579,18 @@ void MainWindow::SetSize(int state)
   m_size.setHeight(h);
 }
 
+
 // SHORTCUTS
 // shortcuts  slots
 void MainWindow::ShortcutPause()
 {
-  if (m_widgetStacked->currentIndex() != 0) CheckoutToMenu();
+  if (m_widgetStacked->currentIndex() != 0)
+  {
+    CheckoutToMenu();
+    ShowMenuItems();
+    // delete m_space, set it to nullptr
+    if (!GAME_STARTED) m_windowGame->DeleteSpace();
+  }
 }
 
 
@@ -586,7 +598,7 @@ void MainWindow::ShortcutPause()
 // check current game state and show needed buttons in main menu
 void MainWindow::ShowMenuItems()
 {
-  if (m_gameStarted)
+  if (GAME_STARTED)
   {
     // Menu
     m_pbMenuNewGame->setText(QPushButton::tr("End game"));
@@ -597,25 +609,9 @@ void MainWindow::ShowMenuItems()
 
     // Settings block
       // button
-    m_pbSaveSettings->hide();
     m_pbLoadSettings->hide();
     m_pbSetDefault->hide();
       // boxes
-    m_slGPAliensCount->setDisabled(true);
-    m_slGPAliensCount->setObjectName("NotActiveBox");
-    m_slGPAliensCount->setStyleSheet(m_style);
-    m_slGPObstacleCount->setDisabled(true);
-    m_slGPObstacleCount->setObjectName("NotActiveBox");
-    m_slGPObstacleCount->setStyleSheet(m_style);
-    m_slGPGunStartLives->setDisabled(true);
-    m_slGPGunStartLives->setObjectName("NotActiveBox");
-    m_slGPGunStartLives->setStyleSheet(m_style);
-    m_chbGPObstacleRedraw->setDisabled(true);
-    m_chbGPObstacleRedraw->setObjectName("NotActiveBox");
-    m_chbGPObstacleRedraw->setStyleSheet(m_style);
-    m_chbGPGunAddLive->setDisabled(true);
-    m_chbGPGunAddLive->setObjectName("NotActiveBox");
-    m_chbGPGunAddLive->setStyleSheet(m_style);
     m_cbWindowState->setDisabled(true);
     m_cbWindowState->setObjectName("NotActiveBox");
     m_cbWindowState->setStyleSheet(m_style);
@@ -634,25 +630,9 @@ void MainWindow::ShowMenuItems()
 
     // Settings unlock
       // button
-    m_pbSaveSettings->show();
     m_pbLoadSettings->show();
     m_pbSetDefault->show();
       // boxes
-    m_slGPAliensCount->setDisabled(false);
-    m_slGPAliensCount->setObjectName("");
-    m_slGPAliensCount->setStyleSheet(m_style);
-    m_slGPObstacleCount->setDisabled(false);
-    m_slGPObstacleCount->setObjectName("");
-    m_slGPObstacleCount->setStyleSheet(m_style);
-    m_slGPGunStartLives->setDisabled(false);
-    m_slGPGunStartLives->setObjectName("");
-    m_slGPGunStartLives->setStyleSheet(m_style);
-    m_chbGPObstacleRedraw->setDisabled(false);
-    m_chbGPObstacleRedraw->setObjectName("");
-    m_chbGPObstacleRedraw->setStyleSheet(m_style);
-    m_chbGPGunAddLive->setDisabled(false);
-    m_chbGPGunAddLive->setObjectName("");
-    m_chbGPGunAddLive->setStyleSheet(m_style);
     m_cbWindowState->setDisabled(false);
     m_cbWindowState->setObjectName("");
     m_cbWindowState->setStyleSheet(m_style);
@@ -665,14 +645,14 @@ void MainWindow::ShowMenuItems()
 // menu button slots
 void MainWindow::NewGame()
 {
-  if (m_gameStarted)
+  if (GAME_STARTED)  // END GAME
   {
     ShowDialog(DIALOG_GAME_SAVE_WHEN_BREAK, DialogTypes::OnSubmitGameSave);
   }
-  else
+  else               // NEW GAME
   {
     // flag set change menu
-    m_gameStarted = true;
+    GAME_STARTED = true;
     ShowMenuItems();
     m_windowGame->NewGame();
     m_widgetStacked->setCurrentIndex(2);
@@ -681,7 +661,7 @@ void MainWindow::NewGame()
 
 void MainWindow::ContinueOrLoadGame()
 {
-  if (m_gameStarted) // Continue game
+  if (GAME_STARTED) // Continue game
   {
     m_widgetStacked->setCurrentIndex(2);
   }
@@ -1055,6 +1035,11 @@ void MainWindow::ChangeShortcutGamePause(QKeySequence key)
 // settings game
 void MainWindow::ChangeAliensCount(int state)
 {
+  if (state % 5 != 0)
+  {
+    state += 5 - state % 5;
+    m_slGPAliensCount->setValue(state);
+  }
   ALIEN_COUNT = state;
   m_lGPAliensCount->setText(QLabel::tr("Count of aliens = ") + QString::number(state));
   m_settingsChanged = true;

@@ -36,7 +36,7 @@ public:
   }
 
 
-  // assignment operator (for next level reinit)
+  // assignment operator
   Obstacle2DManager & operator = (Obstacle2DManager const & obj)
   {
     if (this == &obj) return *this;
