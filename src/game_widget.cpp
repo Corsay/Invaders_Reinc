@@ -20,7 +20,6 @@ namespace
   int constexpr kRightDirection = 1;
   int constexpr kUpDirection = 2;
   int constexpr kDownDirection = 3;
-  bool canShoot = true;
 } // namespace
 
 GameGLWidget::GameGLWidget(GameWindow * mw)
@@ -49,9 +48,14 @@ void GameGLWidget::initializeGL()
 
   m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background3.png"));
 
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star11.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star22.png")));
+  m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star33.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star44.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star55.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star66.png")));
+
+  m_shipTexture = new QOpenGLTexture(QImage("data/images/aliens/alienShip.png"));
 
   m_gunTexture = new QOpenGLTexture(QImage("data/images/gunArmored.png"));
 
@@ -241,9 +245,6 @@ void GameGLWidget::UpdateGun(float elapsedSeconds)
 
 void GameGLWidget::Update(float elapsedSeconds)
 {
-  // gun shoot delay   
-  if (!(m_frames % GUN_SHOOT_SPEED))
-    canShoot = true;
   // updates
   UpdateGun(elapsedSeconds);
   m_space->GameStep(m_frames);
@@ -298,9 +299,9 @@ void GameGLWidget::keyPressEvent(QKeyEvent * e)
 
   else if (QKeySequence(e->key()) == m_keyGunShoot)
   {
-    if (canShoot)
+    if (GUN_CAN_SHOOT)
     {
-      canShoot = false;
+      GUN_CAN_SHOOT = false;
       m_space->GunShoot();
     }
   }
@@ -404,6 +405,29 @@ void GameGLWidget::RenderAlien()
   }
 }
 
+void GameGLWidget::RenderShip()
+{
+  Ship2D * ship = m_space->GetShip();
+  if (ship != nullptr)
+  {
+    m_texturedRect->Render
+    (
+      m_shipTexture,
+      QVector2D
+      (
+        ship->GetBox().GetCenter().x(),
+        ship->GetBox().GetCenter().y()
+      ),
+      QSize
+      (
+        ship->GetBox().GetWidth(),
+        ship->GetBox().GetHeight()
+      ),
+      m_screenSize
+    );
+  }
+}
+
 void GameGLWidget::RenderObstacle()
 {
   ObstacleVector const & ObVec = m_space->GetObstacleVector();
@@ -498,6 +522,7 @@ void GameGLWidget::Render()
   this->RenderStar();
   this->RenderGun();
   this->RenderAlien();
+  this->RenderShip();
   this->RenderObstacle();
   this->RenderBullet();
   this->RenderInformationString();

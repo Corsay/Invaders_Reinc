@@ -19,9 +19,12 @@ extern size_t GUN_LIVES_START;
 extern bool   GUN_LIVES_INC_EVERY_LEVEL;
 extern size_t GUN_SHOOT_SPEED_DEFAULT;
 extern size_t GUN_SHOOT_SPEED;
+extern bool   GUN_CAN_SHOOT;
 // OBSTACLE
 extern size_t OBSTACLE_COUNT;
 extern bool   OBSTACLE_REDRAW_EVERY_LEVEL;
+// SHIP
+extern bool   SHIP_STARTED;
 // GAME SPACE
 extern float  GAME_PADDING_LEFT;
 extern float  GAME_PADDING_RIGHT;
@@ -71,6 +74,8 @@ extern float BULLET_HEIGHT;
 // SHIP
 extern float SHIP_HEALTH_START;
 extern float SHIP_SPEED_START;
+extern float SHIP_WIDTH;
+extern float SHIP_HEIGHT;
 // GAME
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;

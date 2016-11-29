@@ -49,6 +49,11 @@ public:
 
 
   // Capabilities
+  void MoveShip(float right_border, float left_border)
+  {
+
+  }
+
   void RandomBonus()
   {
     srand(time(0));

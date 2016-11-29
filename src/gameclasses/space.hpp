@@ -1,5 +1,10 @@
 #pragma once
 
+#include <chrono>
+#include <ctime>
+
+using ChronoClock = std::chrono::time_point<std::chrono::system_clock>;
+
 #include "ship.hpp"
 #include "gun.hpp"
 #include "alienmanager.hpp"
@@ -31,6 +36,7 @@ public:
   }
 
   // Getters
+  Ship2D * GetShip() { return m_ship; }
   Gun2D & GetGun() { return *m_gun; }
   Obstacle2DManager & GetObstacleManager() { return *m_obstacleManager; }
   AlienMatrix const & GetAlienMatrix() const { return m_alienManager->GetAlienMatrix(); }
@@ -121,6 +127,9 @@ public:
         itList.push_back(it);
       else if(m_gun->CheckIntersection(*it))
         itList.push_back(it);
+      else if (m_ship != nullptr)
+        if(m_ship->CheckIntersection(*it))
+          itList.push_back(it);
     }
 
     // erase itList
@@ -154,10 +163,26 @@ public:
       delete m_obstacleManager;
       m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
     }
+
+    start = std::chrono::system_clock::now();
   }
 
   void GameStep(int frame)
   {
+    //ChronoClock current = std::chrono::system_clock::now();
+    //std::chrono::duration<double> elapsed_seconds = current - start;
+    //std::cout << "elapsed time: " << elapsed_seconds.count() << " сек.\n";
+
+    // ship activity
+    //if (((int)elapsed_seconds.count()) % 10 == 0)
+    //  if (m_ship == nullptr)
+    //    m_ship = new Ship2D(Point2D{0, this->GetBox().top() - GAME_PADDING_TOP - SHIP_HEIGHT}, Point2D{SHIP_WIDTH, this->GetBox().top() - GAME_PADDING_TOP});
+    //std::cout << *m_ship << std::endl;
+
+    // gun shoot delay
+    if (!(frame % GUN_SHOOT_SPEED))
+      GUN_CAN_SHOOT = true;
+
     // Bullets activity
     BulletsMove(this->GetBox().GetHeight());
 
@@ -178,7 +203,8 @@ public:
   }
 
 private:
-  Ship2D * m_ship = new Ship2D();                                  // one ship
+  ChronoClock start = std::chrono::system_clock::now();            // start game time
+  Ship2D * m_ship = nullptr;                                       // one ship
   Gun2D * m_gun = new Gun2D();                                     // one gun
   Alien2DManager * m_alienManager = new Alien2DManager();          // one alien manager
   Obstacle2DManager * m_obstacleManager = new Obstacle2DManager(); // one obstacle manager

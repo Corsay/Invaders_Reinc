@@ -18,9 +18,12 @@ size_t GUN_LIVES_START           = 3;
 bool   GUN_LIVES_INC_EVERY_LEVEL = true;
 size_t GUN_SHOOT_SPEED_DEFAULT   = 55;
 size_t GUN_SHOOT_SPEED           = 55;   // one shoot every 55 frames
+bool   GUN_CAN_SHOOT             = true;
 // OBSTACLE
 size_t OBSTACLE_COUNT              = 4;
 bool   OBSTACLE_REDRAW_EVERY_LEVEL = false;
+// SHIP
+bool   SHIP_STARTED = false;
 // GAME SPACE
 float  GAME_PADDING_LEFT = 15;
 float  GAME_PADDING_RIGHT = 15;
@@ -70,6 +73,8 @@ float BULLET_HEIGHT       = 25.0f;
 // SHIP
 float SHIP_HEALTH_START   = 50.0f;
 float SHIP_SPEED_START    = 5.0f;
+float SHIP_WIDTH        = 60.0f;
+float SHIP_HEIGHT       = 30.0f;
 // GAME
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;
 float LAST_WINDOW_HORIZONTAL_SIZE = 800.0f;
@@ -108,6 +113,9 @@ void ChangeConstants(float w, float h)
 
   BULLET_WIDTH        *= wk;
   BULLET_HEIGHT       *= hk;
+
+  SHIP_WIDTH        *= wk;
+  SHIP_HEIGHT       *= hk;
 
   LAST_WINDOW_VERTICAL_SIZE = h;
   LAST_WINDOW_HORIZONTAL_SIZE = w;

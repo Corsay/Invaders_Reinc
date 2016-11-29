@@ -42,6 +42,7 @@ protected:
   void RenderStar();
   void RenderGun();
   void RenderAlien();
+  void RenderShip();
   void RenderObstacle();
   void RenderBullet();
   void RenderInformationString();
@@ -59,6 +60,7 @@ private:
 
   std::vector<QOpenGLTexture *> m_starTexture;
 
+  QOpenGLTexture * m_shipTexture = nullptr;
   QOpenGLTexture * m_gunTexture = nullptr;
   QOpenGLTexture * m_alienPirateTexture = nullptr;
   QOpenGLTexture * m_alienRaiderTexture = nullptr;
