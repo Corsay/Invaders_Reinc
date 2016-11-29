@@ -13,9 +13,11 @@ using namespace std;
 // extern (need to send it as param to space2d)
 // ALIEN
 extern size_t ALIEN_COUNT;
+extern size_t ALIEN_SHOOT_SPEED;
 // GUN
 extern size_t GUN_LIVES_START;
 extern bool   GUN_LIVES_INC_EVERY_LEVEL;
+extern size_t GUN_SHOOT_SPEED_DEFAULT;
 extern size_t GUN_SHOOT_SPEED;
 // OBSTACLE
 extern size_t OBSTACLE_COUNT;
@@ -28,8 +30,6 @@ extern float  GAME_PADDING_BOTTOM;
 // GAME
 extern bool   GAME_STARTED;
 // BONUSES
-extern bool   BONUS_LAZER;
-extern bool   BONUS_FAST_SHOOT;
 extern bool   BONUS_GOD;
 
 // const (setted value)
@@ -68,6 +68,9 @@ extern float BULLET_DAMAGE_START;
 extern float BULLET_SPEED_START;
 extern float BULLET_WIDTH;
 extern float BULLET_HEIGHT;
-
+// SHIP
+extern float SHIP_HEALTH_START;
+extern float SHIP_SPEED_START;
+// GAME
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;

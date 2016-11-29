@@ -41,24 +41,27 @@ TEST(obstacle2d_test, test_assignment)
     tempVect = bMatrix[i];
     for (size_t j = 0; j < tempVect.size(); ++j)
     {
-      // the same for Obstacle2D class
-      EXPECT_EQ
-      (
-        tempVect[j]->GetBox(),
-        Box2D
+      if (tempVect[j] != nullptr)
+      {
+        // the same for Obstacle2D class
+        EXPECT_EQ
         (
-          Point2D
-          {
-            ld.x() + j * partWidth,
-            ld.y() + i * partHeight
-          },
-          Point2D
-          {
-            ld.x() + ( j + 1 ) * partWidth + 1,
-            ld.y() + ( i + 1 ) * partHeight + 1
-          }
-        )
-      );
+          tempVect[j]->GetBox(),
+          Box2D
+          (
+            Point2D
+            {
+              ld.x() + j * partWidth,
+              ld.y() + i * partHeight
+            },
+            Point2D
+            {
+              ld.x() + ( j + 1 ) * partWidth + 1,
+              ld.y() + ( i + 1 ) * partHeight + 1
+            }
+          )
+        );
+      }
     }
   }
 

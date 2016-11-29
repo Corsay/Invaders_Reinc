@@ -16,12 +16,7 @@ public:
   }
 
   // Destructor.
-  ~Obstacle2DManager()
-  {
-    for(size_t i = 0; i != m_obstacles.size(); ++i)
-      delete m_obstacles[i];
-    m_obstacles.clear();
-  }
+  ~Obstacle2DManager() = default;
 
   // Constructors with parameters.
   Obstacle2DManager(size_t const countObstacle)

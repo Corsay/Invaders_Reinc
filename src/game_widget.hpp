@@ -37,9 +37,6 @@ protected:
   void initializeGL() override;
 
   void UpdateGun(float elapsedSeconds);
-  void UpdateAliens();
-  void UpdateBullets(float elapsedSeconds);
-  void UpdateBonus(float elapsedSeconds);
   void Update(float elapsedSeconds);
 
   void RenderStar();

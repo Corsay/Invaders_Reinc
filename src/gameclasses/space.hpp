@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gameentity.hpp"
+#include "ship.hpp"
 #include "gun.hpp"
 #include "alienmanager.hpp"
 #include "bulletmanager.hpp"
@@ -23,18 +23,18 @@ public:
       leftBottomY = GAME_PADDING_BOTTOM,
       rightTopX = leftBottomX + GUN_WIDTH,
       rightTopY = leftBottomY + GUN_HEIGHT;
-    m_gun = Gun2D({leftBottomX, leftBottomY}, {rightTopX, rightTopY}, GUN_HEALTH_START, GUN_SPEED_SHOOT_START, GUN_LIVES_START);
+    m_gun = new Gun2D({leftBottomX, leftBottomY}, {rightTopX, rightTopY}, GUN_HEALTH_START, GUN_SPEED_SHOOT_START, GUN_LIVES_START);
 
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
-    m_obstacleManager.CreateObstacleVector(OBSTACLE_COUNT);
+    m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
   }
 
   // Getters
-  Gun2D & GetGun() { return m_gun; }
-  Obstacle2DManager & GetObstacleManager() { return m_obstacleManager; }
+  Gun2D & GetGun() { return *m_gun; }
+  Obstacle2DManager & GetObstacleManager() { return *m_obstacleManager; }
   AlienMatrix const & GetAlienMatrix() const { return m_alienManager->GetAlienMatrix(); }
-  ObstacleVector const & GetObstacleVector() const {return m_obstacleManager.GetObstacleVector(); }
+  ObstacleVector const & GetObstacleVector() const {return m_obstacleManager->GetObstacleVector(); }
   BulletList const & GetBulletFromGun() const {return m_bulletManager->GetBulletsFromGunList(); }
   BulletList const & GetBulletFromAlien() const {return m_bulletManager->GetBulletsFromAliensList(); }
 
@@ -45,7 +45,7 @@ public:
       leftBottomY = y - GUN_HEIGHT / 2,
       rightTopX = leftBottomX + GUN_WIDTH,
       rightTopY = leftBottomY + GUN_HEIGHT;
-    m_gun.SetBox({{leftBottomX, leftBottomY},{rightTopX, rightTopY}});
+    m_gun->SetBox({{leftBottomX, leftBottomY},{rightTopX, rightTopY}});
   }
 
   void BulletsMove(float const & top)
@@ -55,8 +55,8 @@ public:
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
-    Point2D start = m_gun.GetBox().GetCenter();
-    start.SetY(m_gun.GetBox().top());
+    Point2D start = m_gun->GetBox().GetCenter();
+    start.SetY(m_gun->GetBox().top());
     Bullet2D bullet(
       Point2D {start.x() - BULLET_WIDTH / 2, start.y() - BULLET_HEIGHT / 2},
       Point2D {start.x() + BULLET_WIDTH / 2, start.y() + BULLET_HEIGHT / 2},
@@ -69,7 +69,7 @@ public:
 
   void AlienShoot()
   {
-    Alien2D alien = Alien2D({0, 0}, {0, 0}); //m_alienManager->SelectShooter(m_gun.GetBox());
+    Alien2D alien = Alien2D({250, 250}, {250, 250}); //m_alienManager->SelectShooter(m_gun.GetBox());
     Point2D start = alien.GetBox().GetCenter();
     start.SetY(alien.GetBox().bottom());
     Bullet2D bullet(
@@ -102,9 +102,9 @@ public:
       if (m_alienManager->CheckIntersection(*it, &rate))
       {
         itList.push_back(it);
-        m_gun.SetRate(m_gun.GetRate() + rate);
+        m_gun->SetRate(m_gun->GetRate() + rate);
       }
-      else if (m_obstacleManager.CheckIntersection(*it))
+      else if (m_obstacleManager->CheckIntersection(*it))
         itList.push_back(it);
     }
 
@@ -117,9 +117,9 @@ public:
 
     for(auto it = BulletFromAlien.begin(); it != BulletFromAlien.end(); ++it)
     {
-      if (m_obstacleManager.CheckIntersection(*it))
+      if (m_obstacleManager->CheckIntersection(*it))
         itList.push_back(it);
-      else if(m_gun.CheckIntersection(*it))
+      else if(m_gun->CheckIntersection(*it))
         itList.push_back(it);
     }
 
@@ -134,7 +134,7 @@ public:
   unsigned int CheckGameState()
   {
     if (m_alienManager->GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
-    if (m_gun.GetLives() <= 0) return 2;
+    if (m_gun->GetLives() <= 0) return 2;
 
     return 0; // game continued
   }
@@ -148,13 +148,39 @@ public:
 
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
-    if (GUN_LIVES_INC_EVERY_LEVEL && m_gun.GetLives() < 10) m_gun.SetLives(m_gun.GetLives() + 1);
-    if (OBSTACLE_REDRAW_EVERY_LEVEL) m_obstacleManager.CreateObstacleVector(OBSTACLE_COUNT);
+    if (GUN_LIVES_INC_EVERY_LEVEL && m_gun->GetLives() < 10) m_gun->SetLives(m_gun->GetLives() + 1);
+    if (OBSTACLE_REDRAW_EVERY_LEVEL)
+    {
+      delete m_obstacleManager;
+      m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
+    }
+  }
+
+  void GameStep(int frame)
+  {
+    // Bullets activity
+    BulletsMove(this->GetBox().GetHeight());
+
+    // alien activity
+    if(!(frame % ALIEN_SHOOT_SPEED))                // ALIEN SHOOT delay
+      AlienShoot();
+    static int int_timer;
+    if(int_timer)
+      int_timer--;
+    else
+    {
+      AliensMove();
+      int_timer = 30;
+    }
+
+    // check intersections
+    CheckAllIntersections();
   }
 
 private:
-  Gun2D m_gun;                         // one gun
-  Alien2DManager * m_alienManager;     // one alien manager
-  Obstacle2DManager m_obstacleManager; // one obstacle manager
-  Bullet2DManager * m_bulletManager;   // one bullet manager
+  Ship2D * m_ship = new Ship2D();                                  // one ship
+  Gun2D * m_gun = new Gun2D();                                     // one gun
+  Alien2DManager * m_alienManager = new Alien2DManager();          // one alien manager
+  Obstacle2DManager * m_obstacleManager = new Obstacle2DManager(); // one obstacle manager
+  Bullet2DManager * m_bulletManager = new Bullet2DManager();       // one bullet manager
 };

@@ -11,10 +11,12 @@ SimpleLogger & logger = SimpleLogger::Instance();
 // Game parameters management
 // (need to send it as param to space2d)
 // ALIEN
-size_t ALIEN_COUNT = 55;
+size_t ALIEN_COUNT       = 55;
+size_t ALIEN_SHOOT_SPEED = 100;   // one shoot every 100 frames
 // GUN
 size_t GUN_LIVES_START           = 3;
 bool   GUN_LIVES_INC_EVERY_LEVEL = true;
+size_t GUN_SHOOT_SPEED_DEFAULT   = 55;
 size_t GUN_SHOOT_SPEED           = 55;   // one shoot every 55 frames
 // OBSTACLE
 size_t OBSTACLE_COUNT              = 4;
@@ -27,8 +29,6 @@ float  GAME_PADDING_BOTTOM = 50;
 // GAME
 bool   GAME_STARTED = false;
 // BONUSES
-bool   BONUS_LAZER = false;
-bool   BONUS_FAST_SHOOT = false;
 bool   BONUS_GOD = false;
 
 // const (setted value)
@@ -67,7 +67,10 @@ float BULLET_DAMAGE_START = 50.0f;
 float BULLET_SPEED_START  = 5.0f;
 float BULLET_WIDTH        = 10.0f;
 float BULLET_HEIGHT       = 25.0f;
-
+// SHIP
+float SHIP_HEALTH_START   = 50.0f;
+float SHIP_SPEED_START    = 5.0f;
+// GAME
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;
 float LAST_WINDOW_HORIZONTAL_SIZE = 800.0f;
 

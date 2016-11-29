@@ -91,8 +91,7 @@ void GameGLWidget::ChangeSizeConstants(float w, float h)
 
 void GameGLWidget::OffBonuses()
 {
-  BONUS_LAZER = false;
-  BONUS_FAST_SHOOT = false;
+  GUN_SHOOT_SPEED = GUN_SHOOT_SPEED_DEFAULT;
   BONUS_GOD = false;
 }
 
@@ -240,44 +239,14 @@ void GameGLWidget::UpdateGun(float elapsedSeconds)
   m_space->SetGunPozition(m_position.x(), m_position.y());
 }
 
-void GameGLWidget::UpdateAliens()
-{
-  if(qrand() % 75 == 0)                // ALIEN SHOOT delay
-    m_space->AlienShoot();
-  static int int_timer;
-  if(int_timer)
-    int_timer--;
-  else
-  {
-    m_space->AliensMove();
-    int_timer = 30;
-  }
-}
-
-void GameGLWidget::UpdateBullets(float elapsedSeconds)
-{
-  m_space->BulletsMove(height());
-}
-
-void GameGLWidget::UpdateBonus(float elapsedSeconds)
-{
-  if (BONUS_LAZER) GUN_SHOOT_SPEED = 1;
-  else if (BONUS_FAST_SHOOT) GUN_SHOOT_SPEED = 40;
-  else GUN_SHOOT_SPEED = 55;
-}
-
 void GameGLWidget::Update(float elapsedSeconds)
 {
   // gun shoot delay   
-  UpdateBonus(elapsedSeconds);
-  // gun shoot
   if (!(m_frames % GUN_SHOOT_SPEED))
     canShoot = true;
   // updates
   UpdateGun(elapsedSeconds);
-  UpdateBullets(elapsedSeconds);
-  UpdateAliens();
-  m_space->CheckAllIntersections();
+  m_space->GameStep(m_frames);
 }
 
 
