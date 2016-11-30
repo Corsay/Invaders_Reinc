@@ -84,6 +84,12 @@ public:
       );
     }
   }
+  void clear()
+    {
+      for(int i=0; i<m_obstacles.size(); i++)
+        delete m_obstacles[i];
+      m_obstacles.clear();
+    }
 
 private:
   ObstacleVector m_obstacles;          // matrix of Obstacles

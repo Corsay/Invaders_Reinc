@@ -75,7 +75,7 @@ public:
 
   void AlienShoot()
   {
-    Alien2D alien = Alien2D({250, 250}, {250, 250}); //m_alienManager->SelectShooter(m_gun.GetBox());
+    Alien2D alien = m_alienManager->SelectShooter(m_gun->GetBox());
     Point2D start = alien.GetBox().GetCenter();
     start.SetY(alien.GetBox().bottom());
     Bullet2D bullet(
@@ -94,113 +94,143 @@ public:
   }
 
   void CheckAllIntersections()
-  {
-    // check count of bullets in bulletManager
-    BulletList & BulletFromGun = m_bulletManager->GetBulletsFromGunList();
-    BulletList & BulletFromAlien = m_bulletManager->GetBulletsFromAliensList();
-
-    // iterator for delete
-    std::list<std::list<Bullet2D>::iterator> itList;
-
-    for(auto it = BulletFromGun.begin(); it != BulletFromGun.end(); ++it)
     {
-      static int rate = 0;
-      if (m_alienManager->CheckIntersection(*it, &rate))
+      // check count of bullets in bulletManager
+      BulletList & BulletFromGun = m_bulletManager->GetBulletsFromGunList();
+      BulletList & BulletFromAlien = m_bulletManager->GetBulletsFromAliensList();
+      static bool del_obstacle = false;
+      if(!del_obstacle)
+        if(m_obstacleManager->GetCountOObstacle() != 0)
+          if(m_alienManager->GetBox().bottom() <= m_obstacleManager->GetObstacleVector()[0]->GetBox().top())
+          {
+            m_obstacleManager->clear();
+            del_obstacle = true;
+          }
+      if(m_obstacleManager->GetCountOObstacle() != 0)
+        if(m_alienManager->GetBox().bottom() <= m_gun->GetBox().top())
+        {
+         m_gun->SetLives(0);
+        }
+
+      // iterator for delete
+      std::list<std::list<Bullet2D>::iterator> itList;
+      std::list<std::list<Bullet2D>::iterator> itList2;
+
+
+      for(auto it = BulletFromGun.begin(); it != BulletFromGun.end(); ++it)
       {
-        itList.push_back(it);
-        m_gun->SetRate(m_gun->GetRate() + rate);
-      }
-      else if (m_obstacleManager->CheckIntersection(*it))
-        itList.push_back(it);
-    }
-
-    // erase itList
-    for(auto it = itList.begin(); it != itList.end(); ++it)
-    {
-      BulletFromGun.erase(*it);
-    }
-    itList.clear();
-
-    for(auto it = BulletFromAlien.begin(); it != BulletFromAlien.end(); ++it)
-    {
-      if (m_obstacleManager->CheckIntersection(*it))
-        itList.push_back(it);
-      else if(m_gun->CheckIntersection(*it))
-        itList.push_back(it);
-      else if (m_ship != nullptr)
-        if(m_ship->CheckIntersection(*it))
+        static int rate = 0;
+        if (m_alienManager->CheckIntersection(*it, &rate))
+        {
           itList.push_back(it);
-    }
+          m_gun->SetRate(m_gun->GetRate() + rate);
+        }
+        else if (m_obstacleManager->CheckIntersection(*it))
+          itList.push_back(it);
+        else
+          for(auto it2 = BulletFromAlien.begin(); it2 != BulletFromAlien.end(); ++it2 )
+            if( (*it).GetBox()
+                    && it2->GetBox() )
+            {
+              itList.push_back(it);
+              itList2.push_back(it2);
+            }
+      }
 
-    // erase itList
-    for(auto it = itList.begin(); it != itList.end(); ++it)
-    {
-      BulletFromAlien.erase(*it);
+      // erase itList
+      for(auto it = itList.begin(); it != itList.end(); ++it)
+      {
+        BulletFromGun.erase(*it);
+      }
+      itList.clear();
+
+      for(auto it = itList2.begin(); it != itList2.end(); ++it)
+      {
+        BulletFromAlien.erase(*it);
+      }
+      itList2.clear();
+
+
+      for(auto it = BulletFromAlien.begin(); it != BulletFromAlien.end(); ++it)
+      {
+        if (m_obstacleManager->CheckIntersection(*it))
+          itList.push_back(it);
+        else if(m_gun->CheckIntersection(*it))
+          itList.push_back(it);
+        else if (m_ship != nullptr)
+          if(m_ship->CheckIntersection(*it))
+            itList.push_back(it);
+      }
+
+      // erase itList
+      for(auto it = itList.begin(); it != itList.end(); ++it)
+      {
+        BulletFromAlien.erase(*it);
+      }
+      itList.clear();
     }
-    itList.clear();
-  }
 
   unsigned int CheckGameState()
-  {
-    if (m_alienManager->GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
-    if (m_gun->GetLives() <= 0) return 2;
-
-    return 0; // game continued
-  }
-
-  void NewLvlPrepare(int const lvl)
-  {
-    delete m_alienManager;
-    m_alienManager = nullptr;
-    delete m_bulletManager;
-    m_bulletManager = nullptr;
-
-    m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
-    m_bulletManager = new Bullet2DManager();
-    if (GUN_LIVES_INC_EVERY_LEVEL && m_gun->GetLives() < 10) m_gun->SetLives(m_gun->GetLives() + 1);
-    if (OBSTACLE_REDRAW_EVERY_LEVEL)
     {
-      delete m_obstacleManager;
-      m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
+      if (m_alienManager->GetLiveAliensCount() <= 0) return 1;     // all aliens defeated - level passed (increased)
+      if (m_gun->GetLives() <= 0) return 2;
+
+      return 0; // game continued
     }
 
-    start = std::chrono::system_clock::now();
-  }
-
-  void GameStep(int frame)
-  {
-    //ChronoClock current = std::chrono::system_clock::now();
-    //std::chrono::duration<double> elapsed_seconds = current - start;
-    //std::cout << "elapsed time: " << elapsed_seconds.count() << " сек.\n";
-
-    // ship activity
-    //if (((int)elapsed_seconds.count()) % 10 == 0)
-    //  if (m_ship == nullptr)
-    //    m_ship = new Ship2D(Point2D{0, this->GetBox().top() - GAME_PADDING_TOP - SHIP_HEIGHT}, Point2D{SHIP_WIDTH, this->GetBox().top() - GAME_PADDING_TOP});
-    //std::cout << *m_ship << std::endl;
-
-    // gun shoot delay
-    if (!(frame % GUN_SHOOT_SPEED))
-      GUN_CAN_SHOOT = true;
-
-    // Bullets activity
-    BulletsMove(this->GetBox().GetHeight());
-
-    // alien activity
-    if(!(frame % ALIEN_SHOOT_SPEED))                // ALIEN SHOOT delay
-      AlienShoot();
-    static int int_timer;
-    if(int_timer)
-      int_timer--;
-    else
+    void NewLvlPrepare(int const lvl)
     {
-      AliensMove();
-      int_timer = 30;
+      delete m_alienManager;
+      m_alienManager = nullptr;
+      delete m_bulletManager;
+      m_bulletManager = nullptr;
+
+      m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
+      m_bulletManager = new Bullet2DManager();
+      if (GUN_LIVES_INC_EVERY_LEVEL && m_gun->GetLives() < 10) m_gun->SetLives(m_gun->GetLives() + 1);
+      if (OBSTACLE_REDRAW_EVERY_LEVEL)
+      {
+        delete m_obstacleManager;
+        m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
+      }
+
+      start = std::chrono::system_clock::now();
     }
 
-    // check intersections
-    CheckAllIntersections();
-  }
+    void GameStep(int frame)
+    {
+      //ChronoClock current = std::chrono::system_clock::now();
+      //std::chrono::duration<double> elapsed_seconds = current - start;
+      //std::cout << "elapsed time: " << elapsed_seconds.count() << " сек.\n";
+
+      // ship activity
+      //if (((int)elapsed_seconds.count()) % 10 == 0)
+      //  if (m_ship == nullptr)
+      //    m_ship = new Ship2D(Point2D{0, this->GetBox().top() - GAME_PADDING_TOP - SHIP_HEIGHT}, Point2D{SHIP_WIDTH, this->GetBox().top() - GAME_PADDING_TOP});
+      //std::cout << *m_ship << std::endl;
+
+      // gun shoot delay
+      if (!(frame % GUN_SHOOT_SPEED))
+        GUN_CAN_SHOOT = true;
+
+      // Bullets activity
+      BulletsMove(this->GetBox().GetHeight());
+
+      // alien activity
+      if(!(frame % ALIEN_SHOOT_SPEED))                // ALIEN SHOOT delay
+        AlienShoot();
+      static int int_timer;
+      if(int_timer)
+        int_timer--;
+      else
+      {
+        AliensMove();
+        int_timer = 30;
+      }
+
+      // check intersections
+      CheckAllIntersections();
+    }
 
 private:
   ChronoClock start = std::chrono::system_clock::now();            // start game time

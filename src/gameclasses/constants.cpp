@@ -41,12 +41,12 @@ float DEFAULT_SPEED = 0.5f;
 // ALIEN
 float ALIEN_HEALTH_START      = 50.0f;
 float ALIEN_SPEED_SHOOT_START = 1.2f;
-float ALIEN_WIDTH             = 50.0f;
-float ALIEN_HEIGHT            = 40.0f;
+float ALIEN_WIDTH             = 45.0f;
+float ALIEN_HEIGHT            = 35.0f;
 float ALIEN_BOX_LEFT            = 100.0f;
 float ALIEN_BOX_TOP             = 400.0f;
-float ALIEN_HORIZONTAL_DISTANCE = 5.0f;
-float ALIEN_VERTICAL_DISTANCE   = 0.0f;
+float ALIEN_HORIZONTAL_DISTANCE = 12.0f;
+float ALIEN_VERTICAL_DISTANCE   = 5.0f;
 float ALIENT_HORIZONTAL_STEP    = 10.0f;
 float ALIENT_VERTICAL_STEP      = 20.0f;
 // GUN
