@@ -247,8 +247,8 @@ public:
       std::cout << d.count() << "ms\n";
       */
 
-      std::cout << std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() << std::endl;
-      std::cout << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start).count() << std::endl;
+      //std::cout << std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() << std::endl;
+      //std::cout << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start).count() << std::endl;
 
       if (std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() >= 5)
       {
@@ -257,11 +257,12 @@ public:
     }
 
     // gun shoot delay
-    if (!(frame % GUN_SHOOT_SPEED))
+    //if (!(frame % GUN_SHOOT_SPEED))
       GUN_CAN_SHOOT = true;
 
     // Bullets activity
     BulletsMove(this->GetBox().GetHeight());
+    m_ship->MoveShip();
 
     // alien activity
     if(!(frame % ALIEN_SHOOT_SPEED))                // ALIEN SHOOT delay

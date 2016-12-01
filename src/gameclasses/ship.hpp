@@ -49,9 +49,9 @@ public:
 
 
   // Capabilities
-  void MoveShip(float right_border, float left_border)
+  void MoveShip()
   {
-
+    this->GetBox().HorizontalShift(SHIP_SPEED_START);
   }
 
   void RandomBonus()

@@ -58,70 +58,53 @@ public:
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul, int * rate)
   {
-    int i, j;
-    // get shooted alien position
-    i = (bul.GetBox().top() - (m_border.bottom() + ALIEN_HEIGHT) + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
-    j = (bul.GetBox().left() - m_border.left() + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
-    if (i >= 0 && j >= 0 && i < m_aliens.size() && j < m_aliens[i].size())
-    {
-      if (m_aliens[i][j] != nullptr)
-      {
-        if (m_aliens[i][j]->GetBox() && bul.GetBox())
-        {
-          bul.Inform(*m_aliens[i][j]);
-          if(m_aliens[i][j]->GetHealth() <= bul.GetHealth())
+    for(int i = 0; i < m_aliens.size(); i++)
+      for(int j = 0; j < m_aliens[0].size(); j++)
+        if (m_aliens[i][j] != nullptr)
+          if (m_aliens[i][j]->GetBox() && bul.GetBox())
           {
-            *rate = m_aliens[i][j]->GetType();
+            bul.Inform(*m_aliens[i][j]);
 
-            delete m_aliens[i][j];
-            m_aliens[i][j] = nullptr;
-
-            --m_liveAliensCount;
-            if(m_liveAliensCount == 0)
-              return true;
-
-            if (j == 0 || m_aliens[i][j] == *(m_aliens[i].end() - 1))
+            if(m_aliens[i][j]->GetHealth() <= bul.GetHealth())
             {
-              Box2D * box = BoxInColumn(j);
-              if (box == nullptr)
-              {
-                int k = j;
-                while (box == nullptr)
-                {
-                  DeleteColumn(j);
-                  if (j == 0)
-                    box = BoxInColumn(0);
-                  else
-                    box = BoxInColumn(k - 1);
-                  if (k != 0 && box == nullptr)
-                    k --;
-                }
-                if (k == 0)
-                {
-                  m_border.SetLeft(box->left());
-                }
-                else
-                  m_border.SetRight(box->right());
-              }
-            }
+              *rate = m_aliens[i][j]->GetType();
 
-            if(i == 0)
-            {
-              while (BoxInLine(0) == nullptr)
+              delete m_aliens[i][j];
+              m_aliens[i][j] = nullptr;
+
+              --m_liveAliensCount;
+              if(m_liveAliensCount == 0)
+                return true;
+
+              if(BoxInColumn(j) == nullptr)
               {
-                m_aliens.erase(m_aliens.begin());
-                m_border.SetBottom(m_border.bottom() + ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
+                std::cout << "before " <<m_border << std::endl;
+                DeleteColumn(j);
+                if(j == 0)
+                  m_border.SetLeft(m_border.left() + ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
+                if(j == m_aliens[0].size() - 1)
+                {
+                  std::cout << "+";
+                  m_border.SetRight(m_border.right() - ( ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH) );
+                }
+                std::cout << "after " << m_border << std::endl << std::endl;
               }
+
+              if(BoxInLine(i) == nullptr)
+              {
+                m_aliens.erase(m_aliens.begin() + i);
+                if(i == 0)
+                  m_border.SetBottom(m_border.bottom() + ( ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT ) );
+              }
+
+
             }
+            else  // ec heals
+            {
+              m_aliens[i][j]->SetHealth(m_aliens[i][j]->GetHealth() - bul.GetHealth());
+            }
+            return true;
           }
-          else  // ec heals
-          {
-            m_aliens[i][j]->SetHealth(m_aliens[i][j]->GetHealth() - bul.GetHealth());
-          }
-          return true;
-        }
-      }
-    }
     return false;
   }
 
