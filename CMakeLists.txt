@@ -10,6 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
+find_package(Threads REQUIRED)
 
 FILE(GLOB ProjectHeaders "src/*.hpp")
 FILE(GLOB ProjectGameHeaders "src/gameclasses/*.hpp")
@@ -51,6 +52,9 @@ add_executable(
     ${ProjectDataStyles}
     ${ProjectDataTranslations}
 )
+
+#
+target_link_libraries (${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 # Qt modules
 qt5_use_modules(${PROJECT_NAME} Widgets OpenGL)

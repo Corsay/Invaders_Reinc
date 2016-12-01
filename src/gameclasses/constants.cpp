@@ -12,12 +12,12 @@ SimpleLogger & logger = SimpleLogger::Instance();
 // (need to send it as param to space2d)
 // ALIEN
 size_t ALIEN_COUNT       = 55;
-size_t ALIEN_SHOOT_SPEED = 100;   // one shoot every 100 frames
+size_t  ALIEN_SHOOT_SPEED = 100;   // one shoot every 100 frames
 // GUN
 size_t GUN_LIVES_START           = 3;
 bool   GUN_LIVES_INC_EVERY_LEVEL = true;
-size_t GUN_SHOOT_SPEED_DEFAULT   = 55;
-size_t GUN_SHOOT_SPEED           = 55;   // one shoot every 55 frames
+size_t  GUN_SHOOT_SPEED_DEFAULT   = 55;
+size_t  GUN_SHOOT_SPEED           = 55;   // one shoot every 55 frames
 bool   GUN_CAN_SHOOT             = true;
 // OBSTACLE
 size_t OBSTACLE_COUNT              = 4;

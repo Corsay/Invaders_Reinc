@@ -1,5 +1,6 @@
 #pragma once
 
+#include <thread>
 #include <chrono>
 #include <ctime>
 
@@ -212,15 +213,48 @@ public:
 
   void GameStep(int frame)
   {
-    //ChronoClock current = std::chrono::system_clock::now();
-    //std::chrono::duration<double> elapsed_seconds = current - start;
-    //std::cout << "elapsed time: " << elapsed_seconds.count() << " сек.\n";
+    /*std::thread waitingAlienThread
+    {
+      [this]()
+      {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        AlienShoot();
+      }
+    };
+    std::thread waitingGunThread
+    {
+      [this]()
+      {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        GUN_CAN_SHOOT = true;
+      }
+    };
+    waitingAlienThread.join();
+    waitingGunThread.join();*/
 
     // ship activity
-    //if (((int)elapsed_seconds.count()) % 10 == 0)
-    //  if (m_ship == nullptr)
-    //    m_ship = new Ship2D(Point2D{0, this->GetBox().top() - SHIP_HEIGHT}, Point2D{SHIP_WIDTH, this->GetBox().top()});
-    //std::cout << *m_ship << std::endl;
+    if (m_ship == nullptr)
+    {
+      /*
+      typedef std::chrono::high_resolution_clock Time;
+      typedef std::chrono::seconds ms;
+      typedef std::chrono::duration<float> fsec;
+      auto t0 = Time::now();
+      auto t1 = Time::now();
+      fsec fs = t1 - t0;
+      ms d = std::chrono::duration_cast<ms>(fs);
+      std::cout << fs.count() << "s\n";
+      std::cout << d.count() << "ms\n";
+      */
+
+      std::cout << std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() << std::endl;
+      std::cout << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start).count() << std::endl;
+
+      if (std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() >= 5)
+      {
+        m_ship = new Ship2D(Point2D{0, this->GetBox().top() - SHIP_HEIGHT}, Point2D{SHIP_WIDTH, this->GetBox().top()});
+      }
+    }
 
     // gun shoot delay
     if (!(frame % GUN_SHOOT_SPEED))
