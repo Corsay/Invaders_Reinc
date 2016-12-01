@@ -2,6 +2,7 @@
 
 #include "movedgameentity.hpp"
 #include "bullet.hpp"
+#include "alien.hpp"
 
 class Gun2D final : public MovedGameEntity2D
 {
@@ -69,7 +70,7 @@ public:
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
-    if(! (bul.GetBox() && this->GetBox()))
+    if (!(bul.GetBox() && this->GetBox()))
       return false;
 
     if (BONUS_GOD) return true;  // if god mode bonus

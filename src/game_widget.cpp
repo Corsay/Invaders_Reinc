@@ -97,6 +97,9 @@ void GameGLWidget::OffBonuses()
 {
   GUN_SHOOT_SPEED = GUN_SHOOT_SPEED_DEFAULT;
   BONUS_GOD = false;
+
+  // and set start level param
+  SHIP_STARTED = false;
 }
 
 void GameGLWidget::NewGame(float w, float h)
@@ -112,10 +115,10 @@ void GameGLWidget::NewGame(float w, float h)
   m_space = new Space2D(Point2D(0, 0), Point2D(w, h));
   // gun start position
   m_position = QVector2D
-    (
-      m_space->GetGun().GetBox().GetCenter().x(),
-      m_space->GetGun().GetBox().GetCenter().y()
-    );
+  (
+    m_space->GetGun().GetBox().GetCenter().x(),
+    m_space->GetGun().GetBox().GetCenter().y()
+  );
   m_time.start();
 }
 
@@ -255,7 +258,10 @@ void GameGLWidget::Update(float elapsedSeconds)
 void GameGLWidget::DeleteSpace()
 {
   if (m_space != nullptr)
+  {
+    m_space->clear();
     delete m_space;
+  }
   m_space = nullptr;
 }
 

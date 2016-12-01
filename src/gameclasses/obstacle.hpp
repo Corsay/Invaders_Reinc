@@ -104,6 +104,29 @@ public:
     return os;
   }
 
+  void log()
+  {
+    logger << "  _______________________________________" << std::endl;
+    logger << "  LOGING CURRENT OBSTACLE MATRIX CREATION" << std::endl;
+    logger << "  _______________________________________" << std::endl;
+    logger << this->GetCountOfRows() << "*" << this->GetCountOfColumn() << std::endl;
+    for (auto it = m_boxes.begin(); it != m_boxes.end(); ++it)
+    {
+      BoxVector vect = *it;
+      for(auto it2 = vect.begin(); it2 != vect.end(); ++it2)
+      {
+        if ((*it2) != nullptr)
+        {
+          logger << "  " << (**it2) << std::endl;
+        }
+      }
+      logger << std::endl;
+    }
+    logger << "  ___________________________________________" << std::endl;
+    logger << "  LOGING CURRENT OBSTACLE MATRIX CREATION END" << std::endl;
+    logger << "  ___________________________________________" << std::endl;
+  }
+
 private:
   void FillBoxMatrix(Point2D const & ld, Point2D const & rt, float totalHealth)
   {
@@ -148,6 +171,8 @@ private:
       }
       m_boxes.push_back(tempBoxVect);
     }
+
+    log();
   }
 
   BoxMatrix m_boxes;  // matrix of LifeGameEntityes

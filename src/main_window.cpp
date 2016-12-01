@@ -591,6 +591,10 @@ void MainWindow::ShortcutPause()
     // delete m_space, set it to nullptr
     if (!GAME_STARTED) m_windowGame->DeleteSpace();
   }
+  else
+  {
+    if (GAME_STARTED) m_widgetStacked->setCurrentIndex(2);
+  }
 }
 
 

@@ -98,6 +98,14 @@ public:
     return true; // allright
   }
 
+  void clear()
+  {
+    m_fromAlien.erase(m_fromAlien.begin(), m_fromAlien.end());
+    m_fromAlien.clear();
+    m_fromGun.erase(m_fromGun.begin(), m_fromGun.end());
+    m_fromGun.clear();
+  }
+
 private:
   BulletList m_fromAlien;
   BulletList m_fromGun;

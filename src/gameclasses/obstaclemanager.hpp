@@ -60,6 +60,38 @@ public:
     return false;
   }
 
+  void log()
+  {
+    logger << "_______________________________" << std::endl;
+    logger << "_______________________________" << std::endl;
+    logger << "_______________________________" << std::endl;
+    logger << "LOGING OBSTACLE VECTOR CREATION" << std::endl;
+    logger << "_______________________________" << std::endl;
+    logger << GetCountOObstacle() << std::endl;
+    for (auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
+    {
+      if ((*it) != nullptr)
+      {
+        logger << (**it) << std::endl;
+      }
+      logger << std::endl;
+    }
+    logger << "___________________________________" << std::endl;
+    logger << "LOGING OBSTACLE VECTOR CREATION END" << std::endl;
+    logger << "___________________________________" << std::endl;
+    logger << "___________________________________" << std::endl;
+    logger << "___________________________________" << std::endl;
+    logger << std::endl << std::endl << std::endl << std::endl;
+  }
+
+  void clear()
+  {
+    for(int i = 0; i < m_obstacles.size(); ++i)
+      delete m_obstacles[i];
+    m_obstacles.clear();
+  }
+
+private:
   void CreateObstacleVector(size_t const countObstacle)
   {
     m_obstacles.clear();
@@ -83,14 +115,9 @@ public:
         )
       );
     }
-  }
-  void clear()
-    {
-      for(int i=0; i<m_obstacles.size(); i++)
-        delete m_obstacles[i];
-      m_obstacles.clear();
-    }
 
-private:
+    log();
+  }
+
   ObstacleVector m_obstacles;          // matrix of Obstacles
 };

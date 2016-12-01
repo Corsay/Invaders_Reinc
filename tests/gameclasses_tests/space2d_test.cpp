@@ -5,8 +5,8 @@
 
 TEST(space2d_test, test_construction)
 {
-  // constructor
-  Space2D s1;
+  // copy constructor
+  Space2D s1 = Space2D({0,0}, {0,0});;
   EXPECT_EQ(s1.CheckGameState(), 0);
 
   // Constructors with parameters.

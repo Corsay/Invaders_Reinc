@@ -69,10 +69,10 @@ public:
   inline float const right() const  { return m_rightTop.x(); }   // x max
   inline float const top() const    { return m_rightTop.y(); }   // y max
   inline float const bottom() const { return m_leftBottom.y(); } // y min
-  inline SetLeft(float newCoord)  { m_leftBottom.SetX(newCoord); } // x min
-  inline SetRight(float newCoord) { m_rightTop.SetX(newCoord); }   // x max
-  inline SetTop(float newCoord)    { m_rightTop.SetY(newCoord);; }   // y max
-  inline SetBottom(float newCoord){ m_leftBottom.SetY(newCoord); } // y min
+  inline void SetLeft(float newCoord)  { m_leftBottom.SetX(newCoord); } // x min
+  inline void SetRight(float newCoord) { m_rightTop.SetX(newCoord); }   // x max
+  inline void SetTop(float newCoord)   { m_rightTop.SetY(newCoord);; }  // y max
+  inline void SetBottom(float newCoord){ m_leftBottom.SetY(newCoord); } // y min
 
 
   // Setters
