@@ -160,6 +160,7 @@ private:
   QGridLayout * m_layoutSettings = nullptr;
     // widget
   QWidget * m_widgetSettings = nullptr;
+  QWidget * m_widgetRecords = nullptr;
   // GAME
   GameWindow * m_windowGame = nullptr;
   // WINDOW  

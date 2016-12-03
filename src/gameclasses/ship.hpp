@@ -18,15 +18,16 @@ public:
   ~Ship2D() override = default;
 
   // Constructors with parameters.
-  Ship2D(Point2D const & leftBottom, Point2D const & rightTop)
+  Ship2D(Point2D const & leftBottom, Point2D const & rightTop, short direct = 1)
     :MovedGameEntity2D(leftBottom, rightTop)
   {
     DefaultShipSetStartValue();
+    m_direction = direct;
   }
 
-  Ship2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speed)
+  Ship2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speed,  short direct = 1)
     :MovedGameEntity2D(leftBottom, rightTop, health, speed)
-  {}
+  {m_direction = direct;}
 
   // copy constructor and assignment operator
   Ship2D(Ship2D const & obj)
@@ -51,7 +52,10 @@ public:
   // Capabilities
   void MoveShip()
   {
-    this->GetBox().HorizontalShift(SHIP_SPEED_START);
+    if(m_int_timer_start != 0)
+      m_int_timer_start--;
+    else
+      this->GetBox().HorizontalShift(m_direction * SHIP_SPEED_START);
   }
 
   void RandomBonus()
@@ -72,7 +76,7 @@ public:
     bul.Inform(*this);
     this->SetHealth(this->GetHealth() - bul.GetHealth());
     if(this->GetHealth() <= 0)
-    {
+    {      
       RandomBonus();
     }
     return true;
@@ -96,5 +100,9 @@ private:
   {
     SetHealth(SHIP_HEALTH_START);
     SetSpeed(SHIP_SPEED_START);
+    m_int_timer_start = 1200 + rand()%1200;
+    // не чаще чем в 1000/60=20 секунд, не реже чем в 40 секунд
   }
+  short m_direction = 1;
+  short m_int_timer_start = 0;
 };

@@ -79,3 +79,4 @@ extern float SHIP_HEIGHT;
 // GAME
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;
+const int BOOM_TIMER = 15;

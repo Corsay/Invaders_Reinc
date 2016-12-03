@@ -249,6 +249,7 @@ MainWindow::MainWindow()
   m_widgetStacked->addWidget(m_widgetMenu);
   m_widgetStacked->addWidget(m_widgetSettings);
   m_widgetStacked->addWidget(m_windowGame);
+  //m_widgetStacked->addWidget(m_widgetRecords);
   m_widgetStacked->setCurrentIndex(0);
 
   // QShortcuts

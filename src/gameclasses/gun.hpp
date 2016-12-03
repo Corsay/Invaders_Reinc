@@ -58,6 +58,7 @@ public:
   }
 
 
+
   // Getters
   inline size_t const GetLives() const { return m_lives; }
   inline int const GetRate() const   { return m_gunRate; }

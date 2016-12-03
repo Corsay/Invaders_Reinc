@@ -6,11 +6,35 @@
 
 using ChronoClock = std::chrono::time_point<std::chrono::system_clock>;
 
+
 #include "ship.hpp"
 #include "gun.hpp"
 #include "alienmanager.hpp"
 #include "bulletmanager.hpp"
 #include "obstaclemanager.hpp"
+
+const int BOOM_SIZE = 25;
+
+struct BoomElement
+{
+  Point2D m_place;
+  int m_timer;
+  BoomElement(Point2D const & p)
+  {
+    m_place = p;
+    m_timer = BOOM_TIMER;
+  }
+  int GetWidth()
+  {
+    return int( BOOM_SIZE + BOOM_SIZE * sin(m_timer*M_PI/BOOM_TIMER) );
+  }
+  int GetHeigth()
+  {
+    return int( BOOM_SIZE + BOOM_SIZE * sin(m_timer*M_PI/BOOM_TIMER) );
+  }
+};
+
+typedef std::list<BoomElement> BoomList;
 
 class Space2D final : public GameEntity2D
 {
@@ -30,10 +54,19 @@ public:
 
     start = std::chrono::system_clock::now();
     m_ship = nullptr;
-
+    if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100)
+        / (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) < ALIEN_COUNT/5)
+    {
+      ALIEN_HORIZONTAL_DISTANCE = 0;
+      if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / ALIEN_WIDTH  < ALIEN_COUNT/5)
+      {
+          ALIEN_WIDTH = (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / (ALIEN_COUNT/5);
+      }
+    }
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
     m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
+    srand(time(0));
   }
 
   // Getters
@@ -44,6 +77,8 @@ public:
   ObstacleVector const & GetObstacleVector() const {return m_obstacleManager->GetObstacleVector(); }
   BulletList const & GetBulletFromGun() const {return m_bulletManager->GetBulletsFromGunList(); }
   BulletList const & GetBulletFromAlien() const {return m_bulletManager->GetBulletsFromAliensList(); }
+  BoomList & GetBoomList() { return m_boomList; }
+
 
   // Capabilities
   void SetGunPozition(float const x, float const y)
@@ -127,22 +162,29 @@ public:
       {
         itList.push_back(it);
         m_gun->SetRate(m_gun->GetRate() + rate);
+        m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
       else if (m_obstacleManager->CheckIntersection(*it))
       {
         itList.push_back(it);
+        m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
-      else
-      {
-        for (auto it2 = bulletFromAlien.begin(); it2 != bulletFromAlien.end(); ++it2)
+      else if (m_ship != nullptr)
+        if(m_ship->CheckIntersection(*it))
         {
+          delete m_ship;
+          m_ship = nullptr;
+          itList.push_back(it);
+          m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
+        }
+      else
+        for (auto it2 = bulletFromAlien.begin(); it2 != bulletFromAlien.end(); ++it2)
           if((*it).GetBox() && it2->GetBox())
           {
             itList.push_back(it);
             itList2.push_back(it2);
+            m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
           }
-        }
-      }
     }
 
     // erase itList
@@ -161,12 +203,15 @@ public:
     for(auto it = bulletFromAlien.begin(); it != bulletFromAlien.end() && m_gun->GetLives() > 0; ++it)
     {
       if (m_obstacleManager->CheckIntersection(*it))
+      {
         itList.push_back(it);
+        m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().bottom()} ) );
+      }
       else if(m_gun->CheckIntersection(*it))
+      {
         itList.push_back(it);
-      else if (m_ship != nullptr)
-        if(m_ship->CheckIntersection(*it))
-          itList.push_back(it);
+        m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().bottom()} ) );
+      }
     }
 
     // erase itList
@@ -250,9 +295,23 @@ public:
       //std::cout << std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() << std::endl;
       //std::cout << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start).count() << std::endl;
 
-      if (std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() >= 5)
+      /*if (std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() >= 5)
+      {*/
+
+        if(rand() & 1)
+          m_ship = new Ship2D(Point2D{- SHIP_WIDTH ,this->GetBox().top() - SHIP_HEIGHT - 5}, Point2D{0, this->GetBox().top()}, 1);
+        else
+          m_ship = new Ship2D(Point2D{LAST_WINDOW_HORIZONTAL_SIZE, this->GetBox().top() - SHIP_HEIGHT - 5}, Point2D{LAST_WINDOW_HORIZONTAL_SIZE + SHIP_WIDTH, this->GetBox().top() - 5}, -1);
+      //}
+    }
+
+    if(m_ship != nullptr)
+    {
+      m_ship->MoveShip();
+      if(!(m_ship->GetBox() && this->GetBox()))
       {
-        m_ship = new Ship2D(Point2D{0, this->GetBox().top() - SHIP_HEIGHT}, Point2D{SHIP_WIDTH, this->GetBox().top()});
+        delete m_ship;
+        m_ship = nullptr;
       }
     }
 
@@ -262,7 +321,7 @@ public:
 
     // Bullets activity
     BulletsMove(this->GetBox().GetHeight());
-    m_ship->MoveShip();
+
 
     // alien activity
     if(!(frame % ALIEN_SHOOT_SPEED))                // ALIEN SHOOT delay
@@ -294,4 +353,5 @@ private:
   Alien2DManager * m_alienManager = nullptr;            // one alien manager
   Obstacle2DManager * m_obstacleManager = nullptr;      // one obstacle manager
   Bullet2DManager * m_bulletManager = nullptr;          // one bullet manager
+  BoomList m_boomList;
 };

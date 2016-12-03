@@ -58,6 +58,7 @@ public:
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul, int * rate)
   {
+    static int maxRightIndex = m_aliens[0].size() - 1, minLeftIndex = 0;
     for(int i = 0; i < m_aliens.size(); i++)
       for(int j = 0; j < m_aliens[0].size(); j++)
         if (m_aliens[i][j] != nullptr)
@@ -78,18 +79,28 @@ public:
 
               if(BoxInColumn(j) == nullptr)
               {
-                std::cout << "before " <<m_border << std::endl;
-                DeleteColumn(j);
-                if(j == 0)
-                  m_border.SetLeft(m_border.left() + ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
-                if(j == m_aliens[0].size() - 1)
+                if(j == minLeftIndex)
                 {
-                  std::cout << "+";
-                  m_border.SetRight(m_border.right() - ( ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH) );
+                   int k = j;
+                   do
+                   {
+                     m_border.SetLeft(m_border.left() + ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
+                     k++;
+                     minLeftIndex++;
+                   }while(BoxInColumn(k) == nullptr);
                 }
-                std::cout << "after " << m_border << std::endl << std::endl;
+                if(j == maxRightIndex)
+                {
+                   int k = j;
+                   do
+                   {
+                     m_border.SetRight(m_border.right() - ( ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH) );
+                     k--;
+                     maxRightIndex--;
+                   }while(BoxInColumn(k) == nullptr);
+                   std::cout << m_border <<std::endl;
+                }
               }
-
               if(BoxInLine(i) == nullptr)
               {
                 m_aliens.erase(m_aliens.begin() + i);
@@ -110,47 +121,45 @@ public:
 
   bool CheckIntersection(Gun2D * gun)
   {
-    int i, j;
-    // get shooted alien position
-    i = (gun->GetBox().top() - (m_border.bottom() + ALIEN_HEIGHT) + ALIEN_VERTICAL_DISTANCE) / (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT);
-    j = (gun->GetBox().left() - m_border.left() + ALIEN_HORIZONTAL_DISTANCE) / (ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
-    if (i >= 0 && j >= 0 && i < m_aliens.size() && j < m_aliens[i].size())
-    {
-      if (m_aliens[i][j] != nullptr)
-      {
-        if (m_aliens[i][j]->GetBox() && gun->GetBox())
+    for(int i = 0; i < m_aliens.size(); i++)
+      for(int j = 0; j < m_aliens[0].size(); j++)
+        if (i >= 0 && j >= 0 && i < m_aliens.size() && j < m_aliens[i].size())
         {
-          if (!(gun->GetBox() && m_aliens[i][j]->GetBox()))
-            return false;
-
-          gun->SetRate(gun->GetRate() + m_aliens[i][j]->GetType());
-
-          if (BONUS_GOD)
+          if (m_aliens[i][j] != nullptr)
           {
-            delete m_aliens[i][j];
-            m_aliens[i][j] = nullptr;
-            --m_liveAliensCount;
-            return true;  // if god mode bonus
+            if (m_aliens[i][j]->GetBox() && gun->GetBox())
+            {
+              if (!(gun->GetBox() && m_aliens[i][j]->GetBox()))
+                return false;
+
+              gun->SetRate(gun->GetRate() + m_aliens[i][j]->GetType());
+
+              if (BONUS_GOD)
+              {
+                delete m_aliens[i][j];
+                m_aliens[i][j] = nullptr;
+                --m_liveAliensCount;
+                return true;  // if god mode bonus
+              }
+
+              // if intersect
+              gun->SetHealth(gun->GetHealth() - m_aliens[i][j]->GetHealth());
+              if (gun->GetHealth() <= 0)
+              {
+                gun->SetLives(gun->GetLives() - 1);
+                if (gun->GetLives() > 0) gun->SetHealth(GUN_HEALTH_START);
+              }
+
+              logger << *m_aliens[i][j] << std::endl << *gun << std::endl;
+
+              delete m_aliens[i][j];
+              m_aliens[i][j] = nullptr;
+              --m_liveAliensCount;
+
+              return true;
+            }
           }
-
-          // if intersect
-          gun->SetHealth(gun->GetHealth() - m_aliens[i][j]->GetHealth());
-          if (gun->GetHealth() <= 0)
-          {
-            gun->SetLives(gun->GetLives() - 1);
-            if (gun->GetLives() > 0) gun->SetHealth(GUN_HEALTH_START);
-          }
-
-          logger << *m_aliens[i][j] << std::endl << *gun << std::endl;
-
-          delete m_aliens[i][j];
-          m_aliens[i][j] = nullptr;
-          --m_liveAliensCount;
-
-          return true;
         }
-      }
-    }
     return false;
   }
 
@@ -260,7 +269,9 @@ private:
   {
     for (int b = 0; b < m_aliens.size(); b++)
       if (m_aliens[b][j] != nullptr)
-        return &(m_aliens[b][j]->GetBox());
+      {
+        return &(m_aliens[b][j]->GetBox());        
+      }
     return nullptr;
   }
 

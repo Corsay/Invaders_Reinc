@@ -69,6 +69,7 @@ void GameGLWidget::initializeGL()
   m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
 
   m_heartTexture = new QOpenGLTexture(QImage("data/images/heart.png"));
+  m_boomTexture = new  QOpenGLTexture(QImage("data/images/boom.png"));
 
   // check textures
   if (m_backgroundPicture == nullptr || m_gunTexture == nullptr || m_alienPirateTexture == nullptr ||
@@ -203,6 +204,7 @@ void GameGLWidget::paintGL()
     QString rate;
     rate.setNum(m_space->GetGun().GetRate());
     painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
+
 
     painter.end();
     GAME_STARTED = false;
@@ -409,6 +411,7 @@ void GameGLWidget::RenderAlien()
       }
     }
   }
+  //painter.end();
 }
 
 void GameGLWidget::RenderShip()
@@ -522,6 +525,27 @@ void GameGLWidget::RenderInformationString()
     );
   }
 }
+void GameGLWidget::RenderBoom()
+{
+  BoomList & boom = m_space->GetBoomList();
+  std::vector< BoomList::iterator > boomForDel;
+  for(auto it = boom.begin(); it != boom.end(); ++it)
+  {
+      m_texturedRect->Render
+      (
+        m_boomTexture,
+        QVector2D(it->m_place.x(), it->m_place.y()),
+        QSize(it->GetWidth(), it->GetHeigth()),
+        m_screenSize
+      );
+      it->m_timer--;
+      if(it->m_timer == 0)
+        boomForDel.push_back(it);
+  }
+  for(auto it = boomForDel.begin(); it != boomForDel.end(); ++it)
+    boom.erase(*it);
+
+}
 
 void GameGLWidget::Render()
 {
@@ -532,4 +556,5 @@ void GameGLWidget::Render()
   this->RenderObstacle();
   this->RenderBullet();
   this->RenderInformationString();
+  this->RenderBoom();
 }

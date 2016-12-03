@@ -46,6 +46,7 @@ protected:
   void RenderObstacle();
   void RenderBullet();
   void RenderInformationString();
+  void RenderBoom();
   void Render();
 
   void keyPressEvent(QKeyEvent * e) override;
@@ -71,6 +72,7 @@ private:
   QOpenGLTexture * m_bulletFromGunTexture = nullptr;
   QOpenGLTexture * m_bulletFromAlienTexture = nullptr;
   QOpenGLTexture * m_heartTexture = nullptr;
+  QOpenGLTexture * m_boomTexture = nullptr;
 
   TexturedRect * m_texturedRect = nullptr;
   Space2D * m_space = nullptr;

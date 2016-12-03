@@ -44,7 +44,7 @@ float ALIEN_SPEED_SHOOT_START = 1.2f;
 float ALIEN_WIDTH             = 45.0f;
 float ALIEN_HEIGHT            = 35.0f;
 float ALIEN_BOX_LEFT            = 100.0f;
-float ALIEN_BOX_TOP             = 400.0f;
+float ALIEN_BOX_TOP             = 380.0f;
 float ALIEN_HORIZONTAL_DISTANCE = 12.0f;
 float ALIEN_VERTICAL_DISTANCE   = 5.0f;
 float ALIENT_HORIZONTAL_STEP    = 10.0f;
@@ -72,7 +72,7 @@ float BULLET_WIDTH        = 10.0f;
 float BULLET_HEIGHT       = 25.0f;
 // SHIP
 float SHIP_HEALTH_START   = 50.0f;
-float SHIP_SPEED_START    = 5.0f;
+float SHIP_SPEED_START    = 3.0f;
 float SHIP_WIDTH        = 60.0f;
 float SHIP_HEIGHT       = 30.0f;
 // GAME
@@ -114,6 +114,10 @@ void ChangeConstants(float w, float h)
   BULLET_WIDTH        *= wk;
   BULLET_HEIGHT       *= hk;
 
+  SHIP_WIDTH        *= wk;
+  SHIP_HEIGHT       *= hk;
+
+  SHIP_SPEED_START  *= wk;
   SHIP_WIDTH        *= wk;
   SHIP_HEIGHT       *= hk;
 
