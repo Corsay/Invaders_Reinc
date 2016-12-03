@@ -1,5 +1,7 @@
 #include "logger.hpp"
 #include "constants.hpp"
+#include <vector>
+#include <QString>
 
 std::string onlyFile(std::string longName)
 {
@@ -78,6 +80,27 @@ float SHIP_HEIGHT       = 30.0f;
 // GAME
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;
 float LAST_WINDOW_HORIZONTAL_SIZE = 800.0f;
+
+int MAX_COUNT_RECORDS = 5;
+
+std::vector< std::vector <QString> > recordsArray;
+int GetMinimalRecord()
+{
+  if(recordsArray.size() == 0)
+    return 0;
+  else
+  {
+    std::string rec = recordsArray[recordsArray.size()-1][1].toStdString();
+    int val = 0;
+    for (int i = 0; i < rec.size(); ++i)
+    {
+      val *= 10;
+      val += rec[i] - '0';
+    }
+    return val;
+  }
+
+}
 
 void ChangeConstants(float w, float h)
 {

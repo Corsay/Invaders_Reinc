@@ -244,13 +244,32 @@ MainWindow::MainWindow()
 
   // GAME
   m_windowGame = new GameWindow(m_widgetStacked);
+  //RECORDS
+  ReadJsonRecords(recordsArray);
+
+  m_widgetRecords = new QWidget;
+  QGridLayout* table = new QGridLayout;
+  table->setAlignment(Qt::AlignCenter);
+  table->setColumnStretch(0, m_size.width()/100*30);
+
+  for(int i = 0; i < recordsArray.size(); i++)
+  {
+    table->addWidget(new QLabel(recordsArray[i][0]), i, 0);
+    table->addWidget(new QLabel(recordsArray[i][1]), i, 1);
+  }
+
+
+  m_widgetRecords->setLayout(table);
+
 
   // fill stackedWidget
   m_widgetStacked->addWidget(m_widgetMenu);
   m_widgetStacked->addWidget(m_widgetSettings);
   m_widgetStacked->addWidget(m_windowGame);
-  //m_widgetStacked->addWidget(m_widgetRecords);
+  m_widgetStacked->addWidget(m_widgetRecords);
   m_widgetStacked->setCurrentIndex(0);
+
+
 
   // QShortcuts
   m_shortcutGamePause = new QShortcut(m_widgetStacked);
@@ -701,7 +720,56 @@ void MainWindow::CheckoutToMenu()
   if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
   else m_widgetStacked->setCurrentIndex(0);
 }
+void MainWindow::WriteJsonRecord(std::vector< std::vector< QString > >& rezults)
+{
+  Json::Value records;
+  QString str;
+  if( rezults.size() < MAX_COUNT_RECORDS )
+    str.setNum(rezults.size());
+  else
+    str.setNum(MAX_COUNT_RECORDS);
+  records["countRecords"] = str.toStdString();
 
+  for(int i = 0; i < MAX_COUNT_RECORDS && i < rezults.size(); i++)
+  {
+    QString str;
+    str.setNum(i);
+    records[str.toStdString()]["name"] = rezults[i][0].toStdString();
+    records[str.toStdString()]["rezult"] = rezults[i][1].toStdString();
+  }
+
+  std::ofstream settingsFile;
+  settingsFile.open("data/records.json");
+  if (settingsFile.is_open())
+  {
+    Json::StyledWriter styledWriter;
+    settingsFile << styledWriter.write(records);
+    settingsFile.close();
+  }
+
+}
+
+bool MainWindow::ReadJsonRecords(std::vector< std::vector< QString > > & rezults)
+{
+  rezults.clear();
+  Json::Value records;
+  std::ifstream file("data/records.json");
+  if (file.is_open())
+  {
+    file >> records;
+    file.close();
+  }else return false; // not loaded
+
+  int countRecords = records["countRecords"].asCString()[0] - 48;
+  for(int i = 0; i < countRecords; i++)
+  {
+    QString str;
+    str.setNum(i);
+    rezults.push_back( std::vector<QString>{ QString(records[str.toStdString()]["name"].asCString()),
+                                                 QString(records[str.toStdString()]["rezult"].asCString()) } );
+  }
+  return true;
+}
 // save/load settings
 void MainWindow::WriteJson()
 {
@@ -736,6 +804,8 @@ void MainWindow::WriteJson()
     settingsFile.close();
   }
 }
+
+
 
 bool MainWindow::ReadJson()
 {

@@ -15,7 +15,7 @@
 #include <QTranslator>
 #include <QStackedWidget>
 #include <QDialog>
-
+#include <QTableWidget>
 #include "window_constants.hpp"
 #include "game_window.hpp"
 
@@ -63,6 +63,8 @@ protected:
   // MENU
   void ShowMenuItems();
   // settings save/load
+  void WriteJsonRecord(std::vector<std::vector<QString> > & rezults );
+  bool ReadJsonRecords(std::vector< std::vector< QString > > & rezults);
   void WriteJson();
   bool ReadJson();
   void WriteXml();
@@ -168,4 +170,5 @@ private:
   QTranslator m_translator;
   QSize m_size;
   QString m_style;
+
 };

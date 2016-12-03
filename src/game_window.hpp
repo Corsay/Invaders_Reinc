@@ -25,7 +25,6 @@ public:
   void SetKey(KeyTypes type, QKeySequence key);
 
   QStackedWidget * m_stackedWidget = nullptr;
-
 private:
   QTimer * m_timer = nullptr;
   QGridLayout * m_layout = nullptr;

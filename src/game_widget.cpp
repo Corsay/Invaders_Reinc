@@ -195,19 +195,24 @@ void GameGLWidget::paintGL()
   }
   else if (GameState == 2)  // game over gun died
   {
-    QPainter painter;
-    painter.begin(this);
+    if(m_space->GetGun().GetRate() > GetMinimalRecord() )
+      m_gameWindow->m_stackedWidget->setCurrentIndex(3);
+    else
+    {
+      QPainter painter;
+      painter.begin(this);
 
-    painter.setPen(Qt::white);
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2 - 25, "Game over.");
+      painter.setPen(Qt::white);
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2 - 25, "Game over.");
 
-    QString rate;
-    rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
+      QString rate;
+      rate.setNum(m_space->GetGun().GetRate());
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
 
 
-    painter.end();
-    GAME_STARTED = false;
+      painter.end();
+      GAME_STARTED = false;
+    }
   }
 }
 
@@ -525,6 +530,7 @@ void GameGLWidget::RenderInformationString()
     );
   }
 }
+
 void GameGLWidget::RenderBoom()
 {
   BoomList & boom = m_space->GetBoomList();

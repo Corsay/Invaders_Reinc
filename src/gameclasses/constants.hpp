@@ -1,5 +1,7 @@
 #pragma once
 #include "logger.hpp"
+#include <vector>
+#include <QString>
 extern SimpleLogger & logger;
 
 std::string onlyFile(std::string);
@@ -34,6 +36,9 @@ extern float  GAME_PADDING_BOTTOM;
 extern bool   GAME_STARTED;
 // BONUSES
 extern bool   BONUS_GOD;
+
+extern std::vector< std::vector <QString> > recordsArray;
+extern int GetMinimalRecord();
 
 // const (setted value)
 // DEFAULT
@@ -80,3 +85,4 @@ extern float SHIP_HEIGHT;
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;
 const int BOOM_TIMER = 15;
+extern int MAX_COUNT_RECORDS;
