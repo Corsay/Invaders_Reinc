@@ -47,6 +47,7 @@ MainWindow::MainWindow()
   m_pbExit = new QPushButton();
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
     {
+      if (SOUND_MENU_ON) m_soundButtonClick->play();
       ShowDialog(DIALOG_ON_SUBMIT_CLOSE, DialogTypes::OnSubmitClose);
     });
   m_pbMenuNewGame->setIcon(QIcon("data/images/icons/begin.ico"));
@@ -83,6 +84,7 @@ MainWindow::MainWindow()
   m_pbSetDefault = new QPushButton();
   connect(m_pbSetDefault, &QAbstractButton::clicked, [this]()
     {
+      if (SOUND_MENU_ON) m_soundButtonClick->play();
       m_settingsChanged = true;
       SetDefaultSettings();
     });
@@ -267,6 +269,9 @@ MainWindow::MainWindow()
   m_shortcutGamePause = new QShortcut(m_widgetStacked);
   connect(m_shortcutGamePause, SIGNAL(activated()), this, SLOT(ShortcutPause()));
 
+  // QSoundEffect
+  InitSound();
+
   // default button settings (game not started)
   ShowMenuItems();
 
@@ -275,6 +280,19 @@ MainWindow::MainWindow()
   SetDefaultSettings();
   if (!ReadXml()) ReadJson();
   m_settingsChanged = false;
+}
+
+void MainWindow::InitSound()
+{
+  m_soundButtonClick = new QSoundEffect;
+  m_soundButtonClick->setSource(QUrl::fromLocalFile("data/audio/menu_click.wav"));
+
+  SetVolume();
+}
+
+void MainWindow::SetVolume()
+{
+   m_soundButtonClick->setVolume(SOUND_MENU_VOLUME);
 }
 
 void MainWindow::MoveWindowToCenter()
@@ -307,6 +325,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialogYes->resize(150,33);
       connect(pbDialogYes, &QAbstractButton::clicked, [this, about]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           this->m_settingsChanged = false;
           this->m_widgetStacked->setCurrentIndex(0);
@@ -318,6 +337,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialogNo->resize(150,33);
       connect(pbDialogNo, &QAbstractButton::clicked, [this, about]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           this->m_settingsChanged = false;
           this->m_widgetStacked->setCurrentIndex(0);
@@ -328,6 +348,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialogAbort->resize(150,33);
       connect(pbDialogAbort, &QAbstractButton::clicked, [this, about]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           about->close();
         });
@@ -357,6 +378,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialogYes->resize(150,50);
       connect(pbDialogYes, &QAbstractButton::clicked, [this, about, msg]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           GAME_STARTED = false;
           ShowMenuItems();
@@ -370,6 +392,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialogNo->resize(150,50);
       connect(pbDialogNo, &QAbstractButton::clicked, [this, about, msg]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           about->close();
         });
@@ -394,6 +417,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialog->resize(250,100);
       connect(pbDialog, &QAbstractButton::clicked, [this, about]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           about->close();
         });
@@ -414,6 +438,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       pbDialog->resize(250,100);
       connect(pbDialog, &QAbstractButton::clicked, [this, about]()
         {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
           this->setDisabled(false);
           about->close();
         });
@@ -625,6 +650,8 @@ void MainWindow::ShowMenuItems()
 // menu button slots
 void MainWindow::NewGame()
 {
+  if (SOUND_MENU_ON) m_soundButtonClick->play();
+
   if (GAME_STARTED)  // END GAME
   {
     ShowDialog(DIALOG_ON_SUBMIT_BREAK , DialogTypes::OnSubmitClose);
@@ -641,11 +668,15 @@ void MainWindow::NewGame()
 
 void MainWindow::ContinueGame()
 {
+  if (SOUND_MENU_ON) m_soundButtonClick->play();
+
   m_widgetStacked->setCurrentIndex(2);
 }
 
 void MainWindow::CheckoutToSettings()
 {
+  if (SOUND_MENU_ON) m_soundButtonClick->play();
+
   m_widgetStacked->setCurrentIndex(1);
 }
 
@@ -654,6 +685,8 @@ void MainWindow::CheckoutToSettings()
 // settings button slots
 void MainWindow::CheckoutToMenu()
 {
+  if (SOUND_MENU_ON) m_soundButtonClick->play();
+
   if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
   else m_widgetStacked->setCurrentIndex(0);
 }
@@ -1008,6 +1041,8 @@ void MainWindow::SetDefaultSettings()
 // load settings from file
 void MainWindow::LoadSettings()
 {
+  if (SOUND_MENU_ON) m_soundButtonClick->play();
+
   if (ReadXml()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
   else if (ReadJson()) ShowDialog(DIALOG_ON_SETTINGS_LOADED, DialogTypes::OnSettingsLoaded);
   else ShowDialog(DIALOG_ON_SETTINGS_LOAD_ERROR, DialogTypes::OnSettingsLoadError);
@@ -1017,6 +1052,8 @@ void MainWindow::LoadSettings()
 // save settings to file
 void MainWindow::SaveSettings()
 {
+  if (SOUND_MENU_ON) m_soundButtonClick->play();
+
   WriteXml();
   WriteJson();
   m_settingsChanged = false;

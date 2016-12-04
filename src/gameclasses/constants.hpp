@@ -7,9 +7,13 @@ extern SimpleLogger & logger;
 std::string onlyFile(std::string);
 void ChangeConstants(float w, float h);
 
-using namespace std;
-
 #define WHERE "File: " << onlyFile( __FILE__ ) << " Function: " << __FUNCTION__ << " Line:" << __LINE__
+
+// SOUND
+extern bool SOUND_MENU_ON;
+extern bool SOUND_GAME_ON;
+extern float SOUND_MENU_VOLUME;
+extern float SOUND_GAME_VOLUME;
 
 // Game parameters management
 // ALIEN
@@ -95,8 +99,9 @@ extern float SHIP_HEALTH_START;
 extern float SHIP_SPEED_START;
 extern float SHIP_WIDTH;
 extern float SHIP_HEIGHT;
+// BOOM
+const int BOOM_TIMER = 15;
 // GAME
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;
-const int BOOM_TIMER = 15;
 extern int MAX_COUNT_RECORDS;

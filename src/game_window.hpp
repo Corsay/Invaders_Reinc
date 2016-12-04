@@ -21,6 +21,7 @@ public:
   void NewGame();
 
   void DeleteSpace();
+  void SetVolume();
 
   void SetKey(KeyTypes type, QKeySequence key);
 

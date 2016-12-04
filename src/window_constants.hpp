@@ -19,7 +19,6 @@ static QString DIALOG_BUTTON_YES               = "Yes";
 static QString DIALOG_BUTTON_NO                = "No";
 static QString DIALOG_BUTTON_ABORT             = "Abort";
 
-
 // for key change
 enum KeyTypes
 {

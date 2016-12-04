@@ -10,6 +10,12 @@ std::string onlyFile(std::string longName)
 }
 SimpleLogger & logger = SimpleLogger::Instance();
 
+// SOUND
+bool SOUND_MENU_ON = true;
+bool SOUND_GAME_ON = true;
+float SOUND_MENU_VOLUME = 0.25;
+float SOUND_GAME_VOLUME = 0.25;
+
 // Game parameters management
 // (need to send it as param to space2d)
 // ALIEN
@@ -94,8 +100,8 @@ float SHIP_HEIGHT       = 30.0f;
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;
 float LAST_WINDOW_HORIZONTAL_SIZE = 800.0f;
 
-int MAX_COUNT_RECORDS = 5;
 
+int MAX_COUNT_RECORDS = 5;
 std::vector< std::vector <QString> > recordsArray;
 int GetMinimalRecord()
 {

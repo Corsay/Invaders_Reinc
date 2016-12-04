@@ -33,9 +33,26 @@ GameGLWidget::GameGLWidget(GameWindow * mw)
 GameGLWidget::~GameGLWidget()
 {
   makeCurrent();
+  // textures
   for(unsigned int i = 0; i < m_starTexture.size(); i++)
     delete m_starTexture[i];
+  for(unsigned int i = 0; i < m_bonusTexture.size(); i++)
+    delete m_bonusTexture[i];
+  delete m_shipTexture;
+  delete m_gunTexture;
+  delete m_alienPirateTexture;
+  delete m_alienRaiderTexture;
+  delete m_alienBombardierTexture;
+  delete m_obstacleTexture;
+  delete m_backgroundPicture;
+  delete m_partObstacleTexture;
+  delete m_bulletFromGunTexture;
+  delete m_bulletFromAlienTexture;
+  delete m_heartTexture;
+  delete m_boomTexture;
+  // main
   delete m_texturedRect;
+  DeleteSpace();
   doneCurrent();
 }
 
@@ -46,6 +63,7 @@ void GameGLWidget::initializeGL()
   m_texturedRect = new TexturedRect();
   m_texturedRect->Initialize(this);
 
+  // TEXTURES
   m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background3.png"));
 
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star11.png")));
@@ -271,6 +289,11 @@ void GameGLWidget::DeleteSpace()
   m_space = nullptr;
 }
 
+void GameGLWidget::SetVolume()
+{
+  m_space->SetVolume();
+}
+
 // KEY EVENTS
 // Set new key bind
 void GameGLWidget::SetKey(KeyTypes type, QKeySequence key)
@@ -315,11 +338,6 @@ void GameGLWidget::keyPressEvent(QKeyEvent * e)
       GUN_CAN_SHOOT = false;
       m_space->GunShoot();
     }
-  }
-
-  else if (QKeySequence(e->key()) == m_keyGamePause)
-  {
-    //
   }
 }
 

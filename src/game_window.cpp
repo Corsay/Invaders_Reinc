@@ -27,6 +27,11 @@ void GameWindow::DeleteSpace()
   m_glWidget->DeleteSpace();
 }
 
+void GameWindow::SetVolume()
+{
+  m_glWidget->SetVolume();
+}
+
 void GameWindow::SetKey(KeyTypes type, QKeySequence key)
 {
   m_glWidget->SetKey(type, key);

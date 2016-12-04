@@ -10,6 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
+find_package(Qt5Multimedia REQUIRED)
 find_package(Threads REQUIRED)
 
 FILE(GLOB ProjectHeaders "src/*.hpp")
@@ -53,11 +54,11 @@ add_executable(
     ${ProjectDataTranslations}
 )
 
-#
+# add threading
 target_link_libraries (${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 # Qt modules
-qt5_use_modules(${PROJECT_NAME} Widgets OpenGL)
+qt5_use_modules(${PROJECT_NAME} Widgets OpenGL Multimedia)
 
 # Add subdirectory with Google Test Library.
 add_subdirectory(3party/googletest)
@@ -87,7 +88,7 @@ add_executable(
 )
 # Link gtest and gtest_main libraries.
 target_link_libraries(${PROJECT_TEST_NAME} gtest gtest_main)
-qt5_use_modules(${PROJECT_TEST_NAME} Widgets OpenGL)
+qt5_use_modules(${PROJECT_TEST_NAME} Widgets OpenGL Multimedia)
 # Finish tests setting up.
 add_test(test ${PROJECT_TEST_NAME})
 
@@ -110,7 +111,12 @@ set(DATA_BONUSES_FILES_LIST data/images/bonuses/*)
 copy_files("${DATA_BONUSES_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
 set(DATA_ICONS_FILES_LIST data/images/icons/*)
 copy_files("${DATA_ICONS_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+
+set(DATA_AUDIO_FILES_LIST data/audio/*)
+copy_files("${DATA_AUDIO_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+
 set(TRANSLATION_FILES_LIST data/translations/*)
 copy_files("${TRANSLATION_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})
+
 set(STYLE_FILES_LIST data/styles/*)
 copy_files("${STYLE_FILES_LIST}" ${CMAKE_CURRENT_BINARY_DIR})

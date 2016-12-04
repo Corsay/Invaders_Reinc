@@ -1,17 +1,17 @@
 #pragma once
 
-#include <thread>
 #include <chrono>
 #include <ctime>
 
 using ChronoClock = std::chrono::time_point<std::chrono::system_clock>;
-
 
 #include "ship.hpp"
 #include "gun.hpp"
 #include "alienmanager.hpp"
 #include "bulletmanager.hpp"
 #include "obstaclemanager.hpp"
+
+#include <QSoundEffect>
 
 const int BOOM_SIZE = 25;
 
@@ -74,8 +74,29 @@ public:
     m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
     srand(time(0));
     OffBonuses();
+    InitSound();
   }
 
+  void InitSound()
+  {
+    m_soundGunShoot = new QSoundEffect();
+    m_soundGunShoot->setSource(QUrl::fromLocalFile("data/audio/shoot_gun.wav"));
+
+    m_soundAlienShoot = new QSoundEffect();
+    m_soundAlienShoot->setSource(QUrl::fromLocalFile("data/audio/shoot_alien.wav"));
+
+    m_soundBoom = new QSoundEffect();
+    m_soundBoom->setSource(QUrl::fromLocalFile("data/audio/boom.wav"));
+
+    SetVolume();
+  }
+
+  void SetVolume()
+  {
+    m_soundGunShoot->setVolume(SOUND_GAME_VOLUME);
+    m_soundAlienShoot->setVolume(SOUND_GAME_VOLUME);
+    m_soundBoom->setVolume(SOUND_GAME_VOLUME);
+  }
 
   // Getters
   Ship2D * GetShip() { return m_ship; }
@@ -105,6 +126,8 @@ public:
 
   void GunShoot()  // if add manager this code can be replaced, because later added keypress
   {
+    if (SOUND_GAME_ON) m_soundGunShoot->play();
+
     Point2D start = m_gun->GetBox().GetCenter();
     start.SetY(m_gun->GetBox().top());
     Bullet2D bullet(
@@ -119,6 +142,8 @@ public:
 
   void AlienShoot()
   {
+    if (SOUND_GAME_ON) m_soundAlienShoot->play();
+
     Alien2D * alien = m_alienManager->SelectShooter(m_gun->GetBox());
     if (alien != nullptr)
     {
@@ -172,11 +197,15 @@ public:
         if (BONUS_X2) rate *= 2;
         if (BONUS_ANTI_X2) rate /= 2;
         m_gun->SetRate(m_gun->GetRate() + rate);
+
+        if (SOUND_GAME_ON) m_soundBoom->play();
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
       else if (m_obstacleManager->CheckIntersection(*it))
       {
         itList.push_back(it);
+
+        if (SOUND_GAME_ON) m_soundBoom->play();
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
       else if (m_ship != nullptr)
@@ -204,6 +233,7 @@ public:
             return;
           }
 
+          if (SOUND_GAME_ON) m_soundBoom->play();
           m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
         }
       }
@@ -215,6 +245,8 @@ public:
           {
             itList.push_back(it);
             itList2.push_back(it2);
+
+            if (SOUND_GAME_ON) m_soundBoom->play();
             m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
           }
         }
@@ -239,11 +271,15 @@ public:
       if (m_obstacleManager->CheckIntersection(*it))
       {
         itList.push_back(it);
+
+        if (SOUND_GAME_ON) m_soundBoom->play();
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().bottom()} ) );
       }
       else if(m_gun->CheckIntersection(*it))
       {
         itList.push_back(it);
+
+        if (SOUND_GAME_ON) m_soundBoom->play();
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().bottom()} ) );
       }
     }
@@ -415,14 +451,20 @@ public:
     m_bulletManager->clear();
   }
 
-private:
+private: 
+  // sound
+  QSoundEffect * m_soundGunShoot = nullptr;
+  QSoundEffect * m_soundAlienShoot = nullptr;
+  QSoundEffect * m_soundBoom = nullptr;
+
+  // time
   float ftimeAlienShoot = 0.0f;
   float ftimeGunShoot = 0.0f;
   float ftimeShipStart = 0.0f;
   ChronoClock timeAlienShoot = std::chrono::system_clock::now();
   ChronoClock timeGunShoot = std::chrono::system_clock::now();
   ChronoClock timeShipStart = std::chrono::system_clock::now();
-
+  // main
   Ship2D * m_ship = nullptr;                            // one ship
   Gun2D * m_gun = nullptr;                              // one gun
   Alien2DManager * m_alienManager = nullptr;            // one alien manager

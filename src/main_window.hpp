@@ -19,6 +19,8 @@
 #include "window_constants.hpp"
 #include "game_window.hpp"
 
+#include <QSoundEffect>
+
 enum DialogTypes
 {
   OnSubmitClose,
@@ -58,6 +60,9 @@ class MainWindow : public QMainWindow
 
 public:
   MainWindow();
+
+  void InitSound();
+  void SetVolume();
 
 protected:
   // MENU
@@ -168,5 +173,6 @@ private:
   QTranslator m_translator;
   QSize m_size;
   QString m_style;
-
+  // SOUND
+  QSoundEffect * m_soundButtonClick = nullptr;
 };

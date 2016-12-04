@@ -27,6 +27,7 @@ public:
   void NextLevel(int level);
 
   void DeleteSpace();
+  void SetVolume();
 
   void SetKey(KeyTypes type, QKeySequence key);
 
@@ -59,6 +60,7 @@ private:
   QTime m_time;
   QSize m_screenSize;
 
+  // textures
   std::vector<QOpenGLTexture *> m_starTexture;
   std::vector<QOpenGLTexture *> m_bonusTexture;
 
@@ -75,14 +77,15 @@ private:
   QOpenGLTexture * m_heartTexture = nullptr;
   QOpenGLTexture * m_boomTexture = nullptr;
 
-  TexturedRect * m_texturedRect = nullptr;
-  Space2D * m_space = nullptr;
-
+  // key
   QKeySequence m_keyGunMoveLeft = Qt::Key_Left;
   QKeySequence m_keyGunMoveRight = Qt::Key_Right;
   QKeySequence m_keyGunShoot = Qt::Key_Up;
   QKeySequence m_keyGamePause = Qt::Key_Escape;
 
+  // main
+  TexturedRect * m_texturedRect = nullptr;
+  Space2D * m_space = nullptr;
   QVector2D m_position;
   int m_level = 1;
   bool m_directions[4] = { false, false, false, false };
