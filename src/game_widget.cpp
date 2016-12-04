@@ -80,7 +80,7 @@ void GameGLWidget::initializeGL()
   m_partObstacleTexture = new QOpenGLTexture(QImage("data/images/obstaclePart.png"));
 
   m_bulletFromGunTexture = new QOpenGLTexture(QImage("data/images/rectangle.png"));
-  m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
+  m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/rectangle2.png"));
 
   m_heartTexture = new QOpenGLTexture(QImage("data/images/heart.png"));
   m_boomTexture = new  QOpenGLTexture(QImage("data/images/boom.png"));

@@ -213,6 +213,7 @@ public:
 
     down = false;
   }
+
   // chosing who will be shoot
   Alien2D * SelectShooter(Box2D const & gunBorder)
   {
