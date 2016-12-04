@@ -21,7 +21,7 @@
 
 enum DialogTypes
 {
-  OnSubmitGameSave,
+  OnSubmitClose,
   OnSubmitSettingsLeave,
   OnSettingsLoaded,
   OnSettingsLoadError
@@ -82,8 +82,7 @@ private slots:
   void ShortcutPause();
   // MENU
   void NewGame();
-  void ContinueOrLoadGame();
-  void SaveGame();
+  void ContinueGame();
   void CheckoutToSettings();
   // SETTINGS
   // buttons
@@ -114,7 +113,6 @@ private:
   bool m_gameStarted = false;
   QPushButton * m_pbMenuNewGame = nullptr;
   QPushButton * m_pbMenuContinueGame = nullptr;
-  QPushButton * m_pbMenuSaveGame = nullptr;
   QPushButton * m_pbToSet = nullptr;
   QPushButton * m_pbExit = nullptr;
   QGridLayout * m_layoutMenu = nullptr;

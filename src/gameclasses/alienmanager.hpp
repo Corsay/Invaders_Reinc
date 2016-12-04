@@ -60,8 +60,11 @@ public:
   {
     static int maxRightIndex = m_aliens[0].size() - 1, minLeftIndex = 0;
     for(int i = 0; i < m_aliens.size(); i++)
+    {
       for(int j = 0; j < m_aliens[0].size(); j++)
+      {
         if (m_aliens[i][j] != nullptr)
+        {
           if (m_aliens[i][j]->GetBox() && bul.GetBox())
           {
             bul.Inform(*m_aliens[i][j]);
@@ -79,7 +82,7 @@ public:
 
               if(BoxInColumn(j) == nullptr)
               {
-                if(j == minLeftIndex)
+                if (j == minLeftIndex)
                 {
                    int k = j;
                    do
@@ -87,7 +90,8 @@ public:
                      m_border.SetLeft(m_border.left() + ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
                      k++;
                      minLeftIndex++;
-                   }while(BoxInColumn(k) == nullptr);
+                   }
+                   while(BoxInColumn(k) == nullptr);
                 }
                 if(j == maxRightIndex)
                 {
@@ -97,18 +101,18 @@ public:
                      m_border.SetRight(m_border.right() - ( ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH) );
                      k--;
                      maxRightIndex--;
-                   }while(BoxInColumn(k) == nullptr);
-                   std::cout << m_border <<std::endl;
+                   }
+                   while(BoxInColumn(k) == nullptr);
                 }
               }
               if(BoxInLine(i) == nullptr)
               {
                 m_aliens.erase(m_aliens.begin() + i);
                 if(i == 0)
-                  m_border.SetBottom(m_border.bottom() + ( ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT ) );
+                {
+                  m_border.SetBottom(m_border.bottom() + ( ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT));
+                }
               }
-
-
             }
             else  // ec heals
             {
@@ -116,6 +120,9 @@ public:
             }
             return true;
           }
+        }
+      }
+    }
     return false;
   }
 
@@ -132,7 +139,10 @@ public:
               if (!(gun->GetBox() && m_aliens[i][j]->GetBox()))
                 return false;
 
-              gun->SetRate(gun->GetRate() + m_aliens[i][j]->GetType());
+              int rate = m_aliens[i][j]->GetType();
+              if (BONUS_X2) rate *= 2;
+              if (BONUS_ANTI_X2) rate /= 2;
+              gun->SetRate(gun->GetRate() + rate);
 
               if (BONUS_GOD)
               {
@@ -209,8 +219,12 @@ public:
     srand(time(0));
     int j = rand() % m_aliens[0].size();
     for (int i = 0; i < m_aliens.size(); i++)
+    {
       if (m_aliens[i][j] != nullptr)
+      {
         return m_aliens[i][j];
+      }
+    }
     return nullptr;
   }
 
@@ -230,6 +244,7 @@ public:
       vect.clear();
     }
     m_aliens.clear();
+    m_liveAliensCount = 0;
   }
 
   void log()

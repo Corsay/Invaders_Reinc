@@ -14,12 +14,11 @@ SimpleLogger & logger = SimpleLogger::Instance();
 // (need to send it as param to space2d)
 // ALIEN
 size_t ALIEN_COUNT       = 55;
-size_t  ALIEN_SHOOT_SPEED = 100;   // one shoot every 100 frames
+float ALIEN_SHOOT_SPEED = 1.5;
 // GUN
 size_t GUN_LIVES_START           = 3;
 bool   GUN_LIVES_INC_EVERY_LEVEL = true;
-size_t  GUN_SHOOT_SPEED_DEFAULT   = 55;
-size_t  GUN_SHOOT_SPEED           = 55;   // one shoot every 55 frames
+float  GUN_SHOOT_SPEED           = 1.5;
 bool   GUN_CAN_SHOOT             = true;
 // OBSTACLE
 size_t OBSTACLE_COUNT              = 4;
@@ -34,7 +33,21 @@ float  GAME_PADDING_BOTTOM = 50;
 // GAME
 bool   GAME_STARTED = false;
 // BONUSES
-bool   BONUS_GOD = false;
+// +
+bool   BONUS_X2             = false;       // x2 rate
+bool   BONUS_ADD_LIVE       = false;       // add gun live
+bool   BONUS_GUN_FAST_SHOOT = false;       // gun shoot speed +
+float  BONUS_SPEED_GUN_FAST_SHOOT = 0.5;
+bool   BONUS_LAZER          = false;       // lazer gun shoot
+float  BONUS_SPEED_LAZER_SHOOT = 0.01;
+bool   BONUS_HEAL_OBSTACLES = false;       // new obstacles
+bool   BONUS_HIT_ALL_ALIENS = false;       // delete all aliens, lvl passed
+bool   BONUS_GOD            = false;       // god for gun
+// -
+bool   BONUS_ANTI_X2          = false;     // x1/2 rate
+bool   BONUS_ALIEN_FAST_SHOOT = false;     // alien shoot speed +
+float  BONUS_SPEED_ALIEN_FAST_SHOOT = 0.75;
+bool   BONUS_HIT_OBSTACLES    = false;     // delete all obstacles
 
 // const (setted value)
 // DEFAULT
@@ -75,7 +88,7 @@ float BULLET_HEIGHT       = 25.0f;
 // SHIP
 float SHIP_HEALTH_START   = 50.0f;
 float SHIP_SPEED_START    = 3.0f;
-float SHIP_WIDTH        = 60.0f;
+float SHIP_WIDTH        = 40.0f;
 float SHIP_HEIGHT       = 30.0f;
 // GAME
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;

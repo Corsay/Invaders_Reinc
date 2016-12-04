@@ -55,9 +55,23 @@ void GameGLWidget::initializeGL()
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star55.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star66.png")));
 
+  // +
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/X2.png")));             // x2
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Add_heart.png")));      // add life
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Gun_fast_shoot.png"))); // gun fast shoot
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Gun_lazer.png")));      // gun laser
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Heal_obstacles.png"))); // heal obstacles
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Hit_aliens.png")));     // hit aliens
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/God.png")));            // god
+  // -
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/X05.png")));             // X0.5
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Alien_fast_shoot.png")));// alien fast shoot
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Hit_obstacles.png")));   // Hit obstacles
+  m_bonusTexture.push_back(new QOpenGLTexture(QImage("data/images/bonuses/Nothing.png")));         // have not a bonus
+
   m_shipTexture = new QOpenGLTexture(QImage("data/images/aliens/alienShip.png"));
 
-  m_gunTexture = new QOpenGLTexture(QImage("data/images/gunArmored.png"));
+  m_gunTexture = new QOpenGLTexture(QImage("data/images/gunMilitary.png"));
 
   m_alienPirateTexture = new QOpenGLTexture(QImage("data/images/aliens/alienPirate.png"));
   m_alienRaiderTexture = new QOpenGLTexture(QImage("data/images/aliens/alienRaider.png"));
@@ -65,7 +79,7 @@ void GameGLWidget::initializeGL()
 
   m_partObstacleTexture = new QOpenGLTexture(QImage("data/images/obstaclePart.png"));
 
-  m_bulletFromGunTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
+  m_bulletFromGunTexture = new QOpenGLTexture(QImage("data/images/rectangle.png"));
   m_bulletFromAlienTexture = new QOpenGLTexture(QImage("data/images/greenRectangle.jpg"));
 
   m_heartTexture = new QOpenGLTexture(QImage("data/images/heart.png"));
@@ -94,20 +108,8 @@ void GameGLWidget::ChangeSizeConstants(float w, float h)
   OBSTACLE_BOX_LEFT = GAME_PADDING_LEFT;
 }
 
-void GameGLWidget::OffBonuses()
-{
-  GUN_SHOOT_SPEED = GUN_SHOOT_SPEED_DEFAULT;
-  BONUS_GOD = false;
-
-  // and set start level param
-  SHIP_STARTED = false;
-}
-
 void GameGLWidget::NewGame(float w, float h)
 {
-  // Set false ALL BONUSES
-  OffBonuses();
-
   // change size onstants
   ChangeSizeConstants(w, h);
   ChangeConstants(w,h);
@@ -125,9 +127,6 @@ void GameGLWidget::NewGame(float w, float h)
 
 void GameGLWidget::NextLevel(int level)
 {
-  // Set False ALL BONUSES
-  OffBonuses();
-
   // because we can change count of aliens and obstacles we need to correct its sizes
   ChangeSizeConstants(width(), height());
 
@@ -166,12 +165,12 @@ void GameGLWidget::paintGL()
       QString framesPerSecond;
       framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
       painter.setPen(Qt::white);
-      painter.drawText(20, 40, framesPerSecond + " fps");
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 150, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 4, framesPerSecond + " fps");
     }
 
     QString rate;
     rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 120 , LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 150, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
 
     QPen pen = QPen(Qt::red);
     pen.setWidth(3);
@@ -195,8 +194,10 @@ void GameGLWidget::paintGL()
   }
   else if (GameState == 2)  // game over gun died
   {
-    if(m_space->GetGun().GetRate() > GetMinimalRecord() )
+    if (m_space->GetGun().GetRate() > GetMinimalRecord())
+    {
       m_gameWindow->m_stackedWidget->setCurrentIndex(3);
+    }
     else
     {
       QPainter painter;
@@ -208,7 +209,6 @@ void GameGLWidget::paintGL()
       QString rate;
       rate.setNum(m_space->GetGun().GetRate());
       painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
-
 
       painter.end();
       GAME_STARTED = false;
@@ -257,9 +257,8 @@ void GameGLWidget::Update(float elapsedSeconds)
 {
   // updates
   UpdateGun(elapsedSeconds);
-  m_space->GameStep(m_frames);
+  m_space->GameStep();
 }
-
 
 // delete current m_space
 void GameGLWidget::DeleteSpace()
@@ -271,7 +270,6 @@ void GameGLWidget::DeleteSpace()
   }
   m_space = nullptr;
 }
-
 
 // KEY EVENTS
 // Set new key bind
@@ -341,7 +339,6 @@ void GameGLWidget::RenderStar()
   static std::deque<int> starsY;
   static std::deque<int> starsT;
   static std::deque<int> starsP;
-  m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width() / 2, m_screenSize.height() / 2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
 
   static float t = 1000.0f;
   // random star
@@ -416,7 +413,6 @@ void GameGLWidget::RenderAlien()
       }
     }
   }
-  //painter.end();
 }
 
 void GameGLWidget::RenderShip()
@@ -524,11 +520,47 @@ void GameGLWidget::RenderInformationString()
     m_texturedRect->Render
     (
       m_heartTexture,
-      QVector2D(50 + GAME_PADDING_BOTTOM * ( i + 0.5 ), GAME_PADDING_BOTTOM/2),
+      QVector2D(50 + GAME_PADDING_BOTTOM * ( i + 0.5 ), GAME_PADDING_BOTTOM / 2),
       QSize(GAME_PADDING_BOTTOM * 0.5, GAME_PADDING_BOTTOM * 0.5),
       m_screenSize
     );
   }
+}
+
+void GameGLWidget::RenderBonus()
+{
+  QOpenGLTexture * bonusTexture = nullptr;
+  // detect which bonus are active
+  if (BONUS_X2)
+    bonusTexture = m_bonusTexture[0];
+  else if (BONUS_ADD_LIVE)
+    bonusTexture = m_bonusTexture[1];
+  else if (BONUS_GUN_FAST_SHOOT)
+    bonusTexture = m_bonusTexture[2];
+  else if (BONUS_LAZER)
+    bonusTexture = m_bonusTexture[3];
+  else if (BONUS_HEAL_OBSTACLES)
+    bonusTexture = m_bonusTexture[4];
+  else if (BONUS_HIT_ALL_ALIENS)
+    bonusTexture = m_bonusTexture[5];
+  else if (BONUS_GOD)
+    bonusTexture = m_bonusTexture[6];
+  else if (BONUS_ANTI_X2)
+    bonusTexture = m_bonusTexture[7];
+  else if (BONUS_ALIEN_FAST_SHOOT)
+    bonusTexture = m_bonusTexture[8];
+  else if (BONUS_HIT_OBSTACLES)
+    bonusTexture = m_bonusTexture[9];
+  else
+    bonusTexture = m_bonusTexture[10];
+  // paint
+  m_texturedRect->Render
+  (
+    bonusTexture,
+    QVector2D(LAST_WINDOW_HORIZONTAL_SIZE - 150 - GAME_PADDING_BOTTOM / 2, GAME_PADDING_BOTTOM / 2),
+    QSize(GAME_PADDING_BOTTOM * 0.7, GAME_PADDING_BOTTOM * 0.7),
+    m_screenSize
+  );
 }
 
 void GameGLWidget::RenderBoom()
@@ -537,24 +569,26 @@ void GameGLWidget::RenderBoom()
   std::vector< BoomList::iterator > boomForDel;
   for(auto it = boom.begin(); it != boom.end(); ++it)
   {
-      m_texturedRect->Render
-      (
-        m_boomTexture,
-        QVector2D(it->m_place.x(), it->m_place.y()),
-        QSize(it->GetWidth(), it->GetHeigth()),
-        m_screenSize
-      );
-      it->m_timer--;
-      if(it->m_timer == 0)
-        boomForDel.push_back(it);
+    m_texturedRect->Render
+    (
+      m_boomTexture,
+      QVector2D(it->m_place.x(), it->m_place.y()),
+      QSize(it->GetWidth(), it->GetHeigth()),
+      m_screenSize
+    );
+    it->m_timer--;
+    if(it->m_timer == 0)
+    {
+      boomForDel.push_back(it);
+    }
   }
   for(auto it = boomForDel.begin(); it != boomForDel.end(); ++it)
     boom.erase(*it);
-
 }
 
 void GameGLWidget::Render()
 {
+  m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width() / 2, m_screenSize.height() / 2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
   this->RenderStar();
   this->RenderGun();
   this->RenderAlien();
@@ -562,5 +596,6 @@ void GameGLWidget::Render()
   this->RenderObstacle();
   this->RenderBullet();
   this->RenderInformationString();
+  this->RenderBonus();
   this->RenderBoom();
 }

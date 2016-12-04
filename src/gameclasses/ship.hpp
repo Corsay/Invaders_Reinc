@@ -27,7 +27,9 @@ public:
 
   Ship2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speed,  short direct = 1)
     :MovedGameEntity2D(leftBottom, rightTop, health, speed)
-  {m_direction = direct;}
+  {
+    m_direction = direct;
+  }
 
   // copy constructor and assignment operator
   Ship2D(Ship2D const & obj)
@@ -41,6 +43,7 @@ public:
     return *this;
   }
 
+
   // For factory
   inline EntitiesTypes GetEntityType() override { return EntitiesTypes::ShipType; }
   std::unique_ptr<GameEntity2D> Create() override
@@ -52,19 +55,62 @@ public:
   // Capabilities
   void MoveShip()
   {
-    if(m_int_timer_start != 0)
-      m_int_timer_start--;
-    else
-      this->GetBox().HorizontalShift(m_direction * SHIP_SPEED_START);
+    this->GetBox().HorizontalShift(m_direction * SHIP_SPEED_START);
   }
 
-  void RandomBonus()
+  void RandomNegativeBonus()
   {
     srand(time(0));
-    int randomValue = rand() % 99;
-    if (randomValue < 5) BONUS_GOD = true;                  // 5%
-    else if (randomValue < 95) GUN_SHOOT_SPEED = 40; // BONUS_FAST_SHOOT = true;     // 90%
-    else if (randomValue < 99) GUN_SHOOT_SPEED = 1;  // BONUS_LAZER = true;          // 5%
+    int randomValue = rand() % 100;
+    if (randomValue < 10) // 10%
+    {
+      BONUS_HIT_OBSTACLES = true;
+    }
+    else if (randomValue < 70) // 60%
+    {
+      ALIEN_SHOOT_SPEED = BONUS_SPEED_ALIEN_FAST_SHOOT;
+      BONUS_ALIEN_FAST_SHOOT = true;
+    }
+    else if (randomValue < 100) // 30%
+    {
+      BONUS_ANTI_X2 = true;
+    }
+  }
+
+  void RandomPozitiveBonus()
+  {
+    srand(time(0));
+    int randomValue = rand() % 124;
+    if (randomValue < 5) // 5%
+    {
+      BONUS_GOD = true;
+    }
+    else if (randomValue < 15) // 10%
+    {
+      BONUS_ADD_LIVE = true;
+    }
+    else if (randomValue < 20) // 5%
+    {
+      BONUS_HEAL_OBSTACLES = true;
+    }
+    else if (randomValue < 39) // 19%
+    {
+      BONUS_X2 = true;
+    }
+    else if (randomValue < 44) // 5%
+    {
+      GUN_SHOOT_SPEED = BONUS_SPEED_LAZER_SHOOT;
+      BONUS_LAZER = true;
+    }
+    else if (randomValue < 124) // 80%
+    {
+      GUN_SHOOT_SPEED = BONUS_SPEED_GUN_FAST_SHOOT;
+      BONUS_GUN_FAST_SHOOT = true;
+    }
+    else // 1%
+    {
+      BONUS_HIT_ALL_ALIENS = true;
+    }
   }
 
   bool CheckIntersection(Bullet2D const & bul)
@@ -77,7 +123,7 @@ public:
     this->SetHealth(this->GetHealth() - bul.GetHealth());
     if(this->GetHealth() <= 0)
     {      
-      RandomBonus();
+      RandomPozitiveBonus();
     }
     return true;
   }
@@ -100,9 +146,6 @@ private:
   {
     SetHealth(SHIP_HEALTH_START);
     SetSpeed(SHIP_SPEED_START);
-    m_int_timer_start = 1200 + rand()%1200;
-    // не чаще чем в 1000/60=20 секунд, не реже чем в 40 секунд
   }
   short m_direction = 1;
-  short m_int_timer_start = 0;
 };

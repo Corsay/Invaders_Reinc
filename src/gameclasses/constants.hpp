@@ -12,15 +12,15 @@ using namespace std;
 #define WHERE "File: " << onlyFile( __FILE__ ) << " Function: " << __FUNCTION__ << " Line:" << __LINE__
 
 // Game parameters management
-// extern (need to send it as param to space2d)
 // ALIEN
 extern size_t ALIEN_COUNT;
-extern size_t ALIEN_SHOOT_SPEED;
+const float  ALIEN_SHOOT_SPEED_DEFAULT = 1.5;
+extern float  ALIEN_SHOOT_SPEED;
 // GUN
 extern size_t GUN_LIVES_START;
 extern bool   GUN_LIVES_INC_EVERY_LEVEL;
-extern size_t GUN_SHOOT_SPEED_DEFAULT;
-extern size_t GUN_SHOOT_SPEED;
+const float   GUN_SHOOT_SPEED_DEFAULT = 0.8;
+extern float  GUN_SHOOT_SPEED;
 extern bool   GUN_CAN_SHOOT;
 // OBSTACLE
 extern size_t OBSTACLE_COUNT;
@@ -35,9 +35,23 @@ extern float  GAME_PADDING_BOTTOM;
 // GAME
 extern bool   GAME_STARTED;
 // BONUSES
+// +
+extern bool   BONUS_X2;
+extern bool   BONUS_ADD_LIVE;
+extern bool   BONUS_GUN_FAST_SHOOT;
+extern float  BONUS_SPEED_GUN_FAST_SHOOT;
+extern bool   BONUS_LAZER;
+extern float  BONUS_SPEED_LAZER_SHOOT;
+extern bool   BONUS_HEAL_OBSTACLES;
+extern bool   BONUS_HIT_ALL_ALIENS;
 extern bool   BONUS_GOD;
+// -
+extern bool   BONUS_ANTI_X2;
+extern bool   BONUS_ALIEN_FAST_SHOOT;
+extern float  BONUS_SPEED_ALIEN_FAST_SHOOT;
+extern bool   BONUS_HIT_OBSTACLES;
 
-extern std::vector< std::vector <QString> > recordsArray;
+extern std::vector<std::vector <QString>> recordsArray;
 extern int GetMinimalRecord();
 
 // const (setted value)

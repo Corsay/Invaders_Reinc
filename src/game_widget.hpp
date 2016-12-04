@@ -23,7 +23,6 @@ public:
   ~GameGLWidget();
 
   void ChangeSizeConstants(float w, float h);
-  void OffBonuses();
   void NewGame(float w, float h);
   void NextLevel(int level);
 
@@ -46,6 +45,7 @@ protected:
   void RenderObstacle();
   void RenderBullet();
   void RenderInformationString();
+  void RenderBonus();
   void RenderBoom();
   void Render();
 
@@ -60,6 +60,7 @@ private:
   QSize m_screenSize;
 
   std::vector<QOpenGLTexture *> m_starTexture;
+  std::vector<QOpenGLTexture *> m_bonusTexture;
 
   QOpenGLTexture * m_shipTexture = nullptr;
   QOpenGLTexture * m_gunTexture = nullptr;

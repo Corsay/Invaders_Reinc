@@ -41,16 +41,13 @@ MainWindow::MainWindow()
   m_pbMenuNewGame = new QPushButton();
   connect(m_pbMenuNewGame, SIGNAL(clicked(bool)), this, SLOT(NewGame()));
   m_pbMenuContinueGame = new QPushButton();
-  connect(m_pbMenuContinueGame, SIGNAL(clicked(bool)), this, SLOT(ContinueOrLoadGame()));
-  m_pbMenuSaveGame = new QPushButton();
-  connect(m_pbMenuSaveGame, SIGNAL(clicked(bool)), this, SLOT(SaveGame()));
+  connect(m_pbMenuContinueGame, SIGNAL(clicked(bool)), this, SLOT(ContinueGame()));
   m_pbToSet = new QPushButton();
   connect(m_pbToSet, SIGNAL(clicked(bool)), this, SLOT(CheckoutToSettings()));
   m_pbExit = new QPushButton();
   connect(m_pbExit, &QAbstractButton::clicked, [this]()
     {
-      if (GAME_STARTED) ShowDialog(DIALOG_ON_SUBMIT_GAME_SAVE, DialogTypes::OnSubmitGameSave);
-      else exit(0);
+      ShowDialog(DIALOG_ON_SUBMIT_CLOSE, DialogTypes::OnSubmitClose);
     });
   m_pbMenuNewGame->setIcon(QIcon("data/images/icons/begin.ico"));
   m_pbExit->setObjectName("ExitButton");
@@ -67,8 +64,7 @@ MainWindow::MainWindow()
   m_layoutMenu->addWidget(topFiller, 0, 0, 1, 3);
   m_layoutMenu->addWidget(m_pbMenuNewGame, 1, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbMenuContinueGame, 2, 1, 1, 1);
-  m_layoutMenu->addWidget(m_pbMenuSaveGame, 3, 1, 1, 1);
-  m_layoutMenu->addWidget(m_pbToSet, 4, 1, 1, 1);
+  m_layoutMenu->addWidget(m_pbToSet, 3, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbExit, 6, 1, 1, 1);
   m_layoutMenu->addWidget(bottomFiller, 7, 0, 1, 3);
 
@@ -258,9 +254,7 @@ MainWindow::MainWindow()
     table->addWidget(new QLabel(recordsArray[i][1]), i, 1);
   }
 
-
   m_widgetRecords->setLayout(table);
-
 
   // fill stackedWidget
   m_widgetStacked->addWidget(m_widgetMenu);
@@ -268,8 +262,6 @@ MainWindow::MainWindow()
   m_widgetStacked->addWidget(m_windowGame);
   m_widgetStacked->addWidget(m_widgetRecords);
   m_widgetStacked->setCurrentIndex(0);
-
-
 
   // QShortcuts
   m_shortcutGamePause = new QShortcut(m_widgetStacked);
@@ -348,7 +340,7 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       about->show();
       break;
     }
-    case DialogTypes::OnSubmitGameSave:                                       // SAVE GAME DIALOG (two variants(with close program and just over current game))
+    case DialogTypes::OnSubmitClose:                                       // Submit close
     {
       this->setDisabled(true);
       QDialog * about = new QDialog;
@@ -359,47 +351,24 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       QGridLayout * glLayout = new QGridLayout(about);
 
       QLabel * lMsg = new QLabel();
-      if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) lMsg->setText(msg + DIALOG_TEXT_GAME_SAVE_CLOSE);   // if exit
-      else lMsg->setText(msg + DIALOG_TEXT_GAME_SAVE);                                      // if end current game
+      lMsg->setText(msg + DIALOG_TEXT_CLOSE);
       QPushButton * pbDialogYes = new QPushButton();
       pbDialogYes->setText(DIALOG_BUTTON_YES);
-      pbDialogYes->resize(150,33);
+      pbDialogYes->resize(150,50);
       connect(pbDialogYes, &QAbstractButton::clicked, [this, about, msg]()
         {
           this->setDisabled(false);
-          this->SaveGame();
-          if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) this->close();   // if exit
-          else                                                     // if end current game
-          {
-            GAME_STARTED = false;
-            ShowMenuItems();
-
-            // delete m_space and set it to nullptr
-            m_windowGame->DeleteSpace();
-          }
+          GAME_STARTED = false;
+          ShowMenuItems();
+          // delete m_space and set it to nullptr
+          m_windowGame->DeleteSpace();
           about->close();
+          if (msg == DIALOG_ON_SUBMIT_CLOSE) this->close();   // if exit
         });
       QPushButton * pbDialogNo = new QPushButton();
       pbDialogNo->setText(DIALOG_BUTTON_NO);
-      pbDialogNo->resize(150,33);
+      pbDialogNo->resize(150,50);
       connect(pbDialogNo, &QAbstractButton::clicked, [this, about, msg]()
-        {
-          this->setDisabled(false);
-          if (msg != DIALOG_GAME_SAVE_WHEN_BREAK) this->close();   // if exit
-          else                                                     // if end current game
-          {
-            GAME_STARTED = false;
-            ShowMenuItems();
-
-            // delete m_space and set it to nullptr
-            m_windowGame->DeleteSpace();
-          }
-          about->close();
-        });
-      QPushButton * pbDialogAbort = new QPushButton();
-      pbDialogAbort->setText(DIALOG_BUTTON_ABORT);
-      pbDialogAbort->resize(150,33);
-      connect(pbDialogAbort, &QAbstractButton::clicked, [this, about]()
         {
           this->setDisabled(false);
           about->close();
@@ -408,7 +377,6 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       glLayout->addWidget(lMsg, 0, 0, 1, 3);
       glLayout->addWidget(pbDialogYes, 1, 0, 1, 1);
       glLayout->addWidget(pbDialogNo, 1, 1, 1, 1);
-      glLayout->addWidget(pbDialogAbort, 1, 2, 1, 1);
 
       about->show();
       break;
@@ -491,18 +459,8 @@ void MainWindow::SetTextsForCurLang()
     m_pbMenuNewGame->setText(QPushButton::tr("New game"));
     m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
   }
-  if (GAME_STARTED)
-  {
-    m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
-    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
-  }
-  else
-  {
-    m_pbMenuContinueGame->setText(QPushButton::tr("Load game"));
-    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Load game from the save file"));
-  }
-  m_pbMenuSaveGame->setText(QPushButton::tr("Save game"));
-  m_pbMenuSaveGame->setToolTip(QPushButton::tr("Save current game state to the file"));
+  m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
+  m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
   m_pbToSet->setText(QPushButton::tr("Settings"));
   m_pbToSet->setToolTip(QPushButton::tr("Move to the settings"));
   m_pbExit->setText(QPushButton::tr("Exit"));
@@ -542,15 +500,14 @@ void MainWindow::SetTextsForCurLang()
   m_cbLanguage->setItemText(GameLanguages::English, QComboBox::tr("English"));
   m_cbLanguage->setItemText(GameLanguages::Russian, QComboBox::tr("Russian"));
     // DIALOGS
-  DIALOG_GAME_SAVE_WHEN_BREAK      = QObject::tr("Do you want to save current state of the game before ending?");
-  DIALOG_ON_SUBMIT_GAME_SAVE       = QObject::tr("Do you want to save current state of the game before closing?");
+  DIALOG_ON_SUBMIT_CLOSE          = QObject::tr("Are you really want to close program?");
+  DIALOG_ON_SUBMIT_BREAK          = QObject::tr("Are you really want to break current game?");
   DIALOG_ON_SUBMIT_SETTINGS_LEAVE  = QObject::tr("Do you want to save current settings of the game before back to the main menu?");
   DIALOG_ON_SETTINGS_LOADED        = QObject::tr("Succesfull load settings.");
   DIALOG_ON_SETTINGS_LOAD_ERROR    = QObject::tr("Error then try to load settings.");
   ADDITION_DIALOG_TEXT             = QObject::tr("\n\n Click to back to settings.");
   DIALOG_TEXT_SETTINGS_SAVE        = QObject::tr("\n Click:\n Yes - to save settings and go to the main menu;\n No - to go to the main menu without saving;\n Abort - to abort action. ");
-  DIALOG_TEXT_GAME_SAVE            = QObject::tr("\n Click:\n Yes - to save game state and end current game;\n No - to end game without saving;\n Abort - to abort action. ");
-  DIALOG_TEXT_GAME_SAVE_CLOSE      = QObject::tr("\n Click:\n Yes - to save game state and close program;\n No - to close program without saving;\n Abort - to abort action. ");
+  DIALOG_TEXT_CLOSE                = QObject::tr("\n Click:\n Yes - to accept;\n No - to abort action. ");
   DIALOG_BUTTON_YES                = QObject::tr("Yes");
   DIALOG_BUTTON_NO                 = QObject::tr("No");
   DIALOG_BUTTON_ABORT              = QObject::tr("Abort");
@@ -613,7 +570,10 @@ void MainWindow::ShortcutPause()
   }
   else
   {
-    if (GAME_STARTED) m_widgetStacked->setCurrentIndex(2);
+    if (GAME_STARTED)
+    {
+      m_widgetStacked->setCurrentIndex(2);
+    }
   }
 }
 
@@ -627,9 +587,7 @@ void MainWindow::ShowMenuItems()
     // Menu
     m_pbMenuNewGame->setText(QPushButton::tr("End game"));
     m_pbMenuNewGame->setToolTip(QPushButton::tr("End current game with save dialog"));
-    m_pbMenuContinueGame->setText(QPushButton::tr("Continue game"));
-    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
-    m_pbMenuSaveGame->show();
+    m_pbMenuContinueGame->show();
 
     // Settings block
       // button
@@ -648,9 +606,7 @@ void MainWindow::ShowMenuItems()
     // Menu
     m_pbMenuNewGame->setText(QPushButton::tr("New game"));
     m_pbMenuNewGame->setToolTip(QPushButton::tr("Start new game"));
-    m_pbMenuContinueGame->setText(QPushButton::tr("Load game"));
-    m_pbMenuContinueGame->setToolTip(QPushButton::tr("Load game from the save file"));
-    m_pbMenuSaveGame->hide();
+    m_pbMenuContinueGame->hide();
 
     // Settings unlock
       // button
@@ -671,7 +627,7 @@ void MainWindow::NewGame()
 {
   if (GAME_STARTED)  // END GAME
   {
-    ShowDialog(DIALOG_GAME_SAVE_WHEN_BREAK, DialogTypes::OnSubmitGameSave);
+    ShowDialog(DIALOG_ON_SUBMIT_BREAK , DialogTypes::OnSubmitClose);
   }
   else               // NEW GAME
   {
@@ -683,28 +639,9 @@ void MainWindow::NewGame()
   }
 }
 
-void MainWindow::ContinueOrLoadGame()
+void MainWindow::ContinueGame()
 {
-  if (GAME_STARTED) // Continue game
-  {
-    m_widgetStacked->setCurrentIndex(2);
-  }
-  else               // Load game
-  {
-    //
-    // m_windowGame->LoadGameState(Filename from dialog);
-
-    // if successfull load then call newgame
-    NewGame();
-
-    std::cout << "Not full released" << std::endl;
-  }
-}
-
-void MainWindow::SaveGame()
-{
-  // m_windowGame->SaveGameState(Filename from dialog);
-  std::cout << "Not full released" << std::endl;
+  m_widgetStacked->setCurrentIndex(2);
 }
 
 void MainWindow::CheckoutToSettings()

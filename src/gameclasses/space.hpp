@@ -26,11 +26,11 @@ struct BoomElement
   }
   int GetWidth()
   {
-    return int( BOOM_SIZE + BOOM_SIZE * sin(m_timer*M_PI/BOOM_TIMER) );
+    return int(BOOM_SIZE + BOOM_SIZE * sin(m_timer * M_PI / BOOM_TIMER));
   }
   int GetHeigth()
   {
-    return int( BOOM_SIZE + BOOM_SIZE * sin(m_timer*M_PI/BOOM_TIMER) );
+    return int(BOOM_SIZE + BOOM_SIZE * sin(m_timer * M_PI / BOOM_TIMER));
   }
 };
 
@@ -52,22 +52,30 @@ public:
         rightTopY = leftBottomY + GUN_HEIGHT;
     m_gun = new Gun2D({leftBottomX, leftBottomY}, {rightTopX, rightTopY}, GUN_HEALTH_START, GUN_SPEED_SHOOT_START, GUN_LIVES_START);
 
-    start = std::chrono::system_clock::now();
+    timeAlienShoot = std::chrono::system_clock::now();
+    timeGunShoot = std::chrono::system_clock::now();
+    timeShipStart = std::chrono::system_clock::now();
+    ftimeAlienShoot = 0.0f;
+    ftimeGunShoot = 0.0f;
+    ftimeShipStart = 0.0f;
+
     m_ship = nullptr;
     if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100)
-        / (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) < ALIEN_COUNT/5)
+        / (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) < ALIEN_COUNT / 5)
     {
       ALIEN_HORIZONTAL_DISTANCE = 0;
-      if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / ALIEN_WIDTH  < ALIEN_COUNT/5)
+      if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / ALIEN_WIDTH  < ALIEN_COUNT / 5)
       {
-          ALIEN_WIDTH = (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / (ALIEN_COUNT/5);
+          ALIEN_WIDTH = (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / (ALIEN_COUNT / 5);
       }
     }
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
     m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
     srand(time(0));
+    OffBonuses();
   }
+
 
   // Getters
   Ship2D * GetShip() { return m_ship; }
@@ -161,6 +169,8 @@ public:
       if (m_alienManager->CheckIntersection(*it, &rate))
       {
         itList.push_back(it);
+        if (BONUS_X2) rate *= 2;
+        if (BONUS_ANTI_X2) rate /= 2;
         m_gun->SetRate(m_gun->GetRate() + rate);
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
@@ -170,21 +180,45 @@ public:
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
       else if (m_ship != nullptr)
+      {
         if(m_ship->CheckIntersection(*it))
         {
           delete m_ship;
           m_ship = nullptr;
           itList.push_back(it);
+
+          // work with bonuses
+          if (BONUS_ADD_LIVE)
+          {
+            m_gun->SetLives(m_gun->GetLives() + 1);
+          }
+          if (BONUS_HEAL_OBSTACLES)
+          {
+            m_obstacleManager->clear();
+            delete m_obstacleManager;
+            m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
+          }
+          if (BONUS_HIT_ALL_ALIENS)
+          {
+            m_alienManager->clear();
+            return;
+          }
+
           m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
         }
+      }
       else
+      {
         for (auto it2 = bulletFromAlien.begin(); it2 != bulletFromAlien.end(); ++it2)
+        {
           if((*it).GetBox() && it2->GetBox())
           {
             itList.push_back(it);
             itList2.push_back(it2);
             m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
           }
+        }
+      }
     }
 
     // erase itList
@@ -237,97 +271,132 @@ public:
     return 0; // game continued
   }
 
+  void OffBonuses()
+  {
+    // +
+    BONUS_X2             = false;
+    BONUS_ADD_LIVE       = false;
+    BONUS_GUN_FAST_SHOOT = false;
+    BONUS_LAZER          = false;
+    BONUS_HEAL_OBSTACLES = false;
+    BONUS_HIT_ALL_ALIENS = false;
+    BONUS_GOD            = false;
+    // -
+    BONUS_ANTI_X2          = false;
+    BONUS_ALIEN_FAST_SHOOT = false;
+    BONUS_HIT_OBSTACLES    = false;
+
+    // and set start level param
+    GUN_SHOOT_SPEED = GUN_SHOOT_SPEED_DEFAULT;
+    ALIEN_SHOOT_SPEED = ALIEN_SHOOT_SPEED_DEFAULT;
+    SHIP_STARTED = false;
+  }
+
   void NewLvlPrepare(int const lvl)
   {
+    OffBonuses();
+
     delete m_alienManager;
     m_alienManager = nullptr;
     delete m_bulletManager;
     m_bulletManager = nullptr;
+    delete m_ship;
+    m_ship = nullptr;
 
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
     if (GUN_LIVES_INC_EVERY_LEVEL && m_gun->GetLives() < 10) m_gun->SetLives(m_gun->GetLives() + 1);
     if (OBSTACLE_REDRAW_EVERY_LEVEL)
     {
+      m_obstacleManager->clear();
       delete m_obstacleManager;
       m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
     }
 
-    start = std::chrono::system_clock::now();
+    timeAlienShoot = std::chrono::system_clock::now();
+    timeGunShoot = std::chrono::system_clock::now();
+    timeShipStart = std::chrono::system_clock::now();
+    ftimeAlienShoot = 0.0f;
+    ftimeGunShoot = 0.0f;
+    ftimeShipStart = 0.0f;
   }
 
-  void GameStep(int frame)
+  void GameStep()
   {
-    /*std::thread waitingAlienThread
+    // fix timer if used pause (if function GameStep not call more then 0.5 seconds)
+    if (std::chrono::duration<float>(std::chrono::system_clock::now() - timeAlienShoot).count() >= 0.5)
     {
-      [this]()
-      {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        AlienShoot();
-      }
-    };
-    std::thread waitingGunThread
-    {
-      [this]()
-      {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        GUN_CAN_SHOOT = true;
-      }
-    };
-    waitingAlienThread.join();
-    waitingGunThread.join();*/
+      timeAlienShoot = std::chrono::system_clock::now();
+      timeGunShoot = std::chrono::system_clock::now();
+      timeShipStart = std::chrono::system_clock::now();
+    }
+
+    // time
+    ftimeAlienShoot += std::chrono::duration<float>(std::chrono::system_clock::now() - timeAlienShoot).count();
+    timeAlienShoot = std::chrono::system_clock::now();
+    ftimeGunShoot += std::chrono::duration<float>(std::chrono::system_clock::now() - timeGunShoot).count();
+    timeGunShoot = std::chrono::system_clock::now();
 
     // ship activity
     if (m_ship == nullptr)
     {
-      /*
-      typedef std::chrono::high_resolution_clock Time;
-      typedef std::chrono::seconds ms;
-      typedef std::chrono::duration<float> fsec;
-      auto t0 = Time::now();
-      auto t1 = Time::now();
-      fsec fs = t1 - t0;
-      ms d = std::chrono::duration_cast<ms>(fs);
-      std::cout << fs.count() << "s\n";
-      std::cout << d.count() << "ms\n";
-      */
+      if (SHIP_STARTED == false)
+      {
+        ftimeShipStart += std::chrono::duration<float>(std::chrono::system_clock::now() - timeShipStart).count();
+        timeShipStart = std::chrono::system_clock::now();
 
-      //std::cout << std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() << std::endl;
-      //std::cout << std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start).count() << std::endl;
+        if (ftimeShipStart >= rand() % 20 + 20)
+        {
+          SHIP_STARTED = true;
+          srand(time(0));
+          if(rand() % 2)
+            m_ship = new Ship2D(Point2D{-SHIP_WIDTH, this->GetBox().top() - SHIP_HEIGHT - 5}, Point2D{0, this->GetBox().top()}, 1);
+          else
+            m_ship = new Ship2D(Point2D{LAST_WINDOW_HORIZONTAL_SIZE, this->GetBox().top() - SHIP_HEIGHT - 5}, Point2D{LAST_WINDOW_HORIZONTAL_SIZE + SHIP_WIDTH, this->GetBox().top() - 5}, -1);
 
-      /*if (std::chrono::duration<float>(std::chrono::system_clock::now() - start).count() >= 5)
-      {*/
-
-        if(rand() & 1)
-          m_ship = new Ship2D(Point2D{- SHIP_WIDTH ,this->GetBox().top() - SHIP_HEIGHT - 5}, Point2D{0, this->GetBox().top()}, 1);
-        else
-          m_ship = new Ship2D(Point2D{LAST_WINDOW_HORIZONTAL_SIZE, this->GetBox().top() - SHIP_HEIGHT - 5}, Point2D{LAST_WINDOW_HORIZONTAL_SIZE + SHIP_WIDTH, this->GetBox().top() - 5}, -1);
-      //}
+          ftimeShipStart = 0.0f;
+        }
+      }
     }
-
-    if(m_ship != nullptr)
+    else
     {
       m_ship->MoveShip();
+
       if(!(m_ship->GetBox() && this->GetBox()))
       {
+        m_ship->RandomNegativeBonus();
+
+        // antibonus
+        if (BONUS_HIT_OBSTACLES)
+        {
+          m_obstacleManager->clear();
+        }
+
         delete m_ship;
         m_ship = nullptr;
       }
     }
 
     // gun shoot delay
-    //if (!(frame % GUN_SHOOT_SPEED))
+    if (ftimeGunShoot >= GUN_SHOOT_SPEED)
+    {
       GUN_CAN_SHOOT = true;
+      ftimeGunShoot = 0.0f;
+    }
 
     // Bullets activity
     BulletsMove(this->GetBox().GetHeight());
 
-
     // alien activity
-    if(!(frame % ALIEN_SHOOT_SPEED))                // ALIEN SHOOT delay
+    // alien shoot delay
+    if (ftimeAlienShoot >= ALIEN_SHOOT_SPEED)
+    {
       AlienShoot();
+      ftimeAlienShoot = 0.0f;
+    }
+
     static int int_timer;
-    if(int_timer)
+    if (int_timer)
       int_timer--;
     else
     {
@@ -347,7 +416,13 @@ public:
   }
 
 private:
-  ChronoClock start = std::chrono::system_clock::now(); // start game time
+  float ftimeAlienShoot = 0.0f;
+  float ftimeGunShoot = 0.0f;
+  float ftimeShipStart = 0.0f;
+  ChronoClock timeAlienShoot = std::chrono::system_clock::now();
+  ChronoClock timeGunShoot = std::chrono::system_clock::now();
+  ChronoClock timeShipStart = std::chrono::system_clock::now();
+
   Ship2D * m_ship = nullptr;                            // one ship
   Gun2D * m_gun = nullptr;                              // one gun
   Alien2DManager * m_alienManager = nullptr;            // one alien manager

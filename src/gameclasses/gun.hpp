@@ -65,7 +65,7 @@ public:
 
   // Setters
   inline void SetLives(size_t const newLives) { m_lives = newLives; }
-  inline void SetRate(float const newGunRate) { m_gunRate = newGunRate; }
+  inline void SetRate(float newGunRate) { m_gunRate = newGunRate; }
 
 
   // Capabilities
