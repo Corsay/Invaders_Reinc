@@ -414,7 +414,7 @@ public:
     }
 
     // gun shoot delay
-    if (ftimeGunShoot >= GUN_SHOOT_SPEED)
+    if (ftimeGunShoot >= GUN_SHOOT_SPEED || GUN_CAN_SHOOT)
     {
       GUN_CAN_SHOOT = true;
       ftimeGunShoot = 0.0f;

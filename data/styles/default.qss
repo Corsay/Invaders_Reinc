@@ -1,3 +1,16 @@
+*
+{
+  font-family: "Sans Serif";
+  font-size: 12px;
+}
+
+GameWindow *
+{
+  font-family: "Epson1";
+  font-size: 18px;
+}
+
+
 QMainWindow 
 { 
   border-image: url(data/images/background.jpg); 

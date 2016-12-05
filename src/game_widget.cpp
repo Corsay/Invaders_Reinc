@@ -183,12 +183,12 @@ void GameGLWidget::paintGL()
       QString framesPerSecond;
       framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
       painter.setPen(Qt::white);
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 150, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 4, framesPerSecond + " fps");
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 5, framesPerSecond + " fps");
     }
 
     QString rate;
     rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 150, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
 
     QPen pen = QPen(Qt::red);
     pen.setWidth(3);
@@ -575,7 +575,7 @@ void GameGLWidget::RenderBonus()
   m_texturedRect->Render
   (
     bonusTexture,
-    QVector2D(LAST_WINDOW_HORIZONTAL_SIZE - 150 - GAME_PADDING_BOTTOM / 2, GAME_PADDING_BOTTOM / 2),
+    QVector2D(LAST_WINDOW_HORIZONTAL_SIZE - 210 - GAME_PADDING_BOTTOM / 2, GAME_PADDING_BOTTOM / 2),
     QSize(GAME_PADDING_BOTTOM * 0.7, GAME_PADDING_BOTTOM * 0.7),
     m_screenSize
   );

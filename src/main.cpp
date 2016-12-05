@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QSurfaceFormat>
+#include <QFontDatabase>
 #include "main_window.hpp"
 
 int main(int argc, char ** argv)
@@ -14,6 +15,9 @@ int main(int argc, char ** argv)
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     QSurfaceFormat::setDefaultFormat(format);
+
+    QFontDatabase::addApplicationFont("data/fonts/DS Hiline.ttf");
+    QFontDatabase::addApplicationFont("data/fonts/Epson1.ttf");
 
     MainWindow mw;
     mw.show();
