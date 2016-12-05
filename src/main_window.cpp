@@ -546,12 +546,12 @@ void MainWindow::SetTextsForCurLang()
   m_pbSetDefault->setText(QPushButton::tr("Set default"));
   m_pbSetDefault->setToolTip(QPushButton::tr("Set default settings"));
     // label
-  m_lControlComment->setText(QLabel::tr("_________________Control buttons:_________________"));
+  m_lControlComment->setText(QLabel::tr("__________________Control buttons:_________________"));
   m_lControlGunMoveLeft->setText(QLabel::tr("Gun move left button---"));
   m_lControlGunMoveRight->setText(QLabel::tr("Gun move right button-"));
   m_lControlGunShoot->setText(QLabel::tr("Button to gun shoot-----"));
   m_lControlGamePause->setText(QLabel::tr("Game pause---------------"));
-  m_lGameParamComment->setText(QLabel::tr("____________________Game:_____________________"));
+  m_lGameParamComment->setText(QLabel::tr("_______________________Game:_____________________"));
   m_lGPAliensCount->setText(QLabel::tr("Count of aliens = ") + QString::number(m_slGPAliensCount->value()));
   m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString(" ") + QString::number(m_slGPObstacleCount->value()));
   m_lGPObstacleRedraw->setText(QLabel::tr("Redraw obstacles every level"));
@@ -577,15 +577,15 @@ void MainWindow::SetTextsForCurLang()
     // DIALOGS
   DIALOG_ON_SUBMIT_CLOSE          = QObject::tr("Are you really want to close program?");
   DIALOG_ON_SUBMIT_BREAK          = QObject::tr("Are you really want to break current game?");
-  DIALOG_ON_SUBMIT_SETTINGS_LEAVE  = QObject::tr("Do you want to save current settings of the game before back to the main menu?");
-  DIALOG_ON_SETTINGS_LOADED        = QObject::tr("Succesfull load settings.");
-  DIALOG_ON_SETTINGS_LOAD_ERROR    = QObject::tr("Error then try to load settings.");
-  ADDITION_DIALOG_TEXT             = QObject::tr("\n\n Click to back to settings.");
-  DIALOG_TEXT_SETTINGS_SAVE        = QObject::tr("\n Click:\n Yes - to save settings and go to the main menu;\n No - to go to the main menu without saving;\n Abort - to abort action. ");
-  DIALOG_TEXT_CLOSE                = QObject::tr("\n Click:\n Yes - to accept;\n No - to abort action. ");
-  DIALOG_BUTTON_YES                = QObject::tr("Yes");
-  DIALOG_BUTTON_NO                 = QObject::tr("No");
-  DIALOG_BUTTON_ABORT              = QObject::tr("Abort");
+  DIALOG_ON_SUBMIT_SETTINGS_LEAVE = QObject::tr("Do you want to save current settings of the game before back to the main menu?");
+  DIALOG_ON_SETTINGS_LOADED       = QObject::tr("Succesfull load settings.");
+  DIALOG_ON_SETTINGS_LOAD_ERROR   = QObject::tr("Error then try to load settings.");
+  ADDITION_DIALOG_TEXT            = QObject::tr("\n\n Click to back to settings.");
+  DIALOG_TEXT_SETTINGS_SAVE       = QObject::tr("\n Click:\n Yes - to save settings and go to the main menu;\n No - to go to the main menu without saving;\n Abort - to abort action. ");
+  DIALOG_TEXT_CLOSE               = QObject::tr("\n Click:\n Yes - to accept;\n No - to abort action. ");
+  DIALOG_BUTTON_YES               = QObject::tr("Yes");
+  DIALOG_BUTTON_NO                = QObject::tr("No");
+  DIALOG_BUTTON_ABORT             = QObject::tr("Abort");
 }
 
 void MainWindow::ResizeQGridLayouts()
