@@ -90,23 +90,30 @@ MainWindow::MainWindow()
     });
 
   // QLabels
+    // Control
   m_lControlComment = new QLabel();
   m_lControlGunMoveLeft = new QLabel();
   m_lControlGunMoveRight = new QLabel();
   m_lControlGunShoot = new QLabel();
   m_lControlGamePause = new QLabel();
-
+    // Game parameters
   m_lGameParamComment = new QLabel();
   m_lGPAliensCount = new QLabel();
   m_lGPObstacleCount = new QLabel();
   m_lGPObstacleRedraw = new QLabel();
   m_lGPGunStartLives = new QLabel();
   m_lGPGunAddLive = new QLabel();
-
+    // Main
   m_lWindowComment = new QLabel();
   m_lWindowSize = new QLabel();
   m_lWindowState = new QLabel();
   m_lLanguage = new QLabel();
+    // Sound
+  m_lSoundComment = new QLabel();
+  m_lSMainOn = new QLabel();
+  m_lSMainVolume = new QLabel();
+  m_lSGameOn = new QLabel();
+  m_lSGameVolume = new QLabel();
 
   // Work with Values and Keys
     // Control
@@ -165,6 +172,24 @@ MainWindow::MainWindow()
   m_cbLanguage->addItem("English", GameLanguages::English);
   m_cbLanguage->addItem("Russian", GameLanguages::Russian);
   connect(m_cbLanguage, SIGNAL(activated(int)), this, SLOT(ChangeLanguage(int)));
+    // Sound
+  m_slSMenuVolume = new QSlider(Qt::Horizontal);
+  m_slSMenuVolume->setRange(0, 100);
+  m_slSMenuVolume->setPageStep(1);
+  m_slSMenuVolume->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  connect(m_slSMenuVolume, SIGNAL(valueChanged(int)), this, SLOT(ChangeSoundMenuVolume(int)));
+
+  m_slSGameVolume = new QSlider(Qt::Horizontal);
+  m_slSGameVolume->setRange(0, 100);
+  m_slSGameVolume->setPageStep(1);
+  m_slSGameVolume->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  connect(m_slSGameVolume, SIGNAL(valueChanged(int)), this, SLOT(ChangeSoundGameVolume(int)));
+
+  m_chbSMenuOn = new QCheckBox;
+  connect(m_chbSMenuOn, SIGNAL(clicked(bool)), this, SLOT(ChangeSoundMenuOn(bool)));
+
+  m_chbSGameOn = new QCheckBox;
+  connect(m_chbSGameOn, SIGNAL(clicked(bool)), this, SLOT(ChangeSoundGameOn(bool)));
 
   // QHBoxLayouts
     // control
@@ -206,6 +231,19 @@ MainWindow::MainWindow()
   QHBoxLayout * hbLanguage = new QHBoxLayout;
   hbLanguage->addWidget(m_lLanguage);
   hbLanguage->addWidget(m_cbLanguage);
+    // Sound
+  QHBoxLayout * hbSoundMain = new QHBoxLayout;
+  hbSoundMain->addWidget(m_lSMainOn);
+  hbSoundMain->addWidget(m_chbSMenuOn);
+  QHBoxLayout * hbSoundMainVolume = new QHBoxLayout;
+  hbSoundMainVolume->addWidget(m_lSMainVolume);
+  hbSoundMainVolume->addWidget(m_slSMenuVolume);
+  QHBoxLayout * hbSoundGame = new QHBoxLayout;
+  hbSoundGame->addWidget(m_lSGameOn);
+  hbSoundGame->addWidget(m_chbSGameOn);
+  QHBoxLayout * hbSoundGameVolume = new QHBoxLayout;
+  hbSoundGameVolume->addWidget(m_lSGameVolume);
+  hbSoundGameVolume->addWidget(m_slSGameVolume);
 
   // layout
   m_layoutSettings = new QGridLayout;
@@ -224,10 +262,16 @@ MainWindow::MainWindow()
   m_layoutSettings->addLayout(hbGPGunStartLives, 6, 2, 1, 2);
   m_layoutSettings->addLayout(hbGPGunAddLive, 7, 2, 1, 2);
     // window
-  m_layoutSettings->addWidget(m_lWindowComment, 8, 0, 1, 2);
-  m_layoutSettings->addLayout(hbWindowSize, 9, 0, 1, 2);
-  m_layoutSettings->addLayout(hbWindowState, 10, 0, 1, 2);
-  m_layoutSettings->addLayout(hbLanguage, 11, 0, 1, 2);
+  m_layoutSettings->addWidget(m_lWindowComment, 8, 2, 1, 2);
+  m_layoutSettings->addLayout(hbWindowSize, 9, 2, 1, 2);
+  m_layoutSettings->addLayout(hbWindowState, 10, 2, 1, 2);
+  m_layoutSettings->addLayout(hbLanguage, 11, 2, 1, 2);
+    // sound
+  m_layoutSettings->addWidget(m_lSoundComment, 7, 0, 1, 2);
+  m_layoutSettings->addLayout(hbSoundMain, 8, 0, 1, 2);
+  m_layoutSettings->addLayout(hbSoundMainVolume, 9, 0, 1, 2);
+  m_layoutSettings->addLayout(hbSoundGame, 10, 0, 1, 2);
+  m_layoutSettings->addLayout(hbSoundGameVolume, 11, 0, 1, 2);
     // buttons
   m_layoutSettings->addWidget(m_pbSaveSettings, 12, 0);
   m_layoutSettings->addWidget(m_pbLoadSettings, 12, 1);
@@ -239,16 +283,16 @@ MainWindow::MainWindow()
   m_widgetSettings->setLayout(m_layoutSettings);
   m_widgetSettings->hide();
 
-
   // GAME
   m_windowGame = new GameWindow(m_widgetStacked);
-  //RECORDS
+
+  // RECORDS
   ReadJsonRecords(recordsArray);
 
   m_widgetRecords = new QWidget;
-  QGridLayout* table = new QGridLayout;
+  QGridLayout * table = new QGridLayout;
   table->setAlignment(Qt::AlignCenter);
-  table->setColumnStretch(0, m_size.width()/100*30);
+  table->setColumnStretch(0, m_size.width() / 100 * 30);
 
   for(int i = 0; i < recordsArray.size(); i++)
   {
@@ -278,6 +322,7 @@ MainWindow::MainWindow()
   // load all user settings from file
   // load default and then load from file
   SetDefaultSettings();
+
   if (!ReadXml()) ReadJson();
   m_settingsChanged = false;
 }
@@ -508,7 +553,7 @@ void MainWindow::SetTextsForCurLang()
   m_lControlGamePause->setText(QLabel::tr("Game pause---------------"));
   m_lGameParamComment->setText(QLabel::tr("____________________Game:_____________________"));
   m_lGPAliensCount->setText(QLabel::tr("Count of aliens = ") + QString::number(m_slGPAliensCount->value()));
-  m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString::number(m_slGPObstacleCount->value()));
+  m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString(" ") + QString::number(m_slGPObstacleCount->value()));
   m_lGPObstacleRedraw->setText(QLabel::tr("Redraw obstacles every level"));
   m_lGPGunStartLives->setText(QLabel::tr("Start gun lives count = ") + QString::number(m_slGPGunStartLives->value()));
   m_lGPGunAddLive->setText(QLabel::tr("Add one life to gun at every level"));
@@ -516,6 +561,11 @@ void MainWindow::SetTextsForCurLang()
   m_lWindowSize->setText(QLabel::tr("Window size"));
   m_lWindowState->setText(QLabel::tr("Window state"));
   m_lLanguage->setText(QLabel::tr("Language:"));
+  m_lSoundComment->setText(QLabel::tr("_____________________Sound:_______________________"));
+  m_lSMainOn->setText(QLabel::tr("Menu page sound state on?"));
+  m_lSMainVolume->setText(QLabel::tr("Menu page volume = ") + QString::number(m_slSMenuVolume->value()));
+  m_lSGameOn->setText(QLabel::tr("Game page sound state on?"));
+  m_lSGameVolume->setText(QLabel::tr("Game page volume = ") + QString::number(m_slSGameVolume->value()));
     // combo box
       // window state
   m_cbWindowState->setItemText(GameWindowStateTypes::FullScreen, QComboBox::tr("Full screen"));
@@ -690,11 +740,13 @@ void MainWindow::CheckoutToMenu()
   if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
   else m_widgetStacked->setCurrentIndex(0);
 }
-void MainWindow::WriteJsonRecord(std::vector< std::vector< QString > >& rezults)
+
+// RECORDS
+void MainWindow::WriteJsonRecord(std::vector<std::vector<QString>> & rezults)
 {
   Json::Value records;
   QString str;
-  if( rezults.size() < MAX_COUNT_RECORDS )
+  if(rezults.size() < MAX_COUNT_RECORDS)
     str.setNum(rezults.size());
   else
     str.setNum(MAX_COUNT_RECORDS);
@@ -716,10 +768,9 @@ void MainWindow::WriteJsonRecord(std::vector< std::vector< QString > >& rezults)
     settingsFile << styledWriter.write(records);
     settingsFile.close();
   }
-
 }
 
-bool MainWindow::ReadJsonRecords(std::vector< std::vector< QString > > & rezults)
+bool MainWindow::ReadJsonRecords(std::vector<std::vector<QString>> & rezults)
 {
   rezults.clear();
   Json::Value records;
@@ -728,18 +779,19 @@ bool MainWindow::ReadJsonRecords(std::vector< std::vector< QString > > & rezults
   {
     file >> records;
     file.close();
-  }else return false; // not loaded
+  }
+  else return false; // not loaded
 
   int countRecords = records["countRecords"].asCString()[0] - 48;
   for(int i = 0; i < countRecords; i++)
   {
     QString str;
     str.setNum(i);
-    rezults.push_back( std::vector<QString>{ QString(records[str.toStdString()]["name"].asCString()),
-                                                 QString(records[str.toStdString()]["rezult"].asCString()) } );
+    rezults.push_back(std::vector<QString>{QString(records[str.toStdString()]["name"].asCString()), QString(records[str.toStdString()]["rezult"].asCString())});
   }
   return true;
 }
+
 // save/load settings
 void MainWindow::WriteJson()
 {
@@ -764,6 +816,12 @@ void MainWindow::WriteJson()
   main["windowSize"]["index"] = m_cbWindowSize->currentIndex();
   main["windowState"]["index"] = m_cbWindowState->currentIndex();
   main["language"]["index"] = m_cbLanguage->currentIndex();
+
+  auto & sound = root["sound"];
+  sound["MenuOn"]["flag"] = m_chbSMenuOn->isChecked();
+  sound["MenuVolume"]["volume"] = m_slSMenuVolume->value();
+  sound["GameOn"]["flag"] = m_chbSGameOn->isChecked();
+  sound["GameVolume"]["volume"] = m_slSGameVolume->value();
 
   std::ofstream settingsFile;
   settingsFile.open("data/settings.json");
@@ -869,6 +927,30 @@ bool MainWindow::ReadJson()
     ChangeLanguage(m_cbLanguage->currentIndex());
   }
 
+  auto & sound = root["sound"];
+  if (!sound.empty())
+  {
+    if (!sound["MenuOn"]["flag"].empty())
+    {
+      m_chbSMenuOn->setChecked(sound["MenuOn"]["flag"].asBool());
+    }
+    if (!sound["MenuVolume"]["volume"].empty())
+    {
+      m_slSMenuVolume->setValue(sound["MenuVolume"]["volume"].asInt());
+    }
+    if (!sound["GameOn"]["flag"].empty())
+    {
+      m_chbSGameOn->setChecked(sound["GameOn"]["flag"].asBool());
+    }
+    if (!sound["GameVolume"]["volume"].empty())
+    {
+      m_slSGameVolume->setValue(sound["GameVolume"]["volume"].asInt());
+    }
+
+    ChangeSoundMenuOn(m_chbSMenuOn->isChecked());
+    ChangeSoundGameOn(m_chbSGameOn->isChecked());
+  }
+
   return true; //success load
 }
 
@@ -898,6 +980,12 @@ void MainWindow::WriteXml()
   main.append_child("windowSize").append_attribute("index").set_value(m_cbWindowSize->currentIndex());
   main.append_child("windowState").append_attribute("index").set_value(m_cbWindowState->currentIndex());
   main.append_child("language").append_attribute("index").set_value(m_cbLanguage->currentIndex());
+
+  pugi::xml_node sound = root.append_child("sound");
+  sound.append_child("MenuOn").append_attribute("flag").set_value(m_chbSMenuOn->isChecked());
+  sound.append_child("MenuVolume").append_attribute("volume").set_value(m_slSMenuVolume->value());
+  sound.append_child("GameOn").append_attribute("flag").set_value(m_chbSGameOn->isChecked());
+  sound.append_child("GameVolume").append_attribute("volume").set_value(m_slSGameVolume->value());
 
   doc.save_file("data/settings.xml", PUGIXML_TEXT("  "));
 }
@@ -1004,6 +1092,38 @@ bool MainWindow::ReadXml()
       ChangeWindowState(m_cbWindowState->currentIndex());
       ChangeLanguage(m_cbLanguage->currentIndex());
     }
+
+    pugi::xml_node sound = root.child("sound");
+    if (!sound.empty())
+    {
+      if (!sound.child("MenuOn").attribute("flag").empty())
+      {
+        m_chbSMenuOn->setChecked(
+          sound.child("MenuOn").attribute("flag").as_bool()
+        );
+      }
+      if (!sound.child("MenuVolume").attribute("volume").empty())
+      {
+        m_slSMenuVolume->setValue(
+          sound.child("MenuVolume").attribute("volume").as_int()
+        );
+      }
+      if (!sound.child("GameOn").attribute("flag").empty())
+      {
+        m_chbSGameOn->setChecked(
+          sound.child("GameOn").attribute("flag").as_bool()
+        );
+      }
+      if (!sound.child("GameVolume").attribute("volume").empty())
+      {
+        m_slSGameVolume->setValue(
+          sound.child("GameVolume").attribute("volume").as_int()
+        );
+      }
+
+      ChangeSoundMenuOn(m_chbSMenuOn->isChecked());
+      ChangeSoundGameOn(m_chbSGameOn->isChecked());
+    }
   }
   else return false; // not loaded
   return true; // success load
@@ -1027,6 +1147,10 @@ void MainWindow::SetDefaultSettings()
   m_cbWindowState->setCurrentIndex(GameWindowStateTypes::MinimizedWindow);
   m_cbWindowSize->setCurrentIndex(GameResolutionTypes::Size800x600);
   m_cbLanguage->setCurrentIndex(GameLanguages::English);
+  m_slSMenuVolume->setValue(25);
+  m_slSGameVolume->setValue(25);
+  m_chbSMenuOn->setChecked(false);
+  m_chbSGameOn->setChecked(false);
 
     // call change functions
       // game
@@ -1036,6 +1160,9 @@ void MainWindow::SetDefaultSettings()
   SetSize(m_cbWindowSize->currentIndex());
   ChangeWindowState(m_cbWindowState->currentIndex());
   ChangeLanguage(m_cbLanguage->currentIndex());
+      // sound
+  ChangeSoundMenuOn(m_chbSMenuOn->isChecked());
+  ChangeSoundGameOn(m_chbSGameOn->isChecked());
 }
 
 // load settings from file
@@ -1097,7 +1224,7 @@ void MainWindow::ChangeAliensCount(int state)
 void MainWindow::ChangeObstacleCount(int state)
 {
   OBSTACLE_COUNT = state;
-  m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString::number(state));
+  m_lGPObstacleCount->setText(QLabel::tr("Count of obstacles = ") + QString(" ") + QString::number(state));
   m_settingsChanged = true;
 }
 
@@ -1191,5 +1318,34 @@ void MainWindow::ChangeLanguage(int state)
       break;
     }
   }
+  m_settingsChanged = true;
+}
+
+// settings sound
+void MainWindow::ChangeSoundMenuVolume(int state)
+{
+  SOUND_MENU_VOLUME = ((float)state) / 100;
+  m_lSMainVolume->setText(QLabel::tr("Menu page volume = ") + QString::number(state));
+  SetVolume();
+  m_settingsChanged = true;
+}
+
+void MainWindow::ChangeSoundGameVolume(int state)
+{
+  SOUND_GAME_VOLUME = ((float)state) / 100;
+  m_lSGameVolume->setText(QLabel::tr("Game page volume = ") + QString::number(state));
+  m_windowGame->SetVolume();
+  m_settingsChanged = true;
+}
+
+void MainWindow::ChangeSoundMenuOn(bool state)
+{
+  SOUND_MENU_ON = state;
+  m_settingsChanged = true;
+}
+
+void MainWindow::ChangeSoundGameOn(bool state)
+{
+  SOUND_GAME_ON = state;
   m_settingsChanged = true;
 }

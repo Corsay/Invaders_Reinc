@@ -64,7 +64,7 @@ void GameGLWidget::initializeGL()
   m_texturedRect->Initialize(this);
 
   // TEXTURES
-  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background3.png"));
+  m_backgroundPicture = new QOpenGLTexture(QImage("data/images/background.png"));
 
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star11.png")));
   m_starTexture.push_back(new QOpenGLTexture(QImage("data/images/stars/star22.png")));
@@ -291,7 +291,7 @@ void GameGLWidget::DeleteSpace()
 
 void GameGLWidget::SetVolume()
 {
-  m_space->SetVolume();
+  if (m_space != nullptr) m_space->SetVolume();
 }
 
 // KEY EVENTS

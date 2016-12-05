@@ -11,8 +11,8 @@ std::string onlyFile(std::string longName)
 SimpleLogger & logger = SimpleLogger::Instance();
 
 // SOUND
-bool SOUND_MENU_ON = true;
-bool SOUND_GAME_ON = true;
+bool SOUND_MENU_ON = false;
+bool SOUND_GAME_ON = false;
 float SOUND_MENU_VOLUME = 0.25;
 float SOUND_GAME_VOLUME = 0.25;
 

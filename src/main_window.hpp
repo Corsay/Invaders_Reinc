@@ -110,6 +110,11 @@ private slots:
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
   void ChangeLanguage(int state);
+  // sound
+  void ChangeSoundMenuVolume(int state);
+  void ChangeSoundGameVolume(int state);
+  void ChangeSoundMenuOn(bool state);
+  void ChangeSoundGameOn(bool state);
 
 private:
   // SHORTCUTS
@@ -145,6 +150,11 @@ private:
   QLabel * m_lWindowSize = nullptr;
   QLabel * m_lWindowState = nullptr;
   QLabel * m_lLanguage = nullptr;
+  QLabel * m_lSoundComment = nullptr;
+  QLabel * m_lSMainOn = nullptr;
+  QLabel * m_lSMainVolume = nullptr;
+  QLabel * m_lSGameOn = nullptr;
+  QLabel * m_lSGameVolume = nullptr;
     // keysequenceedit
   QKeySequenceEdit * m_kseGunMoveLeft = nullptr;
   QKeySequenceEdit * m_kseGunMoveRight = nullptr;
@@ -154,9 +164,15 @@ private:
   QSlider * m_slGPAliensCount = nullptr;
   QSlider * m_slGPObstacleCount = nullptr;
   QSlider * m_slGPGunStartLives = nullptr;
+      // sound
+  QSlider * m_slSMenuVolume = nullptr;
+  QSlider * m_slSGameVolume = nullptr;
     // checkbox
   QCheckBox * m_chbGPObstacleRedraw = nullptr;
   QCheckBox * m_chbGPGunAddLive = nullptr;
+      // sound
+  QCheckBox * m_chbSMenuOn = nullptr;
+  QCheckBox * m_chbSGameOn = nullptr;
     // combobox
   QComboBox * m_cbWindowState = nullptr;
   QComboBox * m_cbWindowSize = nullptr;
