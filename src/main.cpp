@@ -16,7 +16,6 @@ int main(int argc, char ** argv)
     format.setStencilBufferSize(8);
     QSurfaceFormat::setDefaultFormat(format);
 
-    QFontDatabase::addApplicationFont("data/fonts/DS Hiline.ttf");
     QFontDatabase::addApplicationFont("data/fonts/Epson1.ttf");
 
     MainWindow mw;
