@@ -1,7 +1,6 @@
 #pragma once
 
 #include <chrono>
-#include <ctime>
 
 using ChronoClock = std::chrono::time_point<std::chrono::system_clock>;
 

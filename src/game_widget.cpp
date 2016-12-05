@@ -128,6 +128,10 @@ void GameGLWidget::ChangeSizeConstants(float w, float h)
 
 void GameGLWidget::NewGame(float w, float h)
 {
+  // reset flag
+  m_gameOver = false;
+  m_nextLevel = false;
+
   // change size onstants
   ChangeSizeConstants(w, h);
   ChangeConstants(w,h);
@@ -145,6 +149,9 @@ void GameGLWidget::NewGame(float w, float h)
 
 void GameGLWidget::NextLevel(int level)
 {
+  // reset flag
+  m_nextLevel = false;
+
   // because we can change count of aliens and obstacles we need to correct its sizes
   ChangeSizeConstants(width(), height());
 
@@ -153,16 +160,94 @@ void GameGLWidget::NextLevel(int level)
   m_time.restart();
 }
 
-void GameGLWidget::paintGL()
+// PAINTING
+void GameGLWidget::paintGLActiveGame()
 {
-  int GameState = m_space->CheckGameState();
-  if (!GameState)
-  {
-    int const elapsed = m_time.elapsed();
-    Update(elapsed / 1000.0f);
+  int const elapsed = m_time.elapsed();
+  Update(elapsed / 1000.0f);
 
+  QPainter painter;
+  painter.begin(this);
+  painter.setPen(Qt::white);
+  painter.beginNativePainting();
+
+  glFrontFace(GL_CW);
+  glCullFace(GL_BACK);
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  Render();
+
+  glDisable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+
+  painter.endNativePainting();
+
+  if (elapsed != 0)
+  {
+    QString framesPerSecond;
+    framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 5, framesPerSecond + " fps");
+  }
+
+  QString rate;
+  rate.setNum(m_space->GetGun().GetRate());
+  painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
+
+  QPen pen = QPen(Qt::red);
+  pen.setWidth(3);
+  painter.setPen(pen);
+  painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5);
+
+  painter.end();
+
+  if (!(m_frames % 100))
+  {
+    m_time.start();
+    m_frames = 0;
+  }
+  ++m_frames;
+  update();
+}
+
+void GameGLWidget::paintGLNextLevel()
+{
+  if (!m_nextLevel)  // pause with info
+  {
     QPainter painter;
     painter.begin(this);
+    painter.setPen(Qt::white);
+
+    QString rate;
+    rate.setNum(m_space->GetGun().GetRate());
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 150, LAST_WINDOW_VERTICAL_SIZE / 3 - 15, "You current rezult: " + rate);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 15, "Aliens destroyed! You win! Level " + QString::number(m_level + 1));
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 30, "Click Enter to go to the next level! ");
+
+    // next level info
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 45, "Next Level Aliens Modifications:");
+    if (ALIEN_MOVE_SPEED_TIMER_DEFAULT - (m_level * ALIEN_MOVE_SPEED_TIMER_INC) >= ALIEN_MOVE_SPEED_TIMER_MIN)
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 60, "1) Little faster move");
+    if (ALIEN_SHOOT_SPEED_DEFAULT - (m_level * ALIEN_SHOOT_SPEED_INC) >= ALIEN_SHOOT_SPEED_MIN)
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 75, "2) Little faster shoot");
+    if (((m_level + 1) % ALIEN_HEALTH_LVL == 0) && ALIEN_HEALTH_DEFAULT + ((m_level + 1) / ALIEN_HEALTH_LVL * ALIEN_HEALTH_INC) <= ALIEN_HEALTH_MAX)
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 90, "3) One more life");
+  }
+  else              // next level
+  {
+    NextLevel(++m_level);
+    paintGL();
+  }
+}
+
+void GameGLWidget::paintGLGameOver()
+{
+  if (!m_gameOver)
+  {
+    QPainter painter;
+    painter.begin(this);
+    painter.setPen(Qt::white);
     painter.beginNativePainting();
 
     glFrontFace(GL_CW);
@@ -176,19 +261,11 @@ void GameGLWidget::paintGL()
     glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
-    painter.endNativePainting();
-
-    if (elapsed != 0)
-    {
-      QString framesPerSecond;
-      framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
-      painter.setPen(Qt::white);
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 5, framesPerSecond + " fps");
-    }
-
     QString rate;
     rate.setNum(m_space->GetGun().GetRate());
     painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
+
+    painter.drawText(10, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "Game over. Gun shooted.  Press Enter to go to the game scores!");
 
     QPen pen = QPen(Qt::red);
     pen.setWidth(3);
@@ -196,41 +273,31 @@ void GameGLWidget::paintGL()
     painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5);
 
     painter.end();
-
-    if (!(m_frames % 100))
-    {
-      m_time.start();
-      m_frames = 0;
-    }
-    ++m_frames;
-    update();
+    GAME_STARTED = false;
   }
-  else if (GameState == 1)  // next level
-  {
-    NextLevel(++m_level);
-    paintGL();
-  }
-  else if (GameState == 2)  // game over gun died
+  else
   {
     if (m_space->GetGun().GetRate() > GetMinimalRecord())
     {
       m_gameWindow->m_stackedWidget->setCurrentIndex(3);
     }
-    else
-    {
-      QPainter painter;
-      painter.begin(this);
+  }
+}
 
-      painter.setPen(Qt::white);
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2 - 25, "Game over.");
-
-      QString rate;
-      rate.setNum(m_space->GetGun().GetRate());
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 25, (LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM) / 2, "You rezult: " + rate);
-
-      painter.end();
-      GAME_STARTED = false;
-    }
+void GameGLWidget::paintGL()
+{
+  int GameState = m_space->CheckGameState();
+  if (!GameState)
+  {
+    paintGLActiveGame();
+  }
+  else if (GameState == 1)  // next level
+  {
+    paintGLNextLevel();
+  }
+  else if (GameState == 2)  // game over gun died
+  {
+    paintGLGameOver();
   }
 }
 
@@ -325,7 +392,7 @@ void GameGLWidget::SetKey(KeyTypes type, QKeySequence key)
 
 void GameGLWidget::keyPressEvent(QKeyEvent * e)
 {
-  if (m_gameWindow->m_stackedWidget->currentIndex() == 2)
+  if (m_gameWindow->m_stackedWidget->currentIndex() == 2 )
   {
     if (QKeySequence(e->key()) == m_keyGunMoveLeft)
       m_directions[kLeftDirection] = true;
@@ -333,13 +400,20 @@ void GameGLWidget::keyPressEvent(QKeyEvent * e)
     else if (QKeySequence(e->key()) == m_keyGunMoveRight)
       m_directions[kRightDirection] = true;
 
-    else if (QKeySequence(e->key()) == m_keyGunShoot)
+    else if (QKeySequence(e->key()) == m_keyGunShoot && m_space->CheckGameState() == 0)
     {
       if (GUN_CAN_SHOOT)
       {
         GUN_CAN_SHOOT = false;
         m_space->GunShoot();
       }
+    }
+
+    // check zone
+    if (QKeySequence(e->key()) == Qt::Key_Return)
+    {
+      if (m_space->CheckGameState() == 1) m_nextLevel = true;
+      if (m_space->CheckGameState() == 2) m_gameOver = true;
     }
 
     // cheat zone
@@ -621,7 +695,7 @@ void GameGLWidget::Render()
 {
   m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width() / 2, m_screenSize.height() / 2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
   this->RenderStar();
-  this->RenderGun();
+  if (m_space->CheckGameState() == 0) this->RenderGun();
   this->RenderAlien();
   this->RenderShip();
   this->RenderObstacle();

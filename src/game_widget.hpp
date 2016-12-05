@@ -9,6 +9,8 @@
 #include "game_window.hpp"
 #include "gameclasses/space.hpp"
 
+#include <chrono>
+
 class GameWindow;
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
@@ -33,8 +35,12 @@ public:
 
 protected:
   void resizeGL(int w, int h) override;
-  void paintGL() override;
   void initializeGL() override;
+
+  void paintGLActiveGame();
+  void paintGLNextLevel();
+  void paintGLGameOver();
+  void paintGL() override;
 
   void UpdateGun(float elapsedSeconds);
   void Update(float elapsedSeconds);
@@ -83,10 +89,14 @@ private:
   QKeySequence m_keyGunShoot = Qt::Key_Up;
   QKeySequence m_keyGamePause = Qt::Key_Escape;
 
+  // for pause
+  bool m_nextLevel = false;
+  bool m_gameOver = false;
+
   // main
   TexturedRect * m_texturedRect = nullptr;
   Space2D * m_space = nullptr;
   QVector2D m_position;
-  int m_level = 0;
+  int m_level = 9;
   bool m_directions[4] = { false, false, false, false };
 };

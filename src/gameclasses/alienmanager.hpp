@@ -261,7 +261,6 @@ public:
   }
 
 private:
-
   Box2D * BoxInLine(int i)
   {
     for (int b = 0; b < m_aliens[0].size(); b++)
