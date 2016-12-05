@@ -297,6 +297,8 @@ void GameGLWidget::paintGL()
   }
   else if (GameState == 2)  // game over gun died
   {
+    m_gameWindow->m_mainWindow->InterfaceAddRecord(true);
+    m_gameWindow->m_stackedWidget->setCurrentIndex(3);
     paintGLGameOver();
   }
 }
@@ -704,3 +706,5 @@ void GameGLWidget::Render()
   this->RenderBonus();
   this->RenderBoom();
 }
+
+Space2D* GameGLWidget::GetSpace(){ return m_space; }

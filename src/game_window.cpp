@@ -6,8 +6,9 @@
 
 typedef void (QWidget::*QWidgetVoidSlot)();
 
-GameWindow::GameWindow(QStackedWidget * w)
+GameWindow::GameWindow(QStackedWidget * w, MainWindow* wnd)
 {
+  m_mainWindow = wnd;
   m_stackedWidget = w;
   m_glWidget = new GameGLWidget(this);
   setCentralWidget(m_glWidget);
@@ -36,3 +37,4 @@ void GameWindow::SetKey(KeyTypes type, QKeySequence key)
 {
   m_glWidget->SetKey(type, key);
 }
+Space2D* GameWindow::GetSpace(){ return m_glWidget->GetSpace(); }

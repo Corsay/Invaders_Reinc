@@ -15,11 +15,13 @@
 #include <QTranslator>
 #include <QStackedWidget>
 #include <QDialog>
-#include <QTableWidget>
+#include <QLineEdit>
 #include "window_constants.hpp"
 #include "game_window.hpp"
 
 #include <QSoundEffect>
+
+class GameWindow;
 
 enum DialogTypes
 {
@@ -60,6 +62,8 @@ class MainWindow : public QMainWindow
 
 public:
   MainWindow();
+  void InterfaceAddRecord(bool show);
+
 
   void InitSound();
   void SetVolume();
@@ -81,6 +85,8 @@ protected:
   void SetTextsForCurLang();
   void SetSize(int state);
   void ResizeQGridLayouts();
+  //records
+  void createRecordTable();
 
 private slots:
   // SHORTCUTS
@@ -92,6 +98,7 @@ private slots:
   // SETTINGS
   // buttons
   void CheckoutToMenu();
+  void CheckoutToRecords();
   void LoadSettings();
   void SaveSettings();
   void SetDefaultSettings();
@@ -115,6 +122,9 @@ private slots:
   void ChangeSoundGameVolume(int state);
   void ChangeSoundMenuOn(bool state);
   void ChangeSoundGameOn(bool state);
+  //records
+  bool saveRecord();
+  void championNameChanged(QString);
 
 private:
   // SHORTCUTS
@@ -123,6 +133,7 @@ private:
   bool m_gameStarted = false;
   QPushButton * m_pbMenuNewGame = nullptr;
   QPushButton * m_pbMenuContinueGame = nullptr;
+  QPushButton * m_pbMenuRecord = nullptr;
   QPushButton * m_pbToSet = nullptr;
   QPushButton * m_pbExit = nullptr;
   QGridLayout * m_layoutMenu = nullptr;
@@ -191,4 +202,10 @@ private:
   QString m_style;
   // SOUND
   QSoundEffect * m_soundButtonClick = nullptr;
+  //RECORDS
+  QLineEdit* m_nameLine = nullptr;
+  QLabel* m_nameLabel = nullptr;
+  QPushButton* m_saveRecordButton = nullptr;
+  QHBoxLayout* m_saveRecordLayout = nullptr;
+  QLabel* m_table = nullptr;
 };

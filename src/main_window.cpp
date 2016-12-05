@@ -42,6 +42,8 @@ MainWindow::MainWindow()
   connect(m_pbMenuNewGame, SIGNAL(clicked(bool)), this, SLOT(NewGame()));
   m_pbMenuContinueGame = new QPushButton();
   connect(m_pbMenuContinueGame, SIGNAL(clicked(bool)), this, SLOT(ContinueGame()));
+  m_pbMenuRecord = new QPushButton();
+  connect(m_pbMenuRecord, SIGNAL(clicked(bool)), this, SLOT(CheckoutToRecords()) );
   m_pbToSet = new QPushButton();
   connect(m_pbToSet, SIGNAL(clicked(bool)), this, SLOT(CheckoutToSettings()));
   m_pbExit = new QPushButton();
@@ -66,6 +68,7 @@ MainWindow::MainWindow()
   m_layoutMenu->addWidget(m_pbMenuNewGame, 1, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbMenuContinueGame, 2, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbToSet, 3, 1, 1, 1);
+  m_layoutMenu->addWidget(m_pbMenuRecord, 4, 1, 1, 1);
   m_layoutMenu->addWidget(m_pbExit, 6, 1, 1, 1);
   m_layoutMenu->addWidget(bottomFiller, 7, 0, 1, 3);
 
@@ -77,6 +80,10 @@ MainWindow::MainWindow()
   // buttons
   m_pbToMenu = new QPushButton();
   connect(m_pbToMenu, SIGNAL(clicked(bool)), this, SLOT(CheckoutToMenu()));
+  if(m_size.width()*0.35 > 250)
+    m_pbToMenu->setFixedWidth(m_size.width()*0.35);
+  else
+    m_pbToMenu->setFixedWidth(250);
   m_pbSaveSettings = new QPushButton();
   connect(m_pbSaveSettings, SIGNAL(clicked(bool)), this, SLOT(SaveSettings()));
   m_pbLoadSettings = new QPushButton();
@@ -284,23 +291,40 @@ MainWindow::MainWindow()
   m_widgetSettings->hide();
 
   // GAME
-  m_windowGame = new GameWindow(m_widgetStacked);
+  m_windowGame = new GameWindow(m_widgetStacked, this);
 
-  // RECORDS
+  //RECORDS
   ReadJsonRecords(recordsArray);
 
   m_widgetRecords = new QWidget;
-  QGridLayout * table = new QGridLayout;
-  table->setAlignment(Qt::AlignCenter);
-  table->setColumnStretch(0, m_size.width() / 100 * 30);
 
-  for(int i = 0; i < recordsArray.size(); i++)
-  {
-    table->addWidget(new QLabel(recordsArray[i][0]), i, 0);
-    table->addWidget(new QLabel(recordsArray[i][1]), i, 1);
-  }
+  m_nameLine = new QLineEdit;
+  m_nameLine->setFixedWidth(250);
+  m_nameLabel = new QLabel("Enter You name: ");
 
-  m_widgetRecords->setLayout(table);
+  m_saveRecordButton = new QPushButton;
+  m_saveRecordButton->setVisible(false);
+
+  QObject::connect( m_saveRecordButton, SIGNAL(clicked(bool)), this, SLOT( saveRecord() ) );
+  QObject::connect( m_nameLine, SIGNAL(textChanged(QString)), this, SLOT( championNameChanged(QString) ) );
+
+  m_saveRecordLayout = new QHBoxLayout;
+  m_saveRecordLayout->setStretch(0, m_size.width()/100*30);
+  m_saveRecordLayout->addWidget(m_nameLabel);
+  m_saveRecordLayout->addWidget(m_nameLine);
+  m_saveRecordLayout->addWidget(m_saveRecordButton);
+
+
+
+  m_table = new QLabel("<center><h1>RECORDS:</h1></center>");
+  createRecordTable();
+
+  QVBoxLayout * mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(m_pbToMenu);
+  mainLayout->addLayout(m_saveRecordLayout);
+  mainLayout->addWidget(m_table);
+
+  m_widgetRecords->setLayout(mainLayout);
 
   // fill stackedWidget
   m_widgetStacked->addWidget(m_widgetMenu);
@@ -325,6 +349,16 @@ MainWindow::MainWindow()
 
   if (!ReadXml()) ReadJson();
   m_settingsChanged = false;
+}
+
+void MainWindow::InterfaceAddRecord(bool show)
+{
+    m_nameLabel->setVisible(show);
+    m_nameLine->setVisible(show);
+    if(m_nameLine->text() == "")
+      m_saveRecordButton->setVisible(false);
+    else
+      m_saveRecordButton->setVisible(show);
 }
 
 void MainWindow::InitSound()
@@ -541,6 +575,9 @@ void MainWindow::SetTextsForCurLang()
   m_pbToMenu->setToolTip(QPushButton::tr("Back to the main menu"));
   m_pbSaveSettings->setText(QPushButton::tr("Save settings"));
   m_pbSaveSettings->setToolTip(QPushButton::tr("Save settings to data/settings"));
+  m_pbMenuRecord->setText(QPushButton::tr("Best rezults"));
+  m_pbMenuRecord->setToolTip(QPushButton::tr("see records"));
+  m_saveRecordButton->setText(QPushButton::tr("save record"));
   m_pbLoadSettings->setText(QPushButton::tr("Load settings"));
   m_pbLoadSettings->setToolTip(QPushButton::tr("Load settings from data/settings"));
   m_pbSetDefault->setText(QPushButton::tr("Set default"));
@@ -741,12 +778,17 @@ void MainWindow::CheckoutToMenu()
   else m_widgetStacked->setCurrentIndex(0);
 }
 
-// RECORDS
-void MainWindow::WriteJsonRecord(std::vector<std::vector<QString>> & rezults)
+void MainWindow::CheckoutToRecords()
+{
+  InterfaceAddRecord(false);
+  m_widgetStacked->setCurrentIndex(3);
+}
+
+void MainWindow::WriteJsonRecord(std::vector< std::vector< QString > > & rezults)
 {
   Json::Value records;
   QString str;
-  if(rezults.size() < MAX_COUNT_RECORDS)
+  if( rezults.size() < MAX_COUNT_RECORDS )
     str.setNum(rezults.size());
   else
     str.setNum(MAX_COUNT_RECORDS);
@@ -768,10 +810,12 @@ void MainWindow::WriteJsonRecord(std::vector<std::vector<QString>> & rezults)
     settingsFile << styledWriter.write(records);
     settingsFile.close();
   }
+
 }
 
-bool MainWindow::ReadJsonRecords(std::vector<std::vector<QString>> & rezults)
+bool MainWindow::ReadJsonRecords(std::vector< std::vector< QString > > & rezults)
 {
+
   rezults.clear();
   Json::Value records;
   std::ifstream file("data/records.json");
@@ -779,19 +823,27 @@ bool MainWindow::ReadJsonRecords(std::vector<std::vector<QString>> & rezults)
   {
     file >> records;
     file.close();
-  }
-  else return false; // not loaded
+  }else return false; // not loaded
 
-  int countRecords = records["countRecords"].asCString()[0] - 48;
+  int countRecords = 0;
+  if(!records.empty())
+  {
+    if( !records["countRecords"].empty() )
+    {
+      countRecords = records["countRecords"].asCString()[0] - 48;
+    }
+  }
+
   for(int i = 0; i < countRecords; i++)
   {
     QString str;
     str.setNum(i);
-    rezults.push_back(std::vector<QString>{QString(records[str.toStdString()]["name"].asCString()), QString(records[str.toStdString()]["rezult"].asCString())});
+    if( !records[str.toStdString()]["name"].empty() && !records[str.toStdString()]["rezult"].empty() )
+    rezults.push_back( std::vector<QString>{ QString(records[str.toStdString()]["name"].asCString()),
+                                                 QString(records[str.toStdString()]["rezult"].asCString()) } );
   }
   return true;
 }
-
 // save/load settings
 void MainWindow::WriteJson()
 {
@@ -1348,4 +1400,80 @@ void MainWindow::ChangeSoundGameOn(bool state)
 {
   SOUND_GAME_ON = state;
   m_settingsChanged = true;
+}
+
+//RECORDS
+int strToInt(QString & str)
+{
+
+  int val = 0;
+  for(int i=0; i<str.size(); i++)
+  {
+    val *=10;
+    val += int(str.toStdString()[i]) - '0';
+  }
+  return val;
+}
+
+void MainWindow::championNameChanged(QString str)
+{
+  m_saveRecordButton->setVisible( !( str == "" || str.size() > 30 ) );
+}
+
+void MainWindow::createRecordTable()
+{
+  if(recordsArray.size() == 0)
+  {
+      m_table->setText("<center><h1>NO RECORDS!!!</h1></center>");
+      return;
+  }
+
+  //QString text2 = "<center><h1>popa</h1><br>popa2</center>";
+  QString text = "<code><center><h1>RECORDS:<br><br>";
+  for(int i = 0; i < recordsArray.size(); i++)
+  {
+    text += recordsArray[i][0];
+    for(int j = recordsArray[i][0].size() + recordsArray[i][1].size(); j < 50; j++)
+      text += "-";
+    text += recordsArray[i][1];
+    text += "<br>";
+  }
+  text += "</h1></center></code>";
+  //std::cout << text.toStdString() <<std::endl;
+  m_table->setText(text);
+}
+
+
+bool MainWindow::saveRecord()
+{
+  InterfaceAddRecord(false);
+  int rezult = m_windowGame->GetSpace()->GetGun().GetRate();
+  QString str;
+  str.setNum(rezult);
+
+  if(rezult < strToInt(recordsArray[ recordsArray.size() - 1 ][1]) && recordsArray.size() < MAX_COUNT_RECORDS)
+  {
+    recordsArray.push_back(std::vector<QString>{m_nameLine->text(), str});
+    createRecordTable();
+    return true;
+  }
+
+  int i = 0;
+  for(i; i < recordsArray.size(); i++)
+  {
+    if(rezult > strToInt(recordsArray[i][1]) )
+    {
+      recordsArray.insert( recordsArray.begin() + i,
+                          std::vector<QString>{m_nameLine->text(), str} );
+
+      if(recordsArray.size() > MAX_COUNT_RECORDS)
+        recordsArray.pop_back();
+
+      WriteJsonRecord( recordsArray );
+      createRecordTable();
+      return true;
+    }
+  }
+
+  return false;
 }

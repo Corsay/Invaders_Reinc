@@ -32,6 +32,7 @@ public:
   void SetVolume();
 
   void SetKey(KeyTypes type, QKeySequence key);
+  Space2D* GetSpace();
 
 protected:
   void resizeGL(int w, int h) override;
@@ -97,6 +98,6 @@ private:
   TexturedRect * m_texturedRect = nullptr;
   Space2D * m_space = nullptr;
   QVector2D m_position;
-  int m_level = 9;
+  int m_level = 0;
   bool m_directions[4] = { false, false, false, false };
 };
