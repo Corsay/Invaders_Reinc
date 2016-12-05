@@ -80,37 +80,13 @@ public:
               if(m_liveAliensCount == 0)
                 return true;
 
-              if(BoxInColumn(j) == nullptr)
-              {
-                if (j == minLeftIndex)
-                {
-                   int k = j;
-                   do
-                   {
-                     m_border.SetLeft(m_border.left() + ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH);
-                     k++;
-                     minLeftIndex++;
-                   }
-                   while(BoxInColumn(k) == nullptr);
-                }
-                if(j == maxRightIndex)
-                {
-                   int k = j;
-                   do
-                   {
-                     m_border.SetRight(m_border.right() - ( ALIEN_HORIZONTAL_DISTANCE + ALIEN_WIDTH) );
-                     k--;
-                     maxRightIndex--;
-                   }
-                   while(BoxInColumn(k) == nullptr);
-                }
-              }
+              SetNewBorder();
               if(BoxInLine(i) == nullptr)
               {
                 m_aliens.erase(m_aliens.begin() + i);
                 if(i == 0)
                 {
-                  m_border.SetBottom(m_border.bottom() + ( ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT));
+                  m_border.SetBottom(m_border.bottom() + (ALIEN_VERTICAL_DISTANCE + ALIEN_HEIGHT));
                 }
               }
             }
@@ -129,7 +105,9 @@ public:
   bool CheckIntersection(Gun2D * gun)
   {
     for(int i = 0; i < m_aliens.size(); i++)
+    {
       for(int j = 0; j < m_aliens[0].size(); j++)
+      {
         if (i >= 0 && j >= 0 && i < m_aliens.size() && j < m_aliens[i].size())
         {
           if (m_aliens[i][j] != nullptr)
@@ -170,6 +148,8 @@ public:
             }
           }
         }
+      }
+    }
     return false;
   }
 
@@ -281,15 +261,6 @@ public:
   }
 
 private:
-  Box2D * BoxInColumn(int j)
-  {
-    for (int b = 0; b < m_aliens.size(); b++)
-      if (m_aliens[b][j] != nullptr)
-      {
-        return &(m_aliens[b][j]->GetBox());        
-      }
-    return nullptr;
-  }
 
   Box2D * BoxInLine(int i)
   {
@@ -299,12 +270,27 @@ private:
     return nullptr;
   }
 
-  void DeleteColumn(int j)
+  void SetNewBorder()
   {
-    if(j < 0 || j > m_aliens.size() - 1)
-      return;
-    for(int k = 0; k < m_aliens.size(); k++)
-      m_aliens[k].erase(m_aliens[k].begin() + j);
+    float left = 0;
+    float right = 0;
+
+    for (size_t i = 0; i < m_aliens.size(); ++i)
+    {
+      for(size_t j = 0; j < m_aliens[i].size(); ++j)
+      {
+        if (m_aliens[i][j] != nullptr)
+        {
+          if (left == 0) left = m_aliens[i][j]->GetBox().left();
+          else if (m_aliens[i][j]->GetBox().left() < left) left = m_aliens[i][j]->GetBox().left();
+          if (right == 0) right = m_aliens[i][j]->GetBox().right();
+          else if (m_aliens[i][j]->GetBox().right() > right) right = m_aliens[i][j]->GetBox().right();
+        }
+      }
+    }
+
+    m_border.SetLeft(left);
+    m_border.SetRight(right);
   }
 
   void CreateAlienMatrix(size_t const countRow, size_t const countColumn)

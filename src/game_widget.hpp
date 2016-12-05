@@ -87,6 +87,6 @@ private:
   TexturedRect * m_texturedRect = nullptr;
   Space2D * m_space = nullptr;
   QVector2D m_position;
-  int m_level = 1;
+  int m_level = 0;
   bool m_directions[4] = { false, false, false, false };
 };

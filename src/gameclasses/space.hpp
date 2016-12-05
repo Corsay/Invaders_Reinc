@@ -52,12 +52,16 @@ public:
         rightTopY = leftBottomY + GUN_HEIGHT;
     m_gun = new Gun2D({leftBottomX, leftBottomY}, {rightTopX, rightTopY}, GUN_HEALTH_START, GUN_SPEED_SHOOT_START, GUN_LIVES_START);
 
+    timeAlienMove = std::chrono::system_clock::now();
     timeAlienShoot = std::chrono::system_clock::now();
     timeGunShoot = std::chrono::system_clock::now();
     timeShipStart = std::chrono::system_clock::now();
+    ftimeAlienMove = 0.0f;
     ftimeAlienShoot = 0.0f;
     ftimeGunShoot = 0.0f;
     ftimeShipStart = 0.0f;
+
+    ALIEN_MOVE_SPEED_TIMER = ALIEN_MOVE_SPEED_TIMER_DEFAULT;
 
     m_ship = nullptr;
     if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100)
@@ -194,6 +198,7 @@ public:
       if (m_alienManager->CheckIntersection(*it, &rate))
       {
         itList.push_back(it);
+
         if (BONUS_X2) rate *= 2;
         if (BONUS_ANTI_X2) rate /= 2;
         m_gun->SetRate(m_gun->GetRate() + rate);
@@ -208,34 +213,31 @@ public:
         if (SOUND_GAME_ON) m_soundBoom->play();
         m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
-      else if (m_ship != nullptr)
+      else if (m_ship != nullptr && m_ship->CheckIntersection(*it))
       {
-        if(m_ship->CheckIntersection(*it))
+        delete m_ship;
+        m_ship = nullptr;
+        itList.push_back(it);
+
+        // work with bonuses
+        if (BONUS_ADD_LIVE)
         {
-          delete m_ship;
-          m_ship = nullptr;
-          itList.push_back(it);
-
-          // work with bonuses
-          if (BONUS_ADD_LIVE)
-          {
-            m_gun->SetLives(m_gun->GetLives() + 1);
-          }
-          if (BONUS_HEAL_OBSTACLES)
-          {
-            m_obstacleManager->clear();
-            delete m_obstacleManager;
-            m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
-          }
-          if (BONUS_HIT_ALL_ALIENS)
-          {
-            m_alienManager->clear();
-            return;
-          }
-
-          if (SOUND_GAME_ON) m_soundBoom->play();
-          m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
+          m_gun->SetLives(m_gun->GetLives() + 1);
         }
+        if (BONUS_HEAL_OBSTACLES)
+        {
+          m_obstacleManager->clear();
+          delete m_obstacleManager;
+          m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
+        }
+        if (BONUS_HIT_ALL_ALIENS)
+        {
+          m_alienManager->clear();
+          return;
+        }
+
+        if (SOUND_GAME_ON) m_soundBoom->play();
+        m_boomList.push_back( BoomElement (Point2D { it->GetBox().GetCenter().x(), it->GetBox().top()} ) );
       }
       else
       {
@@ -332,6 +334,9 @@ public:
   {
     OffBonuses();
 
+    ALIEN_MOVE_SPEED_TIMER = ALIEN_MOVE_SPEED_TIMER_DEFAULT - (lvl * ALIEN_MOVE_SPEED_TIMER_INC);
+    if (ALIEN_MOVE_SPEED_TIMER < ALIEN_MOVE_SPEED_TIMER_MIN) ALIEN_MOVE_SPEED_TIMER = ALIEN_MOVE_SPEED_TIMER_MIN;
+
     delete m_alienManager;
     m_alienManager = nullptr;
     delete m_bulletManager;
@@ -349,9 +354,11 @@ public:
       m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
     }
 
+    timeAlienMove = std::chrono::system_clock::now();
     timeAlienShoot = std::chrono::system_clock::now();
     timeGunShoot = std::chrono::system_clock::now();
     timeShipStart = std::chrono::system_clock::now();
+    ftimeAlienMove = 0.0f;
     ftimeAlienShoot = 0.0f;
     ftimeGunShoot = 0.0f;
     ftimeShipStart = 0.0f;
@@ -362,12 +369,15 @@ public:
     // fix timer if used pause (if function GameStep not call more then 0.5 seconds)
     if (std::chrono::duration<float>(std::chrono::system_clock::now() - timeAlienShoot).count() >= 0.5)
     {
+      timeAlienMove = std::chrono::system_clock::now();
       timeAlienShoot = std::chrono::system_clock::now();
       timeGunShoot = std::chrono::system_clock::now();
       timeShipStart = std::chrono::system_clock::now();
     }
 
     // time
+    ftimeAlienMove += std::chrono::duration<float>(std::chrono::system_clock::now() - timeAlienMove).count();
+    timeAlienMove = std::chrono::system_clock::now();
     ftimeAlienShoot += std::chrono::duration<float>(std::chrono::system_clock::now() - timeAlienShoot).count();
     timeAlienShoot = std::chrono::system_clock::now();
     ftimeGunShoot += std::chrono::duration<float>(std::chrono::system_clock::now() - timeGunShoot).count();
@@ -431,13 +441,10 @@ public:
       ftimeAlienShoot = 0.0f;
     }
 
-    static int int_timer;
-    if (int_timer)
-      int_timer--;
-    else
+    if (ftimeAlienMove >= ALIEN_MOVE_SPEED_TIMER)
     {
       AliensMove();
-      int_timer = 30;
+      ftimeAlienMove = 0.0f;
     }
 
     // check intersections
@@ -458,9 +465,11 @@ private:
   QSoundEffect * m_soundBoom = nullptr;
 
   // time
+  float ftimeAlienMove = 0.0f;
   float ftimeAlienShoot = 0.0f;
   float ftimeGunShoot = 0.0f;
   float ftimeShipStart = 0.0f;
+  ChronoClock timeAlienMove = std::chrono::system_clock::now();
   ChronoClock timeAlienShoot = std::chrono::system_clock::now();
   ChronoClock timeGunShoot = std::chrono::system_clock::now();
   ChronoClock timeShipStart = std::chrono::system_clock::now();

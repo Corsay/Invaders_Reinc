@@ -21,6 +21,8 @@ float SOUND_GAME_VOLUME = 0.25;
 // ALIEN
 size_t ALIEN_COUNT       = 55;
 float ALIEN_SHOOT_SPEED = 1.5;
+float ALIEN_MOVE_SPEED_TIMER = 0.4;
+float ALIEN_MOVE_SPEED_TIMER_INC = 0.025;
 // GUN
 size_t GUN_LIVES_START           = 3;
 bool   GUN_LIVES_INC_EVERY_LEVEL = true;

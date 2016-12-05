@@ -339,6 +339,12 @@ void GameGLWidget::keyPressEvent(QKeyEvent * e)
       m_space->GunShoot();
     }
   }
+
+  else if (QKeySequence(e->key()) == m_keyGamePause)
+  {
+    m_directions[kLeftDirection] = false;
+    m_directions[kRightDirection] = false;
+  }
 }
 
 void GameGLWidget::keyReleaseEvent(QKeyEvent * e)

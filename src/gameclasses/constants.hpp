@@ -18,8 +18,12 @@ extern float SOUND_GAME_VOLUME;
 // Game parameters management
 // ALIEN
 extern size_t ALIEN_COUNT;
-const float  ALIEN_SHOOT_SPEED_DEFAULT = 1.5;
+const float   ALIEN_SHOOT_SPEED_DEFAULT = 1.5;
 extern float  ALIEN_SHOOT_SPEED;
+const float   ALIEN_MOVE_SPEED_TIMER_DEFAULT = 0.4;
+extern float  ALIEN_MOVE_SPEED_TIMER;
+extern float  ALIEN_MOVE_SPEED_TIMER_INC;
+const float  ALIEN_MOVE_SPEED_TIMER_MIN = 0.2;
 // GUN
 extern size_t GUN_LIVES_START;
 extern bool   GUN_LIVES_INC_EVERY_LEVEL;
