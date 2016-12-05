@@ -325,25 +325,32 @@ void GameGLWidget::SetKey(KeyTypes type, QKeySequence key)
 
 void GameGLWidget::keyPressEvent(QKeyEvent * e)
 {
-  if (QKeySequence(e->key()) == m_keyGunMoveLeft)
-    m_directions[kLeftDirection] = true;
-
-  else if (QKeySequence(e->key()) == m_keyGunMoveRight)
-    m_directions[kRightDirection] = true;
-
-  else if (QKeySequence(e->key()) == m_keyGunShoot)
+  if (m_gameWindow->m_stackedWidget->currentIndex() == 2)
   {
-    if (GUN_CAN_SHOOT)
+    if (QKeySequence(e->key()) == m_keyGunMoveLeft)
+      m_directions[kLeftDirection] = true;
+
+    else if (QKeySequence(e->key()) == m_keyGunMoveRight)
+      m_directions[kRightDirection] = true;
+
+    else if (QKeySequence(e->key()) == m_keyGunShoot)
     {
-      GUN_CAN_SHOOT = false;
-      m_space->GunShoot();
+      if (GUN_CAN_SHOOT)
+      {
+        GUN_CAN_SHOOT = false;
+        m_space->GunShoot();
+      }
     }
-  }
 
-  else if (QKeySequence(e->key()) == m_keyGamePause)
-  {
-    m_directions[kLeftDirection] = false;
-    m_directions[kRightDirection] = false;
+    // cheat zone
+    if (e->key() == Qt::Key_F11)
+    {
+      BONUS_GOD = true;
+    }
+    if (e->key() == Qt::Key_F12)
+    {
+      GUN_SHOOT_SPEED = 0.001;
+    }
   }
 }
 

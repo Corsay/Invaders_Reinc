@@ -19,14 +19,18 @@ float SOUND_GAME_VOLUME = 0.25;
 // Game parameters management
 // (need to send it as param to space2d)
 // ALIEN
-size_t ALIEN_COUNT       = 55;
-float ALIEN_SHOOT_SPEED = 1.5;
-float ALIEN_MOVE_SPEED_TIMER = 0.4;
+size_t ALIEN_COUNT               = 55;
+float ALIEN_SHOOT_SPEED          = 1.5;
+float ALIEN_SHOOT_SPEED_INC      = 0.025;
+float ALIEN_MOVE_SPEED_TIMER     = 0.4;
 float ALIEN_MOVE_SPEED_TIMER_INC = 0.025;
+float ALIEN_HEALTH               = 50.0f;
+float ALIEN_HEALTH_INC           = 50.0f;
+size_t ALIEN_HEALTH_LVL          = 10;
 // GUN
 size_t GUN_LIVES_START           = 3;
 bool   GUN_LIVES_INC_EVERY_LEVEL = true;
-float  GUN_SHOOT_SPEED           = 1.5;
+float  GUN_SHOOT_SPEED           = 0.8;
 bool   GUN_CAN_SHOOT             = true;
 // OBSTACLE
 size_t OBSTACLE_COUNT              = 4;
@@ -62,7 +66,6 @@ bool   BONUS_HIT_OBSTACLES    = false;     // delete all obstacles
 float DEFAULT_HEALTH = 50.0f;
 float DEFAULT_SPEED = 0.5f;
 // ALIEN
-float ALIEN_HEALTH_START      = 50.0f;
 float ALIEN_SPEED_SHOOT_START = 1.2f;
 float ALIEN_WIDTH             = 45.0f;
 float ALIEN_HEIGHT            = 35.0f;

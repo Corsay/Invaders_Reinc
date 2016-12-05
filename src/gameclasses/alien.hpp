@@ -74,7 +74,7 @@ public:
 private:
   inline void DefaultAlienSetStartValue()
   {
-    SetHealth(ALIEN_HEALTH_START);
+    SetHealth(ALIEN_HEALTH);
     SetSpeed(ALIEN_SPEED_SHOOT_START);
   }
 

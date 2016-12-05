@@ -323,7 +323,7 @@ private:
               ALIEN_BOX_LEFT + j * (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + ALIEN_WIDTH,
               ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE) + ALIEN_HEIGHT,
             },
-            ALIEN_HEALTH_START,
+            ALIEN_HEALTH,
             ALIEN_SPEED_SHOOT_START,
             curType
           )
@@ -331,7 +331,7 @@ private:
       }
       m_aliens.push_back(tempVect);
     }
-    m_border = Box2D{ m_aliens[0][0]->GetBox().leftBottom(), m_aliens[m_aliens.size() - 1][m_aliens[0].size() - 1]->GetBox().rightTop() };
+    m_border = Box2D{m_aliens[0][0]->GetBox().leftBottom(), m_aliens[m_aliens.size() - 1][m_aliens[0].size() - 1]->GetBox().rightTop()};
 
     log();
   }

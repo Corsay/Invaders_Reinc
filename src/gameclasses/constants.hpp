@@ -18,12 +18,19 @@ extern float SOUND_GAME_VOLUME;
 // Game parameters management
 // ALIEN
 extern size_t ALIEN_COUNT;
-const float   ALIEN_SHOOT_SPEED_DEFAULT = 1.5;
+const float  ALIEN_SHOOT_SPEED_DEFAULT = 1.5;
 extern float  ALIEN_SHOOT_SPEED;
+extern float  ALIEN_SHOOT_SPEED_INC;
+const float  ALIEN_SHOOT_SPEED_MIN = 0.75;
 const float   ALIEN_MOVE_SPEED_TIMER_DEFAULT = 0.4;
 extern float  ALIEN_MOVE_SPEED_TIMER;
 extern float  ALIEN_MOVE_SPEED_TIMER_INC;
 const float  ALIEN_MOVE_SPEED_TIMER_MIN = 0.2;
+const float  ALIEN_HEALTH_DEFAULT = 50.0;
+extern float  ALIEN_HEALTH;
+extern float  ALIEN_HEALTH_INC;
+extern size_t ALIEN_HEALTH_LVL;
+const float  ALIEN_HEALTH_MAX = 150.0;
 // GUN
 extern size_t GUN_LIVES_START;
 extern bool   GUN_LIVES_INC_EVERY_LEVEL;
@@ -64,10 +71,9 @@ extern int GetMinimalRecord();
 
 // const (setted value)
 // DEFAULT
-extern float DEFAULT_HEALTH; // median alien = 50,  gun = 50,  bullet(damage health) = 50, box_part = 50
+extern float DEFAULT_HEALTH;  // median alien = 50,  gun = 50,  bullet(damage health) = 50, box_part = 50
 extern float DEFAULT_SPEED;   // (much of aliens) alien = 0.5, gun = 2.0, bullet(fly speed) = 5.0
 // ALIEN
-extern float ALIEN_HEALTH_START;
 extern float ALIEN_SPEED_SHOOT_START;
 extern float ALIEN_WIDTH;
 extern float ALIEN_HEIGHT;
