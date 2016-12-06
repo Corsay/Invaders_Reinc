@@ -28,17 +28,17 @@ static QString RECORD_MESSAGE                  = "RECORDS:";
 static QString RECORD_NO_MESSAGE               = "NO RECORDS! BE FIRST ;)";
 const int MAX_COUNT_RECORDS = 5;
   // Game
-static QString GAME_RESULT                     = "You rezult: ";
-static QString GAME_OVER                       = "Game over. Gun shooted.";
-static QString GAME_OVER_ADDITIONAL            = "Press Enter to go to the game scores!";
-static QString GAME_CURRENT_RESULT             = "You current rezult: ";
-static QString GAME_PRE_NEXT_LEVEL             = "Aliens destroyed! You win! Level ";
-static QString GAME_NEXT_ADDITIONAL            = "Press Enter to go to the next level!";
-static QString GAME_USE_CHEATS_MSG             = "You are used cheat code on this level";
-static QString GAME_NEXT_ALIEN_MODIF           = "Next Level Aliens Modifications:";
-static QString GAME_NEXT_ALIEN_MODIF_FAST_MOVE = "Little faster move";
-static QString GAME_NEXT_ALIEN_MODIF_FAST_SHOOT= "Little faster shoot";
-static QString GAME_NEXT_ALIEN_MODIF_SPEC_LIFE = "One more life to aliens";
+extern QString GAME_RESULT;
+extern QString GAME_OVER;
+extern QString GAME_OVER_ADDITIONAL;
+extern QString GAME_CURRENT_RESULT;
+extern QString GAME_PRE_NEXT_LEVEL;
+extern QString GAME_NEXT_ADDITIONAL;
+extern QString GAME_USE_CHEATS_MSG;
+extern QString GAME_NEXT_ALIEN_MODIF;
+extern QString GAME_NEXT_ALIEN_MODIF_FAST_MOVE;
+extern QString GAME_NEXT_ALIEN_MODIF_FAST_SHOOT;
+extern QString GAME_NEXT_ALIEN_MODIF_SPEC_LIFE;
 
 // For key change
 enum KeyTypes
