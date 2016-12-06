@@ -17,6 +17,12 @@ QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 QT_FORWARD_DECLARE_CLASS(QOpenGLShader)
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
+class NoTextureException: public std::exception
+{
+public:
+  const char * what() const noexcept;
+};
+
 class GameGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
   Q_OBJECT

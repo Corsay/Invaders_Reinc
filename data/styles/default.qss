@@ -6,7 +6,7 @@
 
 GameWindow *
 {
-  font-family: "Epson1";
+  font-family: "DS Hiline";
   font-size: 18px;
 }
 

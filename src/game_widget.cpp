@@ -22,6 +22,13 @@ namespace
   int constexpr kDownDirection = 3;
 } // namespace
 
+// exceptions
+const char * NoTextureException::what() const noexcept
+{
+  return "Not all game textures found! \n Не все игровые текстуры найдены!";
+}
+
+
 GameGLWidget::GameGLWidget(GameWindow * mw)
   : m_gameWindow(mw)
 {
@@ -104,11 +111,28 @@ void GameGLWidget::initializeGL()
   m_boomTexture = new  QOpenGLTexture(QImage("data/images/boom.png"));
 
   // check textures
-  if (m_backgroundPicture == nullptr || m_gunTexture == nullptr || m_alienPirateTexture == nullptr ||
-      m_alienRaiderTexture == nullptr || m_alienBombardierTexture == nullptr || m_partObstacleTexture == nullptr ||
-      m_bulletFromGunTexture == nullptr || m_bulletFromAlienTexture == nullptr || m_heartTexture == nullptr)
+  for (int i = 0; i < m_bonusTexture.size(); ++i)
   {
-    // stop game... textures not found
+    if (!m_bonusTexture[i]->isCreated())
+    {
+      throw NoTextureException();
+    }
+  }
+
+  for (int i = 0; i < m_starTexture.size(); ++i)
+  {
+    if (!m_starTexture[i]->isCreated())
+    {
+      throw NoTextureException();
+    }
+  }
+
+  if (!m_boomTexture->isCreated() || !m_heartTexture->isCreated() || !m_bulletFromAlienTexture->isCreated() ||
+      !m_bulletFromGunTexture->isCreated() || !m_partObstacleTexture->isCreated() || !m_alienBombardierTexture->isCreated() ||
+      !m_alienRaiderTexture->isCreated() || !m_alienPirateTexture->isCreated() || !m_gunTexture->isCreated() ||
+      !m_shipTexture->isCreated() || !m_backgroundPicture->isCreated())
+  {
+    throw NoTextureException();
   }
 }
 
@@ -122,8 +146,22 @@ void GameGLWidget::ChangeSizeConstants(float w, float h)
   if (alien_h < ALIEN_HEIGHT)
     ALIEN_WIDTH = alien_h;
 
+  if((LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / (ALIEN_WIDTH + 12.0) < ALIEN_COUNT / 5)
+  {
+    ALIEN_HORIZONTAL_DISTANCE = 0;
+    if ((LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / ALIEN_WIDTH < ALIEN_COUNT / 5)
+    {
+      ALIEN_WIDTH = (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / (ALIEN_COUNT / 5);
+    }
+  }
+  else
+  {
+    ALIEN_HORIZONTAL_DISTANCE = 12.0f;
+  }
+
   OBSTACLE_DISTANCE = ((w - GAME_PADDING_LEFT - GAME_PADDING_RIGHT) - (OBSTACLE_WIDTH * OBSTACLE_COUNT)) / (OBSTACLE_COUNT + 1) ;
   OBSTACLE_BOX_LEFT = GAME_PADDING_LEFT;
+  ChangeConstants(w,h);
 }
 
 void GameGLWidget::NewGame(float w, float h)
@@ -131,10 +169,10 @@ void GameGLWidget::NewGame(float w, float h)
   // reset flag
   m_gameOver = false;
   m_nextLevel = false;
+  m_level = 0;
 
   // change size onstants
   ChangeSizeConstants(w, h);
-  ChangeConstants(w,h);
 
   // init space2D
   m_space = new Space2D(Point2D(0, 0), Point2D(w, h));
@@ -184,16 +222,16 @@ void GameGLWidget::paintGLActiveGame()
 
   painter.endNativePainting();
 
+  QRect rect = QRect(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 2, LAST_WINDOW_HORIZONTAL_SIZE - 10, GAME_PADDING_BOTTOM);
+
+  QString text = GAME_RESULT + QString::number(m_space->GetGun().GetRate());
+
   if (elapsed != 0)
   {
-    QString framesPerSecond;
-    framesPerSecond.setNum(m_frames / (elapsed / 1000.0), 'f', 2);
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 5, framesPerSecond + " fps");
+    text += "\n" + QString::number(m_frames / (elapsed / 1000.0), 'f', 2) + " fps";
   }
 
-  QString rate;
-  rate.setNum(m_space->GetGun().GetRate());
-  painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, GAME_RESULT + rate);
+  painter.drawText(rect, Qt::AlignRight | Qt::AlignVCenter, text);
 
   QPen pen = QPen(Qt::red);
   pen.setWidth(3);
@@ -217,39 +255,36 @@ void GameGLWidget::paintGLNextLevel()
   {
     QPainter painter;
     painter.begin(this);
-    painter.setPen(Qt::white);
 
-    QString rate;
-    rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 150, LAST_WINDOW_VERTICAL_SIZE / 3 - 15, GAME_CURRENT_RESULT + rate);
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 15, GAME_PRE_NEXT_LEVEL + QString::number(m_level + 1));
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 30, GAME_NEXT_ADDITIONAL);
+    QRect rect = QRect(0, 0, LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE);
 
-    float yPositionInc = 60;
+    QString text = GAME_CURRENT_RESULT + QString::number(m_space->GetGun().GetRate()) + "\n"
+        + GAME_PRE_NEXT_LEVEL + QString::number(m_level + 1) + "\n"
+        + GAME_NEXT_ADDITIONAL + "\n\n";
+
     // Check cheat using
     if (CHEAT_USED)
     {
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_USE_CHEATS_MSG);
-      yPositionInc += 30;
+      text += GAME_USE_CHEATS_MSG + "\n\n";
     }
 
     // next level info
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF);
-    yPositionInc += 15;
+    text += GAME_NEXT_ALIEN_MODIF + "\n";
     if (ALIEN_MOVE_SPEED_TIMER_DEFAULT - (m_level * ALIEN_MOVE_SPEED_TIMER_INC) >= ALIEN_MOVE_SPEED_TIMER_MIN)
     {
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF_FAST_MOVE);
-      yPositionInc += 15;
+      text += GAME_NEXT_ALIEN_MODIF_FAST_MOVE + "\n";
     }
     if (ALIEN_SHOOT_SPEED_DEFAULT - (m_level * ALIEN_SHOOT_SPEED_INC) >= ALIEN_SHOOT_SPEED_MIN)
     {
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF_FAST_SHOOT);
-      yPositionInc += 15;
+      text += GAME_NEXT_ALIEN_MODIF_FAST_SHOOT + "\n";
     }
     if (((m_level + 1) % ALIEN_HEALTH_LVL == 0) && ALIEN_HEALTH_DEFAULT + ((m_level + 1) / ALIEN_HEALTH_LVL * ALIEN_HEALTH_INC) <= ALIEN_HEALTH_MAX)
     {
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF_SPEC_LIFE);
+      text += GAME_NEXT_ALIEN_MODIF_SPEC_LIFE;
     }
+
+    painter.setPen(Qt::white);
+    painter.drawText(rect, Qt::AlignCenter, text);
   }
   else              // next level
   {
@@ -266,7 +301,7 @@ void GameGLWidget::paintGLGameOver()
     QPainter painter;
     painter.begin(this);
     painter.setPen(Qt::white);
-    painter.beginNativePainting();
+    //painter.beginNativePainting();
 
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
@@ -279,14 +314,17 @@ void GameGLWidget::paintGLGameOver()
     glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
-    painter.endNativePainting();
+    //painter.endNativePainting();
 
-    QString rate;
-    rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, GAME_RESULT + rate);
+    QRect rect = QRect(5, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 2, LAST_WINDOW_HORIZONTAL_SIZE - 10, GAME_PADDING_BOTTOM);
 
-    painter.drawText(10, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, GAME_OVER);
-    painter.drawText(10, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2 + 25, GAME_OVER_ADDITIONAL);
+    QString text = GAME_OVER + "\n" + GAME_OVER_ADDITIONAL;
+
+    painter.drawText(rect, Qt::AlignLeft | Qt::AlignVCenter, text);
+
+    text = GAME_RESULT + QString::number(m_space->GetGun().GetRate());
+
+    painter.drawText(rect, Qt::AlignRight | Qt::AlignVCenter, text);
 
     QPen pen = QPen(Qt::red);
     pen.setWidth(3);
@@ -650,7 +688,7 @@ void GameGLWidget::RenderInformationString()
     m_texturedRect->Render
     (
       m_heartTexture,
-      QVector2D(50 + GAME_PADDING_BOTTOM * ( i + 0.5 ), GAME_PADDING_BOTTOM / 2),
+      QVector2D(GAME_PADDING_BOTTOM * 0.8 + GAME_PADDING_BOTTOM * (i + 0.5), GAME_PADDING_BOTTOM / 2 - 3),
       QSize(GAME_PADDING_BOTTOM * 0.5, GAME_PADDING_BOTTOM * 0.5),
       m_screenSize
     );
@@ -687,7 +725,7 @@ void GameGLWidget::RenderBonus()
   m_texturedRect->Render
   (
     bonusTexture,
-    QVector2D(LAST_WINDOW_HORIZONTAL_SIZE - 210 - GAME_PADDING_BOTTOM / 2, GAME_PADDING_BOTTOM / 2),
+    QVector2D(GAME_PADDING_BOTTOM * 0.5, GAME_PADDING_BOTTOM / 2 - 3),
     QSize(GAME_PADDING_BOTTOM * 0.7, GAME_PADDING_BOTTOM * 0.7),
     m_screenSize
   );
@@ -720,13 +758,16 @@ void GameGLWidget::Render()
 {
   m_texturedRect->Render(m_backgroundPicture, QVector2D(m_screenSize.width() / 2, m_screenSize.height() / 2), QSize(m_screenSize.width(), m_screenSize.height()), m_screenSize);
   this->RenderStar();
-  if (m_space->CheckGameState() == 0) this->RenderGun();
+  if (m_space->CheckGameState() == 0)
+  {
+    this->RenderGun();
+    this->RenderBonus();
+  }
   this->RenderAlien();
   this->RenderShip();
   this->RenderObstacle();
   this->RenderBullet();
   this->RenderInformationString();
-  this->RenderBonus();
   this->RenderBoom();
 }
 

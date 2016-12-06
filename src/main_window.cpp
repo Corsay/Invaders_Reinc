@@ -333,6 +333,11 @@ MainWindow::MainWindow()
   m_settingsChanged = false;
 }
 
+MainWindow::~MainWindow()
+{
+  delete m_soundButtonClick;
+}
+
 void MainWindow::InitSound()
 {
   m_soundButtonClick = new QSoundEffect;
@@ -662,9 +667,11 @@ void MainWindow::SetTextsForCurLang()
   RECORD_NO_MESSAGE               = QObject::tr("NO RECORDS! BE FIRST ;)");
       // game
   GAME_RESULT                     = QObject::tr("You rezult: ");
+  if (GAME_RESULT == "You rezult: ") GAME_RESULT = QString::fromStdString("Score: ");
   GAME_OVER                       = QObject::tr("Game over. Gun shooted.");
   GAME_OVER_ADDITIONAL            = QObject::tr("Press Enter to go to the game scores!");
   GAME_CURRENT_RESULT             = QObject::tr("You current rezult: ");
+  if (GAME_CURRENT_RESULT == "You current rezult: ") GAME_CURRENT_RESULT = QString::fromStdString("You current score: ");
   GAME_PRE_NEXT_LEVEL             = QObject::tr("Aliens destroyed! You win! Level ");
   GAME_NEXT_ADDITIONAL            = QObject::tr("Press Enter to go to the next level!");
   GAME_USE_CHEATS_MSG             = QObject::tr("You are used cheat code on this level");
@@ -782,9 +789,8 @@ void MainWindow::ShowMenuItems()
     m_cbWindowState->setDisabled(false);
     m_cbWindowState->setObjectName("");
     m_cbWindowState->setStyleSheet(m_style);
-    m_cbWindowSize->setDisabled(false);
-    m_cbWindowSize->setObjectName("");
-    m_cbWindowSize->setStyleSheet(m_style);
+    ChangeWindowState(m_cbWindowState->currentIndex());
+    m_settingsChanged = false;
   }
 }
 
@@ -1333,8 +1339,8 @@ void MainWindow::ChangeWindowState(int state)
     m_cbWindowSize->setObjectName("NotActiveBox");
     m_cbWindowSize->setStyleSheet(m_style);
 
-    m_size.setWidth(QDesktopWidget().availableGeometry().right() + 1);
-    m_size.setHeight(QDesktopWidget().availableGeometry().bottom() + 1);
+    m_size.setWidth(this->width());
+    m_size.setHeight(this->height());
   }
 
   m_widgetStacked->resize(m_size);

@@ -65,15 +65,7 @@ public:
     ALIEN_HEALTH = ALIEN_HEALTH_DEFAULT;
 
     m_ship = nullptr;
-    if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100)
-        / (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) < ALIEN_COUNT / 5)
-    {
-      ALIEN_HORIZONTAL_DISTANCE = 0;
-      if( (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / ALIEN_WIDTH  < ALIEN_COUNT / 5)
-      {
-          ALIEN_WIDTH = (LAST_WINDOW_HORIZONTAL_SIZE - (GAME_PADDING_LEFT + GAME_PADDING_RIGHT) - 100) / (ALIEN_COUNT / 5);
-      }
-    }
+
     m_alienManager = new Alien2DManager(5, ALIEN_COUNT / 5);
     m_bulletManager = new Bullet2DManager();
     m_obstacleManager = new Obstacle2DManager(OBSTACLE_COUNT);
@@ -463,6 +455,10 @@ public:
     m_alienManager->clear();
     m_obstacleManager->clear();
     m_bulletManager->clear();
+
+    delete m_soundGunShoot;
+    delete m_soundAlienShoot;
+    delete m_soundBoom;
   }
 
 private: 

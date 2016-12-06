@@ -256,7 +256,7 @@
     <message>
         <location filename="../../src/main_window.cpp" line="670"/>
         <source>You are used cheat code on this level</source>
-        <translation>На уровне были испоьзованы чит-коды</translation>
+        <translation>На уровне были использованы чит-коды</translation>
     </message>
     <message>
         <location filename="../../src/main_window.cpp" line="671"/>
