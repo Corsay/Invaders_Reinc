@@ -4,6 +4,7 @@
 #include "gameclasses/constants.hpp"
 
 #include <QFile>
+#include <algorithm>
 
 #include <pugixml.hpp>
 #include <json/json.h>
@@ -80,10 +81,7 @@ MainWindow::MainWindow()
   // buttons
   m_pbToMenu = new QPushButton();
   connect(m_pbToMenu, SIGNAL(clicked(bool)), this, SLOT(CheckoutToMenu()));
-  if(m_size.width()*0.35 > 250)
-    m_pbToMenu->setFixedWidth(m_size.width()*0.35);
-  else
-    m_pbToMenu->setFixedWidth(250);
+  m_pbToMenu->setFixedWidth(174);
   m_pbSaveSettings = new QPushButton();
   connect(m_pbSaveSettings, SIGNAL(clicked(bool)), this, SLOT(SaveSettings()));
   m_pbLoadSettings = new QPushButton();
@@ -293,38 +291,22 @@ MainWindow::MainWindow()
   // GAME
   m_windowGame = new GameWindow(m_widgetStacked, this);
 
-  //RECORDS
-  ReadJsonRecords(recordsArray);
-
+  // RECORDS
+    // buttons
+  m_pbToMenuFromRecords = new QPushButton();
+  connect(m_pbToMenuFromRecords, SIGNAL(clicked(bool)), this, SLOT(CheckoutToMenu()));
+    // QLabels
+  m_table = new QLabel();
+    // QVBoxLayout
+  m_recordsVLayout = new QVBoxLayout;
+  m_recordsVLayout->addWidget(m_pbToMenuFromRecords);
+  m_recordsVLayout->addWidget(m_table);
+    // widget
   m_widgetRecords = new QWidget;
-
-  m_nameLine = new QLineEdit;
-  m_nameLine->setFixedWidth(250);
-  m_nameLabel = new QLabel("Enter You name: ");
-
-  m_saveRecordButton = new QPushButton;
-  m_saveRecordButton->setVisible(false);
-
-  QObject::connect( m_saveRecordButton, SIGNAL(clicked(bool)), this, SLOT( saveRecord() ) );
-  QObject::connect( m_nameLine, SIGNAL(textChanged(QString)), this, SLOT( championNameChanged(QString) ) );
-
-  m_saveRecordLayout = new QHBoxLayout;
-  m_saveRecordLayout->setStretch(0, m_size.width()/100*30);
-  m_saveRecordLayout->addWidget(m_nameLabel);
-  m_saveRecordLayout->addWidget(m_nameLine);
-  m_saveRecordLayout->addWidget(m_saveRecordButton);
-
-
-
-  m_table = new QLabel("<center><h1>RECORDS:</h1></center>");
-  createRecordTable();
-
-  QVBoxLayout * mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(m_pbToMenu);
-  mainLayout->addLayout(m_saveRecordLayout);
-  mainLayout->addWidget(m_table);
-
-  m_widgetRecords->setLayout(mainLayout);
+  m_widgetRecords->setLayout(m_recordsVLayout);
+    // default records init
+  ReadJsonRecords(recordsArray);
+  CreateRecordTable();
 
   // fill stackedWidget
   m_widgetStacked->addWidget(m_widgetMenu);
@@ -351,16 +333,6 @@ MainWindow::MainWindow()
   m_settingsChanged = false;
 }
 
-void MainWindow::InterfaceAddRecord(bool show)
-{
-    m_nameLabel->setVisible(show);
-    m_nameLine->setVisible(show);
-    if(m_nameLine->text() == "")
-      m_saveRecordButton->setVisible(false);
-    else
-      m_saveRecordButton->setVisible(show);
-}
-
 void MainWindow::InitSound()
 {
   m_soundButtonClick = new QSoundEffect;
@@ -382,9 +354,8 @@ void MainWindow::MoveWindowToCenter()
 }
 
 // Предлагает сохранить игру -> вызывает SaveGame в случае подтверждения пользователем
-QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
+void MainWindow::ShowDialog(QString const & msg, DialogTypes type)
 {
-  QString rez = "FilePath";
   switch (type)
   {
     case DialogTypes::OnSubmitSettingsLeave:                                       // CHANGE SETTINGS BEFORE LEAVE FROM SETTINGS WIDGET
@@ -525,8 +496,63 @@ QString MainWindow::ShowDialog(QString const & msg, DialogTypes type)
       about->show();
       break;
     }
+    case DialogTypes::OnSaveRecord:                                      // Save Record dialog
+    {
+      this->setDisabled(true);
+      QDialog * about = new QDialog;
+      about->setStyleSheet(m_style);
+      about->resize(250,100);
+      about->setWindowFlags(Qt::ToolTip);
+
+      QGridLayout * glLayout = new QGridLayout(about);
+
+      QLabel * lMsg = new QLabel();
+      lMsg->setText(msg);
+
+      QLabel * nameLabel = new QLabel();
+      nameLabel->setText(DIALOG_ON_SAVE_RECORD_INPUT_NAME);
+      nameLabel->resize(25,25);
+      QLineEdit * nameLine = new QLineEdit;
+      nameLine->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+      QPushButton * pbDialogSave = new QPushButton();
+      pbDialogSave->setText(DIALOG_BUTTON_SAVE);
+      pbDialogSave->resize(100,50);
+      connect(pbDialogSave, &QAbstractButton::clicked, [this, about, nameLine, lMsg, msg]()
+        {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
+          if (nameLine->text() != "")
+          {
+            this->setDisabled(false);
+            this->SaveRecord(nameLine->text());
+            about->close();
+          }
+          else
+          {
+            lMsg->setText(msg + DIALOG_ON_SAVE_RECORD_ERROR);
+          }
+        });
+
+      QPushButton * pbDialogAbort = new QPushButton();
+      pbDialogAbort->setText(DIALOG_BUTTON_ABORT);
+      pbDialogAbort->resize(100,50);
+      connect(pbDialogAbort, &QAbstractButton::clicked, [this, about]()
+        {
+          if (SOUND_MENU_ON) m_soundButtonClick->play();
+          this->setDisabled(false);
+          about->close();
+        });
+
+      glLayout->addWidget(lMsg, 0, 0, 1, 3);
+      glLayout->addWidget(nameLabel, 1, 0, 1, 1);
+      glLayout->addWidget(nameLine, 1, 1, 1, 1);
+      glLayout->addWidget(pbDialogSave, 2, 0, 1, 1);
+      glLayout->addWidget(pbDialogAbort, 2, 1, 1, 1);
+
+      about->show();
+      break;
+    }
   }
-  return rez;
 }
 
 void MainWindow::Resize(size_t w, size_t h)
@@ -567,6 +593,8 @@ void MainWindow::SetTextsForCurLang()
   m_pbMenuContinueGame->setToolTip(QPushButton::tr("Continue current game"));
   m_pbToSet->setText(QPushButton::tr("Settings"));
   m_pbToSet->setToolTip(QPushButton::tr("Move to the settings"));
+  m_pbMenuRecord->setText(QPushButton::tr("Game scores"));
+  m_pbMenuRecord->setToolTip(QPushButton::tr("Move to the game scores table"));
   m_pbExit->setText(QPushButton::tr("Exit"));
   m_pbExit->setToolTip(QPushButton::tr("Close program"));
   // SETTINGS
@@ -575,9 +603,6 @@ void MainWindow::SetTextsForCurLang()
   m_pbToMenu->setToolTip(QPushButton::tr("Back to the main menu"));
   m_pbSaveSettings->setText(QPushButton::tr("Save settings"));
   m_pbSaveSettings->setToolTip(QPushButton::tr("Save settings to data/settings"));
-  m_pbMenuRecord->setText(QPushButton::tr("Best rezults"));
-  m_pbMenuRecord->setToolTip(QPushButton::tr("see records"));
-  m_saveRecordButton->setText(QPushButton::tr("save record"));
   m_pbLoadSettings->setText(QPushButton::tr("Load settings"));
   m_pbLoadSettings->setToolTip(QPushButton::tr("Load settings from data/settings"));
   m_pbSetDefault->setText(QPushButton::tr("Set default"));
@@ -611,7 +636,12 @@ void MainWindow::SetTextsForCurLang()
       // language
   m_cbLanguage->setItemText(GameLanguages::English, QComboBox::tr("English"));
   m_cbLanguage->setItemText(GameLanguages::Russian, QComboBox::tr("Russian"));
+  // RECORDS
+    // button
+  m_pbToMenuFromRecords->setText(m_pbToMenu->text());
+  m_pbToMenuFromRecords->setToolTip(m_pbToMenu->toolTip());
     // DIALOGS
+      // main
   DIALOG_ON_SUBMIT_CLOSE          = QObject::tr("Are you really want to close program?");
   DIALOG_ON_SUBMIT_BREAK          = QObject::tr("Are you really want to break current game?");
   DIALOG_ON_SUBMIT_SETTINGS_LEAVE = QObject::tr("Do you want to save current settings of the game before back to the main menu?");
@@ -623,6 +653,27 @@ void MainWindow::SetTextsForCurLang()
   DIALOG_BUTTON_YES               = QObject::tr("Yes");
   DIALOG_BUTTON_NO                = QObject::tr("No");
   DIALOG_BUTTON_ABORT             = QObject::tr("Abort");
+  DIALOG_BUTTON_SAVE              = QObject::tr("Save");
+      // records
+  DIALOG_ON_SAVE_RECORD           = QObject::tr("Input you name and click: \n 'Save' - to accept you record \n 'Abort' - to continue without saving you rate");
+  DIALOG_ON_SAVE_RECORD_ERROR     = QObject::tr("\n Name are important to save record!");
+  DIALOG_ON_SAVE_RECORD_INPUT_NAME= QObject::tr("Name:");
+  RECORD_MESSAGE                  = QObject::tr("RECORDS:");
+  RECORD_NO_MESSAGE               = QObject::tr("NO RECORDS! BE FIRST ;)");
+      // game
+  GAME_RESULT                     = QObject::tr("You rezult: ");
+  GAME_OVER                       = QObject::tr("Game over. Gun shooted.");
+  GAME_OVER_ADDITIONAL            = QObject::tr("Press Enter to go to the game scores!");
+  GAME_CURRENT_RESULT             = QObject::tr("You current rezult: ");
+  GAME_PRE_NEXT_LEVEL             = QObject::tr("Aliens destroyed! You win! Level ");
+  GAME_NEXT_ADDITIONAL            = QObject::tr("Press Enter to go to the next level!");
+  GAME_USE_CHEATS_MSG             = QObject::tr("You are used cheat code on this level");
+  GAME_NEXT_ALIEN_MODIF           = QObject::tr("Next Level Aliens Modifications:");
+  GAME_NEXT_ALIEN_MODIF_FAST_MOVE = QObject::tr("Little faster move");
+  GAME_NEXT_ALIEN_MODIF_FAST_SHOOT= QObject::tr("Little faster shoot");
+  GAME_NEXT_ALIEN_MODIF_SPEC_LIFE = QObject::tr("One more life to aliens");
+    // function to rewrite records to current language
+  CreateRecordTable();
 }
 
 void MainWindow::ResizeQGridLayouts()
@@ -646,6 +697,9 @@ void MainWindow::ResizeQGridLayouts()
   m_layoutSettings->setRowMinimumHeight(7, 15);
   m_layoutSettings->setRowMinimumHeight(12, 45);
   m_layoutSettings->setRowStretch(13, m_size.height()/100*15);
+    // records layout
+  m_recordsVLayout->setMargin(20);
+  m_pbToMenuFromRecords->setFixedWidth(m_pbToMenu->width());
 }
 
 void MainWindow::SetSize(int state)
@@ -774,76 +828,17 @@ void MainWindow::CheckoutToMenu()
 {
   if (SOUND_MENU_ON) m_soundButtonClick->play();
 
+  ShowMenuItems();
+
   if (m_settingsChanged) ShowDialog(DIALOG_ON_SUBMIT_SETTINGS_LEAVE, DialogTypes::OnSubmitSettingsLeave);
   else m_widgetStacked->setCurrentIndex(0);
 }
 
 void MainWindow::CheckoutToRecords()
 {
-  InterfaceAddRecord(false);
   m_widgetStacked->setCurrentIndex(3);
 }
 
-void MainWindow::WriteJsonRecord(std::vector< std::vector< QString > > & rezults)
-{
-  Json::Value records;
-  QString str;
-  if( rezults.size() < MAX_COUNT_RECORDS )
-    str.setNum(rezults.size());
-  else
-    str.setNum(MAX_COUNT_RECORDS);
-  records["countRecords"] = str.toStdString();
-
-  for(int i = 0; i < MAX_COUNT_RECORDS && i < rezults.size(); i++)
-  {
-    QString str;
-    str.setNum(i);
-    records[str.toStdString()]["name"] = rezults[i][0].toStdString();
-    records[str.toStdString()]["rezult"] = rezults[i][1].toStdString();
-  }
-
-  std::ofstream settingsFile;
-  settingsFile.open("data/records.json");
-  if (settingsFile.is_open())
-  {
-    Json::StyledWriter styledWriter;
-    settingsFile << styledWriter.write(records);
-    settingsFile.close();
-  }
-
-}
-
-bool MainWindow::ReadJsonRecords(std::vector< std::vector< QString > > & rezults)
-{
-
-  rezults.clear();
-  Json::Value records;
-  std::ifstream file("data/records.json");
-  if (file.is_open())
-  {
-    file >> records;
-    file.close();
-  }else return false; // not loaded
-
-  int countRecords = 0;
-  if(!records.empty())
-  {
-    if( !records["countRecords"].empty() )
-    {
-      countRecords = records["countRecords"].asCString()[0] - 48;
-    }
-  }
-
-  for(int i = 0; i < countRecords; i++)
-  {
-    QString str;
-    str.setNum(i);
-    if( !records[str.toStdString()]["name"].empty() && !records[str.toStdString()]["rezult"].empty() )
-    rezults.push_back( std::vector<QString>{ QString(records[str.toStdString()]["name"].asCString()),
-                                                 QString(records[str.toStdString()]["rezult"].asCString()) } );
-  }
-  return true;
-}
 // save/load settings
 void MainWindow::WriteJson()
 {
@@ -884,8 +879,6 @@ void MainWindow::WriteJson()
     settingsFile.close();
   }
 }
-
-
 
 bool MainWindow::ReadJson()
 {
@@ -1402,78 +1395,121 @@ void MainWindow::ChangeSoundGameOn(bool state)
   m_settingsChanged = true;
 }
 
-//RECORDS
-int strToInt(QString & str)
-{
 
-  int val = 0;
-  for(int i=0; i<str.size(); i++)
-  {
-    val *=10;
-    val += int(str.toStdString()[i]) - '0';
-  }
-  return val;
+// RECORDS
+void MainWindow::InterfaceAddRecord()
+{
+  ShowDialog(DIALOG_ON_SAVE_RECORD, DialogTypes::OnSaveRecord);
 }
 
-void MainWindow::championNameChanged(QString str)
-{
-  m_saveRecordButton->setVisible( !( str == "" || str.size() > 30 ) );
-}
-
-void MainWindow::createRecordTable()
+void MainWindow::CreateRecordTable()
 {
   if(recordsArray.size() == 0)
   {
-      m_table->setText("<center><h1>NO RECORDS!!!</h1></center>");
-      return;
+    m_table->setText("<center><h1>" + RECORD_NO_MESSAGE + "</h1></center>");
+    return;
   }
 
-  //QString text2 = "<center><h1>popa</h1><br>popa2</center>";
-  QString text = "<code><center><h1>RECORDS:<br><br>";
-  for(int i = 0; i < recordsArray.size(); i++)
+  QString text = "<code><center><h1>" + RECORD_MESSAGE + "<br><br>";
+  for(int i = 0; i < recordsArray.size() && i < MAX_COUNT_RECORDS; i++)
   {
     text += recordsArray[i][0];
     for(int j = recordsArray[i][0].size() + recordsArray[i][1].size(); j < 50; j++)
+    {
       text += "-";
+    }
     text += recordsArray[i][1];
     text += "<br>";
   }
   text += "</h1></center></code>";
-  //std::cout << text.toStdString() <<std::endl;
   m_table->setText(text);
 }
 
-
-bool MainWindow::saveRecord()
+// sort
+struct
 {
-  InterfaceAddRecord(false);
-  int rezult = m_windowGame->GetSpace()->GetGun().GetRate();
-  QString str;
-  str.setNum(rezult);
-
-  if(rezult < strToInt(recordsArray[ recordsArray.size() - 1 ][1]) && recordsArray.size() < MAX_COUNT_RECORDS)
+  bool operator()(std::vector<QString> a, std::vector<QString> b)
   {
-    recordsArray.push_back(std::vector<QString>{m_nameLine->text(), str});
-    createRecordTable();
-    return true;
+    return a[1].toInt() > b[1].toInt();
+  }
+} customLess;
+
+void MainWindow::SaveRecord(QString const & name)
+{
+  recordsArray.push_back
+  (
+    std::vector<QString>
+    {
+      name,
+      QString::number(m_windowGame->GetSpace()->GetGun().GetRate())
+    }
+  );
+  std::sort(recordsArray.begin(), recordsArray.end(), customLess);
+  CreateRecordTable();
+  WriteJsonRecord(recordsArray);
+}
+
+// save/load records
+void MainWindow::WriteJsonRecord(RecordsVect & rezults)
+{
+  Json::Value records;
+
+  auto & root = records["records"];
+
+  root["countRecords"] = rezults.size();
+
+  for (int i = 0; i < rezults.size(); i++)
+  {
+    root[QString::number(i).toStdString()]["name"] = rezults[i][0].toStdString();
+    root[QString::number(i).toStdString()]["rezult"] = rezults[i][1].toStdString();
   }
 
-  int i = 0;
-  for(i; i < recordsArray.size(); i++)
+  std::ofstream recordsFile;
+  recordsFile.open("data/records.json");
+  if (recordsFile.is_open())
   {
-    if(rezult > strToInt(recordsArray[i][1]) )
+    Json::StyledWriter styledWriter;
+    recordsFile << styledWriter.write(records);
+    recordsFile.close();
+  }
+}
+
+bool MainWindow::ReadJsonRecords(RecordsVect & rezults)
+{
+  rezults.clear();
+  Json::Value records;
+  std::ifstream file("data/records.json");
+  if (file.is_open())
+  {
+    file >> records;
+    file.close();
+  }
+  else return false; // not loaded
+
+  Json::Value & root = records["records"];
+
+  int countRecords = 0;
+  if (!root.empty())
+  {
+    if (!root["countRecords"].empty())
     {
-      recordsArray.insert( recordsArray.begin() + i,
-                          std::vector<QString>{m_nameLine->text(), str} );
-
-      if(recordsArray.size() > MAX_COUNT_RECORDS)
-        recordsArray.pop_back();
-
-      WriteJsonRecord( recordsArray );
-      createRecordTable();
-      return true;
+      countRecords = root["countRecords"].asInt();
     }
   }
 
-  return false;
+  for (int i = 0; i < countRecords; i++)
+  {
+    if(!root[QString::number(i).toStdString()]["name"].empty() && !root[QString::number(i).toStdString()]["rezult"].empty())
+    {
+      rezults.push_back
+      (
+        std::vector<QString>
+        {
+          QString(root[QString::number(i).toStdString()]["name"].asCString()),
+          QString(root[QString::number(i).toStdString()]["rezult"].asCString())
+        }
+      );
+    }
+  }
+  return true;
 }

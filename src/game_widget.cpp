@@ -193,7 +193,7 @@ void GameGLWidget::paintGLActiveGame()
 
   QString rate;
   rate.setNum(m_space->GetGun().GetRate());
-  painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
+  painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, GAME_RESULT + rate);
 
   QPen pen = QPen(Qt::red);
   pen.setWidth(3);
@@ -221,18 +221,35 @@ void GameGLWidget::paintGLNextLevel()
 
     QString rate;
     rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 150, LAST_WINDOW_VERTICAL_SIZE / 3 - 15, "You current rezult: " + rate);
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 15, "Aliens destroyed! You win! Level " + QString::number(m_level + 1));
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 30, "Click Enter to go to the next level! ");
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 150, LAST_WINDOW_VERTICAL_SIZE / 3 - 15, GAME_CURRENT_RESULT + rate);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 15, GAME_PRE_NEXT_LEVEL + QString::number(m_level + 1));
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 30, GAME_NEXT_ADDITIONAL);
+
+    float yPositionInc = 60;
+    // Check cheat using
+    if (CHEAT_USED)
+    {
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_USE_CHEATS_MSG);
+      yPositionInc += 30;
+    }
 
     // next level info
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 45, "Next Level Aliens Modifications:");
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF);
+    yPositionInc += 15;
     if (ALIEN_MOVE_SPEED_TIMER_DEFAULT - (m_level * ALIEN_MOVE_SPEED_TIMER_INC) >= ALIEN_MOVE_SPEED_TIMER_MIN)
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 60, "1) Little faster move");
+    {
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF_FAST_MOVE);
+      yPositionInc += 15;
+    }
     if (ALIEN_SHOOT_SPEED_DEFAULT - (m_level * ALIEN_SHOOT_SPEED_INC) >= ALIEN_SHOOT_SPEED_MIN)
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 75, "2) Little faster shoot");
+    {
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF_FAST_SHOOT);
+      yPositionInc += 15;
+    }
     if (((m_level + 1) % ALIEN_HEALTH_LVL == 0) && ALIEN_HEALTH_DEFAULT + ((m_level + 1) / ALIEN_HEALTH_LVL * ALIEN_HEALTH_INC) <= ALIEN_HEALTH_MAX)
-      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + 90, "3) One more life");
+    {
+      painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE / 2 - 180, LAST_WINDOW_VERTICAL_SIZE / 3 + yPositionInc, GAME_NEXT_ALIEN_MODIF_SPEC_LIFE);
+    }
   }
   else              // next level
   {
@@ -243,6 +260,7 @@ void GameGLWidget::paintGLNextLevel()
 
 void GameGLWidget::paintGLGameOver()
 {
+  GAME_STARTED = false;
   if (!m_gameOver)
   {
     QPainter painter;
@@ -261,11 +279,14 @@ void GameGLWidget::paintGLGameOver()
     glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
+    painter.endNativePainting();
+
     QString rate;
     rate.setNum(m_space->GetGun().GetRate());
-    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "You rezult: " + rate);
+    painter.drawText(LAST_WINDOW_HORIZONTAL_SIZE - 210, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, GAME_RESULT + rate);
 
-    painter.drawText(10, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, "Game over. Gun shooted.  Press Enter to go to the game scores!");
+    painter.drawText(10, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2, GAME_OVER);
+    painter.drawText(10, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM / 2 + 20, GAME_OVER_ADDITIONAL);
 
     QPen pen = QPen(Qt::red);
     pen.setWidth(3);
@@ -273,14 +294,11 @@ void GameGLWidget::paintGLGameOver()
     painter.drawLine(0, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5,  LAST_WINDOW_HORIZONTAL_SIZE, LAST_WINDOW_VERTICAL_SIZE - GAME_PADDING_BOTTOM + 5);
 
     painter.end();
-    GAME_STARTED = false;
   }
   else
   {
-    if (m_space->GetGun().GetRate() > GetMinimalRecord())
-    {
-      m_gameWindow->m_stackedWidget->setCurrentIndex(3);
-    }
+    m_gameWindow->m_mainWindow->InterfaceAddRecord();
+    m_gameWindow->m_stackedWidget->setCurrentIndex(3);
   }
 }
 
@@ -297,8 +315,6 @@ void GameGLWidget::paintGL()
   }
   else if (GameState == 2)  // game over gun died
   {
-    m_gameWindow->m_mainWindow->InterfaceAddRecord(true);
-    m_gameWindow->m_stackedWidget->setCurrentIndex(3);
     paintGLGameOver();
   }
 }
@@ -419,12 +435,19 @@ void GameGLWidget::keyPressEvent(QKeyEvent * e)
     }
 
     // cheat zone
+    if (e->key() == Qt::Key_F10)
+    {
+      CHEAT_USED = true;
+      m_space->GetAlienManager().clear();
+    }
     if (e->key() == Qt::Key_F11)
     {
+      CHEAT_USED = true;
       BONUS_GOD = true;
     }
     if (e->key() == Qt::Key_F12)
     {
+      CHEAT_USED = true;
       GUN_SHOOT_SPEED = 0.001;
     }
   }

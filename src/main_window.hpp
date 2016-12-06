@@ -28,7 +28,8 @@ enum DialogTypes
   OnSubmitClose,
   OnSubmitSettingsLeave,
   OnSettingsLoaded,
-  OnSettingsLoadError
+  OnSettingsLoadError,
+  OnSaveRecord
 };
 enum GameResolutionTypes
 {
@@ -56,14 +57,15 @@ enum GameLanguages
   Russian
 };
 
+using RecordsVect = std::vector<std::vector<QString>>;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
   MainWindow();
-  void InterfaceAddRecord(bool show);
-
+  void InterfaceAddRecord();
 
   void InitSound();
   void SetVolume();
@@ -71,22 +73,23 @@ public:
 protected:
   // MENU
   void ShowMenuItems();
-  // settings save/load
-  void WriteJsonRecord(std::vector<std::vector<QString> > & rezults );
-  bool ReadJsonRecords(std::vector< std::vector< QString > > & rezults);
+  // settings /load
   void WriteJson();
   bool ReadJson();
   void WriteXml();
   bool ReadXml();
   // WINDOW
   void MoveWindowToCenter();
-  QString ShowDialog(QString const & msg, DialogTypes type);
+  void ShowDialog(QString const & msg, DialogTypes type);
   void Resize(size_t w, size_t h);
   void SetTextsForCurLang();
   void SetSize(int state);
   void ResizeQGridLayouts();
-  //records
-  void createRecordTable();
+  // RECORDS
+  void CreateRecordTable();
+  void WriteJsonRecord(RecordsVect & rezults);
+  bool ReadJsonRecords(RecordsVect & rezults);
+  void SaveRecord(QString const & name);
 
 private slots:
   // SHORTCUTS
@@ -122,9 +125,6 @@ private slots:
   void ChangeSoundGameVolume(int state);
   void ChangeSoundMenuOn(bool state);
   void ChangeSoundGameOn(bool state);
-  //records
-  bool saveRecord();
-  void championNameChanged(QString);
 
 private:
   // SHORTCUTS
@@ -202,10 +202,12 @@ private:
   QString m_style;
   // SOUND
   QSoundEffect * m_soundButtonClick = nullptr;
-  //RECORDS
-  QLineEdit* m_nameLine = nullptr;
-  QLabel* m_nameLabel = nullptr;
-  QPushButton* m_saveRecordButton = nullptr;
-  QHBoxLayout* m_saveRecordLayout = nullptr;
-  QLabel* m_table = nullptr;
+  // RECORDS
+    // buttons
+  QPushButton * m_pbToMenuFromRecords = nullptr;
+    // label
+  QLabel * m_table = nullptr;
+    // QVBoxLayout
+  QVBoxLayout * m_recordsVLayout = nullptr;
+  RecordsVect recordsArray;
 };

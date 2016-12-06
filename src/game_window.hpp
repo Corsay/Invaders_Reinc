@@ -28,7 +28,7 @@ public:
 
   void SetKey(KeyTypes type, QKeySequence key);
 
-  Space2D* GetSpace();
+  Space2D * GetSpace();
   QStackedWidget * m_stackedWidget = nullptr;
   MainWindow * m_mainWindow = nullptr;
 private:

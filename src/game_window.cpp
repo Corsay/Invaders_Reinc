@@ -37,4 +37,4 @@ void GameWindow::SetKey(KeyTypes type, QKeySequence key)
 {
   m_glWidget->SetKey(type, key);
 }
-Space2D* GameWindow::GetSpace(){ return m_glWidget->GetSpace(); }
+Space2D * GameWindow::GetSpace() { return m_glWidget->GetSpace(); }

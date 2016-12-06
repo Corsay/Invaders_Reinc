@@ -65,9 +65,8 @@ extern bool   BONUS_ANTI_X2;
 extern bool   BONUS_ALIEN_FAST_SHOOT;
 extern float  BONUS_SPEED_ALIEN_FAST_SHOOT;
 extern bool   BONUS_HIT_OBSTACLES;
-
-extern std::vector<std::vector <QString>> recordsArray;
-extern int GetMinimalRecord();
+// Cheats check
+extern bool   CHEAT_USED;
 
 // const (setted value)
 // DEFAULT
@@ -114,4 +113,3 @@ const int BOOM_TIMER = 15;
 // GAME
 extern float LAST_WINDOW_VERTICAL_SIZE;
 extern float LAST_WINDOW_HORIZONTAL_SIZE;
-extern int MAX_COUNT_RECORDS;

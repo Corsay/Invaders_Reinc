@@ -106,6 +106,7 @@ public:
   // Getters
   Ship2D * GetShip() { return m_ship; }
   Gun2D & GetGun() { return *m_gun; }
+  Alien2DManager & GetAlienManager() { return *m_alienManager; }
   Obstacle2DManager & GetObstacleManager() { return *m_obstacleManager; }
   AlienMatrix const & GetAlienMatrix() const { return m_alienManager->GetAlienMatrix(); }
   ObstacleVector const & GetObstacleVector() const {return m_obstacleManager->GetObstacleVector(); }
@@ -329,6 +330,7 @@ public:
     GUN_SHOOT_SPEED = GUN_SHOOT_SPEED_DEFAULT;
     ALIEN_SHOOT_SPEED = ALIEN_SHOOT_SPEED_DEFAULT;
     SHIP_STARTED = false;
+    CHEAT_USED = false;
   }
 
   void NewLvlPrepare(int const lvl)

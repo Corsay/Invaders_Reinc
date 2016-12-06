@@ -60,6 +60,8 @@ bool   BONUS_ANTI_X2          = false;     // x1/2 rate
 bool   BONUS_ALIEN_FAST_SHOOT = false;     // alien shoot speed +
 float  BONUS_SPEED_ALIEN_FAST_SHOOT = 0.75;
 bool   BONUS_HIT_OBSTACLES    = false;     // delete all obstacles
+// Cheats check
+bool   CHEAT_USED = false;
 
 // const (setted value)
 // DEFAULT
@@ -104,27 +106,6 @@ float SHIP_HEIGHT       = 30.0f;
 // GAME
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;
 float LAST_WINDOW_HORIZONTAL_SIZE = 800.0f;
-
-
-int MAX_COUNT_RECORDS = 5;
-std::vector< std::vector <QString> > recordsArray;
-int GetMinimalRecord()
-{
-  if(recordsArray.size() == 0)
-    return 0;
-  else
-  {
-    std::string rec = recordsArray[recordsArray.size()-1][1].toStdString();
-    int val = 0;
-    for (int i = 0; i < rec.size(); ++i)
-    {
-      val *= 10;
-      val += rec[i] - '0';
-    }
-    return val;
-  }
-
-}
 
 void ChangeConstants(float w, float h)
 {
