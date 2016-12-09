@@ -101,7 +101,7 @@ float BULLET_HEIGHT       = 25.0f;
 // SHIP
 float SHIP_HEALTH_START   = 50.0f;
 float SHIP_SPEED_START    = 3.0f;
-float SHIP_WIDTH        = 40.0f;
+float SHIP_WIDTH        = 80.0f;
 float SHIP_HEIGHT       = 30.0f;
 // GAME
 float LAST_WINDOW_VERTICAL_SIZE = 600.0f;
@@ -141,9 +141,6 @@ void ChangeConstants(float w, float h)
 
   BULLET_WIDTH        *= wk;
   BULLET_HEIGHT       *= hk;
-
-  SHIP_WIDTH        *= wk;
-  SHIP_HEIGHT       *= hk;
 
   SHIP_SPEED_START  *= wk;
   SHIP_WIDTH        *= wk;
