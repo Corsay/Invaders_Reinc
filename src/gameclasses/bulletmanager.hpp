@@ -14,8 +14,12 @@ public:
   // Destructor.
   ~Bullet2DManager() = default;
 
-  // no copy constructor
-  Bullet2DManager(Bullet2DManager const & obj) = delete;
+  // copy constructor
+  Bullet2DManager(Bullet2DManager const & obj)
+  {
+    m_fromAlien = obj.GetBulletsFromAliensList();
+    m_fromGun = obj.GetBulletsFromGunList();
+  }
 
   // assignment operator (for next level reinit)
   Bullet2DManager & operator = (Bullet2DManager const & obj)
@@ -37,12 +41,39 @@ public:
 
 
   // Capabilities
-  void BulletsMove(Box2D const & border)
+  void BulletsMove(float const & top)
   {
-    for(auto it=m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
-      it->GetBox().VerticalShift(-(it->GetSpeed()));//если в верхнем левом углу (0; 0)
-    for(auto it=m_fromGun.begin(); it != m_fromGun.end(); ++it)
-      it->GetBox().VerticalShift(it->GetSpeed());//если в верхнем левом углу (0; 0)
+    std::list<std::list<Bullet2D>::iterator> itList;
+
+    // move aliens bullets
+    for(auto it = m_fromAlien.begin(); it != m_fromAlien.end(); ++it)
+    {
+      // need to delete bullet if true
+      if (it->GetBox().bottom() < GAME_PADDING_BOTTOM) itList.push_back(it);
+      else it->GetBox().VerticalShift(-(it->GetSpeed())); // if in left bottom (0; 0)
+    }
+
+    // erase itList
+    for(auto it = itList.begin(); it != itList.end(); ++it)
+    {
+      m_fromAlien.erase(*it);
+    }
+    itList.clear();
+
+    // move gun bullets
+    for(auto it = m_fromGun.begin(); it != m_fromGun.end(); ++it)
+    {
+      // need to delete bullet if true
+      if (it->GetBox().bottom() > top) itList.push_back(it);
+      else it->GetBox().VerticalShift(it->GetSpeed());    // if in left bottom (0; 0)
+    }
+
+    // erase itList
+    for(auto it = itList.begin(); it != itList.end(); ++it)
+    {
+      m_fromGun.erase(*it);
+    }
+    itList.clear();
   }
 
   bool NewBullet(Bullet2D const & bullet, EntitiesTypes Type)
@@ -67,7 +98,15 @@ public:
     return true; // allright
   }
 
+  void clear()
+  {
+    m_fromAlien.erase(m_fromAlien.begin(), m_fromAlien.end());
+    m_fromAlien.clear();
+    m_fromGun.erase(m_fromGun.begin(), m_fromGun.end());
+    m_fromGun.clear();
+  }
+
 private:
-  BulletList m_fromAlien; // not need to return
-  BulletList m_fromGun;   // not need to return
+  BulletList m_fromAlien;
+  BulletList m_fromGun;
 };

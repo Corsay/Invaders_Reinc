@@ -70,14 +70,6 @@ public:
     return obj.GetBox() == GetBox() && obj.GetHealth() == GetHealth() && obj.GetSpeed() == m_speed;
   }
 
-
-  // Capabilities
-  virtual void Move(float x, float y)
-  {
-    throw std::runtime_error("Not released MoveEntity2D::Move.");
-  }
-
-
   // Redefinition
   friend std::ostream & operator << (std::ostream & os, MovedGameEntity2D const & obj)
   {
@@ -86,5 +78,5 @@ public:
   }
 
 private:
-  float m_speed = DEFAULT_SPEED;   // - default shoot speed
+  float m_speed = DEFAULT_SPEED;
 };

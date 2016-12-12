@@ -1,22 +1,40 @@
 #include "game_window.hpp"
 
-#include <QApplication>
 #include "game_widget.hpp"
+#include <QApplication>
 #include <QPalette>
 
 typedef void (QWidget::*QWidgetVoidSlot)();
 
-GameWindow::GameWindow(QStackedWidget * w)
+GameWindow::GameWindow(QStackedWidget * w, MainWindow* wnd)
 {
-  this->setStyleSheet("border-image: url(data/images/background.jpg); background-color: rgb(0,20,20);");
-
+  m_mainWindow = wnd;
   m_stackedWidget = w;
   m_glWidget = new GameGLWidget(this);
+  setCentralWidget(m_glWidget);
   m_timer = new QTimer(this);
   m_timer->setInterval(10);
-  setCentralWidget(m_glWidget);
   connect(m_timer, &QTimer::timeout, m_glWidget, static_cast<QWidgetVoidSlot>(&QWidget::update));
-  m_timer->start();
-
-  //setFocusPolicy(Qt::StrongFocus);
 }
+
+void GameWindow::NewGame()
+{
+  m_glWidget->NewGame(width(), height());
+  m_timer->start();
+}
+
+void GameWindow::DeleteSpace()
+{
+  m_glWidget->DeleteSpace();
+}
+
+void GameWindow::SetVolume()
+{
+  m_glWidget->SetVolume();
+}
+
+void GameWindow::SetKey(KeyTypes type, QKeySequence key)
+{
+  m_glWidget->SetKey(type, key);
+}
+Space2D * GameWindow::GetSpace() { return m_glWidget->GetSpace(); }

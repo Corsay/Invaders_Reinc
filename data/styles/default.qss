@@ -1,3 +1,16 @@
+*
+{
+  font-family: "Sans Serif";
+  font-size: 12px;
+}
+
+GameWindow *
+{
+  font-family: "DS Hiline";
+  font-size: 18px;
+}
+
+
 QMainWindow 
 { 
   border-image: url(data/images/background.jpg); 
@@ -8,6 +21,23 @@ QLabel
 { 
   color: rgb(0, 200, 200); 
 } 
+
+
+QDialog
+{
+  background-color: rgb(100, 100, 100);
+}
+
+QDialog QPushButton
+{
+  background-color: rgb(100, 100, 255);
+}
+
+QDialog QLabel
+{
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
 
 
 QPushButton 
@@ -45,4 +75,14 @@ QComboBox#NotActiveBox
 { 
   color : rgb(100, 100, 100); 
   background-color : rgb(120, 120, 120); 
+}
+
+QSlider#NotActiveBox
+{
+  color : rgb(100, 100, 100);
+}
+
+QCheckBox#NotActiveBox
+{
+  color : rgb(100, 100, 100);
 }

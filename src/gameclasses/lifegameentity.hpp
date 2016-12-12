@@ -36,6 +36,14 @@ public:
     if (health <= 0) throw std::out_of_range("Health must be more then ZERO!");
   }
 
+  // Assignment operator
+  LifeGameEntity2D & operator = (LifeGameEntity2D const & obj)
+  {
+    if (this == &obj) return *this;
+    SetLifeEntity(obj.GetLifeEntity());
+    return *this;
+  }
+
 
   // Getters
   inline LifeGameEntity2D GetLifeEntity() const { return *this; }

@@ -14,15 +14,22 @@
 #include <QSlider>
 #include <QTranslator>
 #include <QStackedWidget>
-
+#include <QDialog>
+#include <QLineEdit>
+#include "window_constants.hpp"
 #include "game_window.hpp"
+
+#include <QSoundEffect>
+
+class GameWindow;
 
 enum DialogTypes
 {
-  OnSubmitGameSave,
+  OnSubmitClose,
   OnSubmitSettingsLeave,
   OnSettingsLoaded,
-  OnSettingsLoadError
+  OnSettingsLoadError,
+  OnSaveRecord
 };
 enum GameResolutionTypes
 {
@@ -50,6 +57,8 @@ enum GameLanguages
   Russian
 };
 
+using RecordsVect = std::vector<std::vector<QString>>;
+
 class MainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -57,15 +66,19 @@ class MainWindow : public QMainWindow
 public:
   MainWindow();
   ~MainWindow();
+  void InterfaceAddRecord();
+
+  void InitSound();
+  void SetVolume();
 
 protected:
   // MENU
   void ShowMenuItems();
-  // settings save/load
+  // settings /load
   void WriteJson();
-  int ReadJson();
+  bool ReadJson();
   void WriteXml();
-  int ReadXml();
+  bool ReadXml();
   // WINDOW
   void MoveWindowToCenter();
   void ShowDialog(QString const & msg, DialogTypes type);
@@ -73,21 +86,23 @@ protected:
   void SetTextsForCurLang();
   void SetSize(int state);
   void ResizeQGridLayouts();
+  // RECORDS
+  void CreateRecordTable();
+  void WriteJsonRecord(RecordsVect & rezults);
+  bool ReadJsonRecords(RecordsVect & rezults);
+  void SaveRecord(QString const & name);
 
 private slots:
   // SHORTCUTS
-  void ShortcutGunMoveLeft();
-  void ShortcutGunMoveRight();
-  void ShortcutGunShoot();
   void ShortcutPause();
   // MENU
   void NewGame();
-  void ContinueOrLoadGame();
-  void SaveGame();
+  void ContinueGame();
   void CheckoutToSettings();
   // SETTINGS
   // buttons
   void CheckoutToMenu();
+  void CheckoutToRecords();
   void LoadSettings();
   void SaveSettings();
   void SetDefaultSettings();
@@ -106,18 +121,20 @@ private slots:
   void ChangeResolution(int state);
   void ChangeWindowState(int state);
   void ChangeLanguage(int state);
+  // sound
+  void ChangeSoundMenuVolume(int state);
+  void ChangeSoundGameVolume(int state);
+  void ChangeSoundMenuOn(bool state);
+  void ChangeSoundGameOn(bool state);
 
 private:
   // SHORTCUTS
-  QShortcut * m_shortcutGunMoveLeft = nullptr;
-  QShortcut * m_shortcutGunMoveRight = nullptr;
-  QShortcut * m_shortcutGunShoot = nullptr;
   QShortcut * m_shortcutGamePause = nullptr;
   // MENU
   bool m_gameStarted = false;
   QPushButton * m_pbMenuNewGame = nullptr;
   QPushButton * m_pbMenuContinueGame = nullptr;
-  QPushButton * m_pbMenuSaveGame = nullptr;
+  QPushButton * m_pbMenuRecord = nullptr;
   QPushButton * m_pbToSet = nullptr;
   QPushButton * m_pbExit = nullptr;
   QGridLayout * m_layoutMenu = nullptr;
@@ -145,6 +162,11 @@ private:
   QLabel * m_lWindowSize = nullptr;
   QLabel * m_lWindowState = nullptr;
   QLabel * m_lLanguage = nullptr;
+  QLabel * m_lSoundComment = nullptr;
+  QLabel * m_lSMainOn = nullptr;
+  QLabel * m_lSMainVolume = nullptr;
+  QLabel * m_lSGameOn = nullptr;
+  QLabel * m_lSGameVolume = nullptr;
     // keysequenceedit
   QKeySequenceEdit * m_kseGunMoveLeft = nullptr;
   QKeySequenceEdit * m_kseGunMoveRight = nullptr;
@@ -154,9 +176,15 @@ private:
   QSlider * m_slGPAliensCount = nullptr;
   QSlider * m_slGPObstacleCount = nullptr;
   QSlider * m_slGPGunStartLives = nullptr;
+      // sound
+  QSlider * m_slSMenuVolume = nullptr;
+  QSlider * m_slSGameVolume = nullptr;
     // checkbox
   QCheckBox * m_chbGPObstacleRedraw = nullptr;
   QCheckBox * m_chbGPGunAddLive = nullptr;
+      // sound
+  QCheckBox * m_chbSMenuOn = nullptr;
+  QCheckBox * m_chbSGameOn = nullptr;
     // combobox
   QComboBox * m_cbWindowState = nullptr;
   QComboBox * m_cbWindowSize = nullptr;
@@ -165,6 +193,7 @@ private:
   QGridLayout * m_layoutSettings = nullptr;
     // widget
   QWidget * m_widgetSettings = nullptr;
+  QWidget * m_widgetRecords = nullptr;
   // GAME
   GameWindow * m_windowGame = nullptr;
   // WINDOW  
@@ -172,4 +201,14 @@ private:
   QTranslator m_translator;
   QSize m_size;
   QString m_style;
+  // SOUND
+  QSoundEffect * m_soundButtonClick = nullptr;
+  // RECORDS
+    // buttons
+  QPushButton * m_pbToMenuFromRecords = nullptr;
+    // label
+  QLabel * m_table = nullptr;
+    // QVBoxLayout
+  QVBoxLayout * m_recordsVLayout = nullptr;
+  RecordsVect recordsArray;
 };

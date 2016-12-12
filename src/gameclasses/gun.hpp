@@ -2,6 +2,7 @@
 
 #include "movedgameentity.hpp"
 #include "bullet.hpp"
+#include "alien.hpp"
 
 class Gun2D final : public MovedGameEntity2D
 {
@@ -20,7 +21,8 @@ public:
   Gun2D(Point2D const & leftBottom, Point2D const & rightTop)
     :MovedGameEntity2D(leftBottom, rightTop)
   {
-    DefaultGunSetStartValue();
+    SetHealth(GUN_HEALTH_START);
+    SetSpeed(GUN_SPEED_SHOOT_START);
   }
 
   Gun2D(Point2D const & leftBottom, Point2D const & rightTop, float health, float speedShoot)
@@ -58,26 +60,28 @@ public:
 
   // Getters
   inline size_t const GetLives() const { return m_lives; }
-  inline float const GetRate() const   { return m_gunRate; }
+  inline int const GetRate() const   { return m_gunRate; }
 
   // Setters
   inline void SetLives(size_t const newLives) { m_lives = newLives; }
-  inline void SetRate(float const newGunRate) { m_gunRate = newGunRate; }
+  inline void SetRate(float newGunRate) { m_gunRate = newGunRate; }
 
 
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
-    if(! (bul.GetBox() && this->GetBox()))
+    if (!(bul.GetBox() && this->GetBox()))
       return false;
-    //если попала
+
+    if (BONUS_GOD) return true;  // if god mode bonus
+
+    // if intersect
     bul.Inform(*this);
     this->SetHealth(this->GetHealth() - bul.GetHealth());
-    if(this->GetHealth() == 0)
+    if(this->GetHealth() <= 0)
     {
       m_lives--;
-      if(m_lives > 0)
-        GunBoom();
+      if (m_lives > 0) this->SetHealth(GUN_HEALTH_START);
     }
     return true;
   }
@@ -97,15 +101,14 @@ public:
   }
 
 private:
-  void GunBoom(){/* имитация взрыва? */}
 
   inline void DefaultGunSetStartValue()
   {
-    this->SetBox( Box2D{ GUN_START_X, GUN_START_Y, GUN_START_X + GUN_WIDTH, GUN_START_Y +GUN_HEIGHT} ) ;
+    this->SetBox( Box2D{ GUN_START_X, GUN_START_Y, GUN_START_X + GUN_WIDTH, GUN_START_Y + GUN_HEIGHT} ) ;
     SetHealth(GUN_HEALTH_START);
     SetSpeed(GUN_SPEED_SHOOT_START);
   }
 
   size_t m_lives = GUN_LIVES_START;  // - default gun lives count
-  float m_gunRate = 0;               // - game rate (from original game) (increment depends on the type of shot down alien)
+  int m_gunRate = 0;               // - game rate (from original game) (increment depends on the type of shot down alien)
 };

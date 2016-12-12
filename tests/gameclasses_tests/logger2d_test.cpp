@@ -17,7 +17,7 @@ TEST(logger_test, test_logger_work)
   logger.On();
   logger.Checkout("log.txt");
 
-  Space2D sp;
+  Space2D sp = Space2D({0,0}, {0,0});
   Alien2D al1;
   logger << al1 << std::endl;
 
@@ -58,6 +58,5 @@ TEST(logger_test, test_logger_work)
       file2 += c;
     }
   }
-  EXPECT_EQ(file1.size(), 232);
-  EXPECT_EQ(file2.size(), 267);
+  EXPECT_EQ(file1.size(), 11501);
 }

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "ray2d.hpp"
+#include "gameclasses/geometry/ray2d.hpp"
 #include <sstream>
 #include <unordered_set>
 

@@ -38,12 +38,12 @@ TEST(alien2dmanager_test, test_assignment)
         (
           Point2D
           {
-            ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE),
+            ALIEN_BOX_LEFT + j * (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE),
             ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE)
           },
           Point2D
           {
-            ALIEN_BOX_LEFT + j * (AlIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + AlIEN_WIDTH,
+            ALIEN_BOX_LEFT + j * (ALIEN_WIDTH + ALIEN_HORIZONTAL_DISTANCE) + ALIEN_WIDTH,
             ALIEN_BOX_TOP + i * (ALIEN_HEIGHT + ALIEN_VERTICAL_DISTANCE) + ALIEN_HEIGHT,
           }
         )
@@ -56,10 +56,4 @@ TEST(alien2dmanager_test, test_assignment)
   Alien2DManager am2;
   am2 = am1;
   EXPECT_EQ(am2.GetLiveAliensCount(), am1.GetLiveAliensCount());
-}
-
-TEST(alien2dmanager_test, test_throw)
-{
-  Alien2DManager am1;
-  EXPECT_THROW(am1.AliensMove(Box2D{}), std::runtime_error);
 }

@@ -16,12 +16,7 @@ public:
   }
 
   // Destructor.
-  ~Obstacle2DManager()
-  {
-      for(size_t i = 0; i!=m_obstacles.size(); ++i)
-        delete m_obstacles[i];
-      m_obstacles.clear();
-  }
+  ~Obstacle2DManager() = default;
 
   // Constructors with parameters.
   Obstacle2DManager(size_t const countObstacle)
@@ -29,10 +24,14 @@ public:
     CreateObstacleVector(countObstacle);
   }
 
-  // no copy constructor
-  Obstacle2DManager(Obstacle2DManager const & obj) = delete;
+  // copy constructor
+  Obstacle2DManager(Obstacle2DManager const & obj)
+  {
+    m_obstacles = obj.GetObstacleVector();
+  }
 
-  // assignment operator (for next level reinit)
+
+  // assignment operator
   Obstacle2DManager & operator = (Obstacle2DManager const & obj)
   {
     if (this == &obj) return *this;
@@ -44,19 +43,52 @@ public:
   // Getters
   inline ObstacleVector const & GetObstacleVector() const { return m_obstacles; }
   inline ObstacleVector & GetObstacleVector() { return m_obstacles; }
-  inline size_t const GetCountOObstacle() const    { return m_obstacles.size(); }
+  inline size_t const GetCountOObstacle() const { return m_obstacles.size(); }
 
 
   // Capabilities
   bool CheckIntersection(Bullet2D const & bul)
   {
     for(auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
+    {
       if((*it)->CheckIntersection(bul))
       {
         bul.Inform(*(*it));
         return true;
       }
+    }
     return false;
+  }
+
+  void log()
+  {
+    logger << "_______________________________" << std::endl;
+    logger << "_______________________________" << std::endl;
+    logger << "_______________________________" << std::endl;
+    logger << "LOGING OBSTACLE VECTOR CREATION" << std::endl;
+    logger << "_______________________________" << std::endl;
+    logger << GetCountOObstacle() << std::endl;
+    for (auto it = m_obstacles.begin(); it != m_obstacles.end(); ++it)
+    {
+      if ((*it) != nullptr)
+      {
+        logger << (**it) << std::endl;
+      }
+      logger << std::endl;
+    }
+    logger << "___________________________________" << std::endl;
+    logger << "LOGING OBSTACLE VECTOR CREATION END" << std::endl;
+    logger << "___________________________________" << std::endl;
+    logger << "___________________________________" << std::endl;
+    logger << "___________________________________" << std::endl;
+    logger << std::endl << std::endl << std::endl << std::endl;
+  }
+
+  void clear()
+  {
+    for(int i = 0; i < m_obstacles.size(); ++i)
+      delete m_obstacles[i];
+    m_obstacles.clear();
   }
 
 private:
@@ -83,6 +115,8 @@ private:
         )
       );
     }
+
+    log();
   }
 
   ObstacleVector m_obstacles;          // matrix of Obstacles
